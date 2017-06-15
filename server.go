@@ -6,7 +6,7 @@ import (
     "net/http"
     "strconv"
     "sync"
-    "os"
+    
     "geophysics/actions"
     "geophysics/calcs"
     "geophysics/utils/fileutils"
@@ -29,14 +29,9 @@ func serveSingle(pattern string, filename string) {
 }
 
 func test(w http.ResponseWriter, r *http.Request) {
-    file, err := os.Open("data/uploads/grav.csv")
-    if err != nil {
-      log.Printf("Failed to open the file: %s", "grav.csv")
-      return
-    }
-    defer file.Close()
-    
-    data := fileutils.GatherCSVData(file, 15)
+    fname := "data/uploads/grav.csv"
+
+    data := fileutils.GatherCSVData(fname, 15)
     t := calcs.InitGravStructWorden807(data)
     calcs.CalcBouguerAnomaly(t)
     log.Println(t)
