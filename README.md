@@ -11,5 +11,8 @@ The user is expected to upload a csv file storing their survey data having field
 Furthermore, the application generates and displays three graphs from the data. The first is an interactive one of the Bouguer anomaly where parameter knobs can be adjusted as to align the actual data curve on the model. Once aligned the user can export the graph with the parameter knob values for further studies. The second is a static graph displaying distance of the survey vs gravimetric values. The third and final one, for the moment, displays distance of the survey vs the altitude. A csv file containing topography data has to be uploaded. Including this information under the gravimetric survey data csv file is under consideration.
 
 ## Low-level functionality
+Details to come...
 
+## TODO
+[ ] Rewrite the way data is parsed when a user uploads a file
 

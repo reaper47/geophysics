@@ -11,6 +11,10 @@ import (
 func GatherCSVData(fname string, addFields int) [][]string {
     delimiter := detectDelimiter(fname)
 
+    if delimiter == ' ' {
+      log.Fatal("No spaces please.")
+    }
+
     file := OpenFile(fname)
     r := csv.NewReader(file)
     r.Comma = delimiter
@@ -69,6 +73,8 @@ func countCSVRunes(data []byte, m map[rune]int) {
             }
         } else if !quotes && val == 9 {
             m[' ']++
+        } else if !quotes && val == 32 {
+            m[' ']++
         } else if !quotes && val == 44 {
             m[',']++
         } else if !quotes && val == 59 {
@@ -84,6 +90,7 @@ func createCSVMap() map[rune]int {
     m[','] = 0
     m['|'] = 0
     m[';'] = 0
+    m[' '] = 0
     m[' '] = 0
     return m
 }

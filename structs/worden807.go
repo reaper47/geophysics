@@ -5,8 +5,8 @@ import (
     "geophysics/utils/arrayutils"
 )
 
-type GravDataWorden807 struct {
-    Station []float64
+type Worden807Struct struct {
+    Stations []float64
     Comments []string
     Time []float64
     TimeMin []float64
@@ -16,31 +16,31 @@ type GravDataWorden807 struct {
     SurveyPOI string
     SurveyAddress string
     SurveyDate string
-    OperationTempGrav float32
-    RefStationLat float32
-    GravSurveyDir float32
+    OperationTempGrav float64
+    RefStationLat float64
+    GravSurveyDir float64
     AvgReading []float64
-    Std []float64    
+    Std []float64
     RelativeGravField []float64
-    GravAnomalyNotCorrected []float64  
-    TemporalVars []float64
-    AttractionDeriv []float64
+    GravAnomalyNotCorrected []float64
+    TemporalVariations []float64
+    AttractionDerivation []float64
     LatCorrection []float64
     ElevComparedToStation []float64
     AltComparedToAvgSea []float64
-    FreeAirCorr []float64
-    BouguerCorr []float64
+    FreeAirCorrection []float64
+    BouguerCorrection []float64
     GravFieldRelBouguer []float64
     BouguerAnomaly [] float64
     RegionalAnomaly []float64
     ResidualAnomaly []float64
 }
 
-func PushToWorden807Struct(gravStruct *GravDataWorden807, data []string, field string) {
+func PushToWorden807Struct(gravStruct *Worden807Struct, data []string, field string) {
     fieldSplit := strings.Split(field, " ")
     
     if strings.Contains(fieldSplit[0], "station") {
-        gravStruct.Station = arrayutils.ConvStringToFloat64(data)
+        gravStruct.Stations = arrayutils.ConvStringToFloat64(data)
         return
     }
     
@@ -55,7 +55,7 @@ func PushToWorden807Struct(gravStruct *GravDataWorden807, data []string, field s
     }
     
     if arrayutils.StringContainedInSlice("time", fieldSplit) && arrayutils.StringContainedInSlice("min", fieldSplit) {
-       gravStruct.Time = arrayutils.ConvStringToFloat64(data)
+       gravStruct.TimeMin = arrayutils.ConvStringToFloat64(data)
        return
     }
     
@@ -92,17 +92,17 @@ func PushToWorden807Struct(gravStruct *GravDataWorden807, data []string, field s
     
     if arrayutils.StringContainedInSlice("operation", fieldSplit) && arrayutils.StringContainedInSlice("temp", fieldSplit) { 
         // check if temperature has to be in fahrenheit or celsius
-        gravStruct.OperationTempGrav = arrayutils.ConvStringToFloat32(data)[0]
+        gravStruct.OperationTempGrav = arrayutils.ConvStringToFloat64(data)[0]
         return 
     }
     
     if arrayutils.StringContainedInSlice("lat", fieldSplit) && arrayutils.StringContainedInSlice("reference", fieldSplit) {
-        gravStruct.RefStationLat = arrayutils.ConvStringToFloat32(data)[0]
+        gravStruct.RefStationLat = arrayutils.ConvStringToFloat64(data)[0]
         return
     }
     
     if arrayutils.StringContainedInSlice("survey", fieldSplit) && arrayutils.StringContainedInSlice("direction", fieldSplit) {
-        gravStruct.GravSurveyDir = arrayutils.ConvStringToFloat32(data)[0]
+        gravStruct.GravSurveyDir = arrayutils.ConvStringToFloat64(data)[0]
         return
     }
     

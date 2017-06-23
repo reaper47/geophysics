@@ -1,6 +1,7 @@
 package mathutils
 
 import (
+    "math"
     "geophysics/utils/arrayutils"
 )
 
@@ -16,14 +17,27 @@ func Mean2D(data [][]float64) []float64 {
         }
         avgs = append(avgs, Round(sum / m, .5, 5))
     }
-        
+    
     return avgs
 }
 
-func Std2D(data [][]float64) []float64 {
-    var s []float64
-    s = append(s, 0.0)
+func PopulationStdDev2D(data [][]float64) []float64 {
+    var stdDevs []float64
+    avgs := Mean2D(data)
+    n := arrayutils.FindMaxNbValsFloat64(data)
+    numEls := len(data)
     
-    return s
+    for i := 0; i < n; i++ {
+        deviation := 0.0
+        currentAvg := avgs[i]
+
+        for _, val := range data {
+            deviation += math.Pow(math.Abs(val[i]-currentAvg), 2)
+        }
+        
+        stdDevs = append(stdDevs, math.Sqrt(deviation/float64(numEls)))
+    }
+    
+    return stdDevs
 }
 

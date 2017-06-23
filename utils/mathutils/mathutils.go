@@ -16,3 +16,10 @@ func Round(val float64, roundOn float64, places int) (newVal float64) {
     return
 }
 
+func SumArr(data []float64) float64 {
+    sum := 0.0
+    for _, val := range data {
+        sum += val
+    }
+    return sum
+}

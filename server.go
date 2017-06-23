@@ -30,11 +30,17 @@ func serveSingle(pattern string, filename string) {
 
 func test(w http.ResponseWriter, r *http.Request) {
     fname := "data/uploads/grav.csv"
+    fname2 := "data/uploads/topo.csv"
 
-    data := fileutils.GatherCSVData(fname, 15)
-    t := calcs.InitGravStructWorden807(data)
-    calcs.CalcBouguerAnomaly(t)
-    log.Println(t)
+    topo := fileutils.GatherCSVData(fname2, 5)
+    t2 := calcs.InitTopoStruct(topo)
+    calcs.PopulateTopoStruct(t2, 11, 99.0)
+    log.Println(t2)
+
+    grav := fileutils.GatherCSVData(fname, 15)
+    t := calcs.InitWorden807Struct(grav)
+    calcs.PopulateWorden807(t)
+    //log.Println(t)
 }
 
 func main() {

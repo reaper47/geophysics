@@ -1,55 +1,30 @@
 package arrayutils
 
 import (
-    "log"
-    "strconv"
     "strings"
+    "errors"
+    "geophysics/constants"
 )
 
-func ConvStringToFloat32(data []string) []float32 {
-    var convData []float32
-    for _, val := range data {
-        if val == "" {
-            convData = append(convData, 0.0)
-            continue
+func FindMaxNbValsFloat64(data [][]float64) int {
+    max := len(data[0])
+    for _, arr := range data {
+        lenArr := len(arr)
+        if lenArr > max {
+            max = lenArr
         }
-        
-        conv, err := strconv.ParseFloat(val, 32)
-        if err != nil {
-	        log.Println("conversion error in convToFloat32: ", err)
-        }       
-        convData = append(convData, float32(conv))
     }
-    return convData
+    return max
 }
 
-func ConvStringToFloat64(data []string) []float64 {
-    var convData []float64
-    for _, val := range data {
-        if val == "" {
-            convData = append(convData, 0.0)
-            continue
+func GatherSameItemsIndex64(item float64, data []float64) []int {
+    var indexes []int
+    for key, val := range data {
+        if val == item {
+            indexes = append(indexes, key)
         }
-        
-        conv, err := strconv.ParseFloat(val, 64)
-        if err != nil {
-	        log.Println("conversion error in convToFloat64: ", err)
-        }
-        convData = append(convData, conv)
     }
-    return convData
-}
-
-func ConvStringToInt(data []string) []int {
-    var convData []int
-    for _, val := range data {
-        conv, err := strconv.Atoi(val)
-        if err != nil {
-	        log.Println("conversion error in convToInt: ", err)
-        }
-        convData = append(convData, conv)
-    }
-    return convData
+    return indexes
 }
 
 func GetColData(data [][]string, i int) []string {
@@ -58,6 +33,45 @@ func GetColData(data [][]string, i int) []string {
         colData = append(colData, val[i])
     }
     return colData[1:]
+}
+
+func GetTotalNumberEls2D(data [][]float64) int {
+    els := 0
+    for i, n := 0, len(data); i < n; i++ {
+        for j, m := 0, len(data[i]); j < m; j++ {
+            els++
+        }
+    }
+    return els
+}
+
+func AddTwoArrays(a []float64, b []float64) ([]float64, error) {
+    if len(a) != len(b) {
+        return nil, errors.New(constants.ArraysNotSameLength)
+    }
+    
+    var c []float64
+    for i, n := 0, len(a); i < n; i++ {
+        c = append(c, a[i] + b[i])
+    }
+    
+    return c, nil
+}
+
+func DivideArrByConstant(data []float64, constant float64) []float64 {
+    var results []float64
+    for _, val := range data {
+        results = append(results, val / constant)
+    }
+    return results
+}
+
+func MultiplyArrByConstant(data []float64, constant float64) []float64 {
+    var results []float64
+    for _, val := range data {
+        results = append(results, val * constant)
+    }
+    return results
 }
 
 func ResizeSlice(data []string, expand int) []string {
@@ -78,14 +92,54 @@ func StringContainedInSlice(a string, arr []string) bool {
     return false
 }
 
-func FindMaxNbValsFloat64(data [][]float64) int {
-    max := len(data[0])
-    for _, arr := range data {
-        lenArr := len(arr)
-        if lenArr > max {
-            max = lenArr
-        }
+func SubtractArrayOneIndexAhead(data []float64, add []float64, appendZero bool) ([]float64, error) {
+    if len(data) != len(add) {
+        return nil, errors.New(constants.ArraysNotSameLength)
     }
-    return max
+    
+    var values []float64
+    if appendZero {
+        values = append(values, 0.0)
+    }
+    
+    for i, n := 1, len(data); i < n; i++ {
+        values = append(values, data[i-1] - data[i] + add[i])
+    }
+    
+    return values, nil
 }
+
+func SubtractSameArrayOneIndexAhead(data []float64) []float64 {
+    var values []float64
+    values = append(values, 0.0)
+    
+    for i, n := 1, len(data); i < n; i++ {
+        values = append(values, values[i-1] - data[i])
+    }
+    
+    return values
+}
+
+func SubtractTwoArraysOneIndexAhead(data1 []float64, data2 []float64) ([]float64, error) {
+    if len(data1) != len(data2) {
+        return nil, errors.New(constants.ArraysNotSameLength)
+    }
+    
+    var values []float64
+    values = append(values, 0.0)
+    
+    for i, n := 1, len(data1); i < n; i++ {
+        values = append(values, data2[i] - data1[i-1])
+    }
+    return values, nil
+}
+
+func SubtractValueFromArray(value float64, data []float64) []float64 {
+    var values []float64
+    for _, val := range data {
+        values = append(values, val - value)
+    }
+    return values
+}
+
 
