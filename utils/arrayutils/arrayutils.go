@@ -58,6 +58,14 @@ func AddTwoArrays(a []float64, b []float64) ([]float64, error) {
     return c, nil
 }
 
+func AddArrWithConstant(data []float64, constant float64) []float64 {
+    var results []float64
+    for _, val := range data {
+        results = append(results, val + constant)
+    }
+    return results
+}
+
 func DivideArrByConstant(data []float64, constant float64) []float64 {
     var results []float64
     for _, val := range data {
@@ -81,6 +89,10 @@ func ResizeSlice(data []string, expand int) []string {
         return newSlice
     }
     return data
+}
+
+func RemoveElementFromSlice(slice []float64, i int) []float64 {
+    return append(slice[:i], slice[i+1:]...)
 }
 
 func StringContainedInSlice(a string, arr []string) bool {
@@ -120,16 +132,29 @@ func SubtractSameArrayOneIndexAhead(data []float64) []float64 {
     return values
 }
 
-func SubtractTwoArraysOneIndexAhead(data1 []float64, data2 []float64) ([]float64, error) {
-    if len(data1) != len(data2) {
+func SubtractTwoArrays(a []float64, b []float64) ([]float64, error) {
+    if len(a) != len(b) {
+        return nil, errors.New(constants.ArraysNotSameLength)
+    }
+    
+    var c []float64
+    for i, n := 0, len(a); i < n; i++ {
+        c = append(c, a[i] - b[i])
+    }
+    
+    return c, nil
+}
+
+func SubtractTwoArraysOneIndexAhead(a []float64, b []float64) ([]float64, error) {
+    if len(a) != len(b) {
         return nil, errors.New(constants.ArraysNotSameLength)
     }
     
     var values []float64
     values = append(values, 0.0)
     
-    for i, n := 1, len(data1); i < n; i++ {
-        values = append(values, data2[i] - data1[i-1])
+    for i, n := 1, len(a); i < n; i++ {
+        values = append(values, b[i] - a[i-1])
     }
     return values, nil
 }

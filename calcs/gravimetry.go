@@ -4,6 +4,7 @@ import (
     "fmt"
     "strings"
     "math"
+    "geophysics/constants"
     "geophysics/structs"
     "geophysics/utils/arrayutils"
     "geophysics/utils/mathutils"
@@ -20,7 +21,7 @@ func InitWorden807Struct(data [][]string) *structs.Worden807Struct {
     return gravStruct
 }
 
-func PopulateWorden807(gravStruct *structs.Worden807Struct) {
+func PopulateWorden807(gravStruct *structs.Worden807Struct, topoStruct *structs.TopoStruct) {
     gravStruct.AvgReading = mathutils.Mean2D(gravStruct.Readings)
     gravStruct.Std = mathutils.PopulationStdDev2D(gravStruct.Readings)
     
@@ -34,27 +35,29 @@ func PopulateWorden807(gravStruct *structs.Worden807Struct) {
     gravStruct.TemporalVariations = calculateTemporalVariations(referenceStations, gravStruct)
     gravStruct.AttractionDerivation = calculateAttractionDerivation(len(referenceStations), referenceStations, gravStruct)
     gravStruct.LatCorrection = calculateLatitudeCorrection(gravStruct)
-    //gravStruct.ElevComparedToStation = 
+    gravStruct.FreeAirCorrection = arrayutils.MultiplyArrByConstant(topoStruct.ElevationToRefStationCorrected, constants.FreeAir)
+    gravStruct.BouguerCorrection = arrayutils.MultiplyArrByConstant(topoStruct.ElevationToRefStationCorrected, constants.RockDensity * constants.Bouguer)
+    gravStruct.BouguerRelativeGravField = calculateBouguerRelativeGravField(gravStruct)
+    gravStruct.BouguerAnomaly = arrayutils.SubtractValueFromArray(gravStruct.BouguerRelativeGravField[0], gravStruct.BouguerRelativeGravField)
+    gravStruct.RegionalAnomaly = calculateRegionalAnomaly(gravStruct)
     
+    residualAnomaly, err := arrayutils.SubtractTwoArrays(gravStruct.BouguerAnomaly, gravStruct.RegionalAnomaly)
+    if err != nil {
+        fmt.Println(err)
+    }
     
-    //gravStruct.AltComparedToAvgSea
-    //gravStruct.FreeAirCorrection
-    //gravStruct.BouguerCorrection 
-    //gravStruct.GravFieldRelBouguer 
-    //gravStruct.BouguerAnomaly 
-    //gravStruct.RegionalAnomaly 
-    //gravStruct.ResidualAnomaly 
+    gravStruct.ResidualAnomaly = residualAnomaly
     
 }
 
 func DialConstantCorrectionWorden807(temp float64, unit string) float64 {
-    upperY, lowerY := 0.40546, 0.40514
+    upperY, lowerY := constants.Worden807UpperY, constants.Worden807LowerY
     
     var leftX, rightX float64
     if strings.ToLower(unit) == "f" {
-        rightX, leftX = 0.0, 120.0
+        rightX, leftX = constants.Worden807RightXFahr, constants.Worden807LeftXFahr
     } else {
-        rightX, leftX = -17.7778, 48.8889
+        rightX, leftX = constants.Worden807RightXCelsius, constants.Worden807LeftXCelsius
     }
 
     return ((upperY - lowerY) / (leftX - rightX)) * float64(temp) + lowerY
@@ -84,6 +87,52 @@ func calculateAttractionDerivation(numRefStations int, refStations []int, gravSt
     }
 
     return derivations
+}
+
+/*
+ * Develop a general solution
+ */
+func calculateBouguerRelativeGravField(gravStruct *structs.Worden807Struct) []float64 {
+    pc1, err := arrayutils.AddTwoArrays(gravStruct.AttractionDerivation, gravStruct.LatCorrection)
+    if err != nil {
+        fmt.Println(err)
+    }
+    
+    pc1 = arrayutils.RemoveElementFromSlice(pc1, 12)
+    pc1 = arrayutils.RemoveElementFromSlice(pc1, 26)
+
+    freeAirSlice := gravStruct.FreeAirCorrection[:len(gravStruct.FreeAirCorrection)/2+1]
+    bouguerSlice := gravStruct.BouguerCorrection[:len(gravStruct.BouguerCorrection)/2+1]
+
+    pc2, err := arrayutils.AddTwoArrays(freeAirSlice, bouguerSlice)
+    if err != nil {
+        fmt.Println(err)
+    }
+    
+    pc3, err := arrayutils.AddTwoArrays(pc1, pc2)
+    if err != nil {
+        fmt.Println(err)
+    }
+    
+    relativeGravFields := gravStruct.RelativeGravField
+    relativeGravFields = arrayutils.RemoveElementFromSlice(relativeGravFields, 12)
+    relativeGravFields = arrayutils.RemoveElementFromSlice(relativeGravFields, 26)
+
+    gravField, err := arrayutils.SubtractTwoArrays(relativeGravFields, pc3)
+    if err != nil {
+        fmt.Println(err)
+    }
+    
+    return gravField
+}
+
+func calculateRegionalAnomaly(gravStruct *structs.Worden807Struct) []float64 {
+    stations := gravStruct.Stations
+    stations = arrayutils.RemoveElementFromSlice(stations, 12)
+    stations = arrayutils.RemoveElementFromSlice(stations, 26)
+    stations = arrayutils.DivideArrByConstant(stations, 500)
+    
+    return arrayutils.MultiplyArrByConstant(stations, 0.30)    
 }
 
 func calculateTemporalVariations(refStations []int, gravStruct *structs.Worden807Struct) []float64 {

@@ -38,6 +38,8 @@ func PopulateTopoStruct(topoStruct *structs.TopoStruct, refStation int, altitude
         fmt.Println(err)
     }
     topoStruct.ElevationToRefStationCorrected = elevToRefStationCorr
-    //topoStruct.AltitudeToAvgSeaLevel =
+    
+    altitudeConstant := altitudeRefStation - topoStruct.ElevationToRefStationCorrected[refStation]
+    topoStruct.AltitudeToAvgSeaLevel = arrayutils.AddArrWithConstant(topoStruct.ElevationToRefStationCorrected, altitudeConstant)
 }
 

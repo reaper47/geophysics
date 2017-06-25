@@ -41,8 +41,6 @@ func PushToTopoStruct(topoStruct *TopoStruct, data []string, field string) {
         return
     }
     
-    
-    
     if arrayutils.StringContainedInSlice("zero", fieldSplit) {
         topoStruct.Zero = arrayutils.ConvStringToFloat64(data)
         return

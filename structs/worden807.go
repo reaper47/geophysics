@@ -26,11 +26,9 @@ type Worden807Struct struct {
     TemporalVariations []float64
     AttractionDerivation []float64
     LatCorrection []float64
-    ElevComparedToStation []float64
-    AltComparedToAvgSea []float64
     FreeAirCorrection []float64
     BouguerCorrection []float64
-    GravFieldRelBouguer []float64
+    BouguerRelativeGravField []float64
     BouguerAnomaly [] float64
     RegionalAnomaly []float64
     ResidualAnomaly []float64
