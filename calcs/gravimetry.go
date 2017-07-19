@@ -35,13 +35,13 @@ func PopulateWorden807(gravStruct *structs.Worden807Struct, topoStruct *structs.
 	gravStruct.TemporalVariations = calculateTemporalVariations(referenceStations, gravStruct)
 	gravStruct.AttractionDerivation = calculateAttractionDerivation(len(referenceStations), referenceStations, gravStruct)
 	gravStruct.LatCorrection = calculateLatitudeCorrection(gravStruct)
-	gravStruct.FreeAirCorrection = arrayutils.MultiplyArrByConstant(topoStruct.ElevationToRefStationCorrected[:26], constants.FreeAir)	
-	gravStruct.BouguerCorrection = arrayutils.MultiplyArrByConstant(topoStruct.ElevationToRefStationCorrected[:26], constants.RockDensity * constants.Bouguer)
+	gravStruct.FreeAirCorrection = arrayutils.MultiplyArrByConstant(topoStruct.ElevationToRefStationCorrected[:26], constants.FreeAir)
+	gravStruct.BouguerCorrection = arrayutils.MultiplyArrByConstant(topoStruct.ElevationToRefStationCorrected[:26], constants.RockDensity*constants.Bouguer)
 	gravStruct.BouguerRelativeGravField = calculateBouguerRelativeGravField(gravStruct)
 
 	gravStruct.BouguerAnomaly = arrayutils.SubtractValueFromArray(gravStruct.BouguerRelativeGravField[0], gravStruct.BouguerRelativeGravField)
 	gravStruct.RegionalAnomaly = calculateRegionalAnomaly(gravStruct)
-	
+
 	residualAnomaly, err := arrayutils.SubtractTwoArrays(gravStruct.BouguerAnomaly, gravStruct.RegionalAnomaly)
 	if err != nil {
 		fmt.Println(err)
@@ -102,11 +102,11 @@ func calculateBouguerRelativeGravField(gravStruct *structs.Worden807Struct) []fl
 	pc1 = arrayutils.RemoveElementFromSlice(pc1, 12)
 	pc1 = arrayutils.RemoveElementFromSlice(pc1, 26)
 
-    freeAirSlice := make([]float64, len(gravStruct.FreeAirCorrection))
-    copy(freeAirSlice, gravStruct.FreeAirCorrection)
+	freeAirSlice := make([]float64, len(gravStruct.FreeAirCorrection))
+	copy(freeAirSlice, gravStruct.FreeAirCorrection)
 
 	bouguerSlice := make([]float64, len(gravStruct.BouguerCorrection))
-    copy(bouguerSlice, gravStruct.BouguerCorrection)
+	copy(bouguerSlice, gravStruct.BouguerCorrection)
 
 	pc2, err := arrayutils.AddTwoArrays(freeAirSlice, bouguerSlice)
 	if err != nil {
@@ -131,9 +131,9 @@ func calculateBouguerRelativeGravField(gravStruct *structs.Worden807Struct) []fl
 }
 
 func calculateRegionalAnomaly(gravStruct *structs.Worden807Struct) []float64 {
-    stations := make([]float64, len(gravStruct.Stations))
+	stations := make([]float64, len(gravStruct.Stations))
 	copy(stations, gravStruct.Stations)
-	
+
 	stations = arrayutils.RemoveElementFromSlice(stations, 12)
 	stations = arrayutils.RemoveElementFromSlice(stations, 26)
 	stations = arrayutils.DivideArrByConstant(stations, 500)
@@ -147,12 +147,12 @@ func calculateTemporalVariations(refStations []int, gravStruct *structs.Worden80
 
 	temporalVariations = append(temporalVariations, 0)
 	for i, n, m := 1, len(refStations), len(gravStruct.Stations); i < m; i++ {
-	    if i < n {
-	        temporalVariations = append(temporalVariations, anomalies[refStations[i]]-anomalies[refStations[0]])
-	    } else {
-	        temporalVariations = append(temporalVariations, float64(math.MaxUint64))
-	    }
-		
+		if i < n {
+			temporalVariations = append(temporalVariations, anomalies[refStations[i]]-anomalies[refStations[0]])
+		} else {
+			temporalVariations = append(temporalVariations, float64(math.MaxUint64))
+		}
+
 	}
 
 	return temporalVariations

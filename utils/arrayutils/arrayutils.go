@@ -1,8 +1,8 @@
 package arrayutils
 
 import (
-	"strings"
 	"log"
+	"strings"
 )
 
 func FindMaxNbValsFloat64(data [][]float64) int {
@@ -45,26 +45,25 @@ func GetTotalNumberEls2D(data [][]float64) int {
 }
 
 func InvertArrayStr(data [][]string) [][]string {
-    lenData := len(data)
-    lenRow := len(data[0])
-    log.Println(lenData)
-    log.Println(lenRow)
-    
-    
-    var arr [][]string
-    for i := 0; i < lenRow; i++ {
-        arr = append(arr, make([]string, 0))
-        for j := 0; j < lenData; j++ {
-            arr[i] = append(arr[i], data[j][i])
-            log.Println(arr)
-        }
-    }
-    return arr
+	lenData := len(data)
+	lenRow := len(data[0])
+	log.Println(lenData)
+	log.Println(lenRow)
+
+	var arr [][]string
+	for i := 0; i < lenRow; i++ {
+		arr = append(arr, make([]string, 0))
+		for j := 0; j < lenData; j++ {
+			arr[i] = append(arr[i], data[j][i])
+			log.Println(arr)
+		}
+	}
+	return arr
 }
 
 func ResizeSlice(data []string, expand int) []string {
 	if (len(data) + expand) > cap(data) {
-		newSlice := make([]string, len(data), cap(data) + expand)
+		newSlice := make([]string, len(data), cap(data)+expand)
 		copy(newSlice, data)
 		return newSlice
 	}
@@ -83,4 +82,3 @@ func StringContainedInSlice(a string, arr []string) bool {
 	}
 	return false
 }
-

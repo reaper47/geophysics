@@ -63,8 +63,7 @@ func SubtractTwoArraysOneIndexAhead(a []float64, b []float64) ([]float64, error)
 func SubtractValueFromArray(value float64, data []float64) []float64 {
 	var values []float64
 	for i := range data {
-		values = append(values, data[i] - value)
+		values = append(values, data[i]-value)
 	}
 	return values
 }
-

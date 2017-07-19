@@ -8,7 +8,7 @@ import (
 func AddArrWithConstant(data []float64, constant float64) []float64 {
 	var arr []float64
 	for i := range data {
-		arr = append(arr, data[i] + constant)
+		arr = append(arr, data[i]+constant)
 	}
 	return arr
 }
@@ -25,4 +25,3 @@ func AddTwoArrays(a []float64, b []float64) ([]float64, error) {
 
 	return c, nil
 }
-

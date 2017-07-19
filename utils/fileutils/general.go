@@ -13,4 +13,3 @@ func OpenFile(filepath string) *os.File {
 	}
 	return file
 }
-

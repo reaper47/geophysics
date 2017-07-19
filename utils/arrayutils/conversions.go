@@ -1,7 +1,7 @@
 package arrayutils
 
 import (
-    "log"
+	"log"
 	"strconv"
 )
 
@@ -22,11 +22,11 @@ func ConvFloat64ToInt(data []float64) []int {
 }
 
 func ConvFloat64ToStr(data []float64) []string {
-    var arr []string
-    for i := range data {
-        arr = append(arr, strconv.FormatFloat(data[i], 'f', 18, 64))
-    }
-    return arr
+	var arr []string
+	for i := range data {
+		arr = append(arr, strconv.FormatFloat(data[i], 'f', 18, 64))
+	}
+	return arr
 }
 
 func ConvStringToFloat64(data []string) []float64 {
@@ -57,4 +57,3 @@ func ConvStringToInt(data []string) []int {
 	}
 	return values
 }
-

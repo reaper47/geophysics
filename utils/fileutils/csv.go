@@ -2,12 +2,12 @@ package fileutils
 
 import (
 	"bufio"
-	"log"
-	"os"
 	"encoding/csv"
-	"geophysics/utils/arrayutils"
 	"geophysics/constants"
 	"geophysics/structs"
+	"geophysics/utils/arrayutils"
+	"log"
+	"os"
 )
 
 func countCSVRunes(data []byte, m map[rune]int) {
@@ -100,34 +100,33 @@ func detectDelimiter(fname string) rune {
 func WriteGravStructToCSV(delimiter rune, useCRLF bool, filename string, gravStruct *structs.Worden807Struct) {
 	out, err := os.Create(constants.WriteToCSVFilePathGrav + filename)
 	if err != nil {
-        log.Fatal(constants.CreatingFile, err)
-    }
-    
+		log.Fatal(constants.CreatingFile, err)
+	}
+
 	w := csv.NewWriter(out)
 	w.Comma = delimiter
 	w.UseCRLF = useCRLF
-	
+
 	defer func() {
-        w.Flush()
-        out.Close()
-    }()
+		w.Flush()
+		out.Close()
+	}()
 
-    var buffer [][]string
-    
-    headers := structs.CreateCSVHeadersWorden807(gravStruct)
-    buffer = append(buffer, headers)
-    
-    wordenData := structs.FetchAllDataWorden807(gravStruct)
-    //wordenData = arrayutils.InvertArrayStr(wordenData)
-    log.Println(wordenData)
-    
-    for i := range wordenData {
-        buffer = append(buffer, wordenData[i])
-    }
-    
-    for i := range buffer {
-        w.Write(buffer[i])
-    }
-    
+	var buffer [][]string
+
+	headers := structs.CreateCSVHeadersWorden807(gravStruct)
+	buffer = append(buffer, headers)
+
+	wordenData := structs.FetchAllDataWorden807(gravStruct)
+	//wordenData = arrayutils.InvertArrayStr(wordenData)
+	log.Println(wordenData)
+
+	for i := range wordenData {
+		buffer = append(buffer, wordenData[i])
+	}
+
+	for i := range buffer {
+		w.Write(buffer[i])
+	}
+
 }
-

@@ -1,9 +1,9 @@
 package structs
 
 import (
+	"geophysics/utils/arrayutils"
 	"strconv"
 	"strings"
-	"geophysics/utils/arrayutils"
 )
 
 type Worden807Struct struct {
@@ -58,53 +58,53 @@ func CreateCSVHeadersWorden807(gravStruct *Worden807Struct) []string {
 }
 
 func FetchAllDataWorden807(gravStruct *Worden807Struct) [][]string {
-    var fetched [][]string 
-        
-    fetched = append(fetched, arrayutils.ConvFloat64ToStr(gravStruct.Stations))
-    fetched = append(fetched, gravStruct.Comments)
-    fetched = append(fetched, arrayutils.ConvFloat64ToStr(gravStruct.Time))
-    fetched = append(fetched, arrayutils.ConvFloat64ToStr(gravStruct.TimeMin))
-    
-    for _, subarr := range gravStruct.Readings {
-        fetched = append(fetched, arrayutils.ConvFloat64ToStr(subarr))
-    }
-    
-    fetched = append(fetched, arrayutils.ConvFloat64ToStr(gravStruct.AvgReading))
-    fetched = append(fetched, arrayutils.ConvFloat64ToStr(gravStruct.Std))
-    fetched = append(fetched, arrayutils.ConvFloat64ToStr(gravStruct.RelativeGravField))
-    fetched = append(fetched, arrayutils.ConvFloat64ToStr(gravStruct.GravAnomalyNotCorrected))
-    fetched = append(fetched, arrayutils.ConvFloat64ToStr(gravStruct.TemporalVariations))
-    fetched = append(fetched, arrayutils.ConvFloat64ToStr(gravStruct.AttractionDerivation))
-    fetched = append(fetched, arrayutils.ConvFloat64ToStr(gravStruct.LatCorrection))
-    fetched = append(fetched, arrayutils.ConvFloat64ToStr(gravStruct.FreeAirCorrection))
-    fetched = append(fetched, arrayutils.ConvFloat64ToStr(gravStruct.BouguerCorrection))
-    fetched = append(fetched, arrayutils.ConvFloat64ToStr(gravStruct.BouguerRelativeGravField))
-    fetched = append(fetched, arrayutils.ConvFloat64ToStr(gravStruct.BouguerAnomaly))
-    fetched = append(fetched, arrayutils.ConvFloat64ToStr(gravStruct.RegionalAnomaly))
-    fetched = append(fetched, arrayutils.ConvFloat64ToStr(gravStruct.ResidualAnomaly))
-    
-    var singles []string
-    singles = append(singles, gravStruct.SurveyPurpose)
-    singles = append(singles, gravStruct.SurveyArea)
-    singles = append(singles, gravStruct.SurveyPOI)
-    singles = append(singles, gravStruct.SurveyAddress)
-    singles = append(singles, gravStruct.SurveyDate)
-    singles = append(singles, strconv.FormatFloat(gravStruct.OperationTempGrav, 'f', 18, 64))
-    singles = append(singles, strconv.FormatFloat(gravStruct.RefStationLat, 'f', 18, 64))
-    singles = append(singles, strconv.FormatFloat(gravStruct.GravSurveyDir, 'f', 18, 64))
-    
-    for _, val := range singles {
-        singleEntreeArr := make([]string, len(gravStruct.Stations))
-        for i, n := 0, len(gravStruct.Stations); i < n; i++ {
-            if i == 0 {
-                singleEntreeArr[i] = val
-            } else {
-                singleEntreeArr[i] = ""
-            }
-        }
-        fetched = append(fetched, singleEntreeArr)
-    }
-    
+	var fetched [][]string
+
+	fetched = append(fetched, arrayutils.ConvFloat64ToStr(gravStruct.Stations))
+	fetched = append(fetched, gravStruct.Comments)
+	fetched = append(fetched, arrayutils.ConvFloat64ToStr(gravStruct.Time))
+	fetched = append(fetched, arrayutils.ConvFloat64ToStr(gravStruct.TimeMin))
+
+	for _, subarr := range gravStruct.Readings {
+		fetched = append(fetched, arrayutils.ConvFloat64ToStr(subarr))
+	}
+
+	fetched = append(fetched, arrayutils.ConvFloat64ToStr(gravStruct.AvgReading))
+	fetched = append(fetched, arrayutils.ConvFloat64ToStr(gravStruct.Std))
+	fetched = append(fetched, arrayutils.ConvFloat64ToStr(gravStruct.RelativeGravField))
+	fetched = append(fetched, arrayutils.ConvFloat64ToStr(gravStruct.GravAnomalyNotCorrected))
+	fetched = append(fetched, arrayutils.ConvFloat64ToStr(gravStruct.TemporalVariations))
+	fetched = append(fetched, arrayutils.ConvFloat64ToStr(gravStruct.AttractionDerivation))
+	fetched = append(fetched, arrayutils.ConvFloat64ToStr(gravStruct.LatCorrection))
+	fetched = append(fetched, arrayutils.ConvFloat64ToStr(gravStruct.FreeAirCorrection))
+	fetched = append(fetched, arrayutils.ConvFloat64ToStr(gravStruct.BouguerCorrection))
+	fetched = append(fetched, arrayutils.ConvFloat64ToStr(gravStruct.BouguerRelativeGravField))
+	fetched = append(fetched, arrayutils.ConvFloat64ToStr(gravStruct.BouguerAnomaly))
+	fetched = append(fetched, arrayutils.ConvFloat64ToStr(gravStruct.RegionalAnomaly))
+	fetched = append(fetched, arrayutils.ConvFloat64ToStr(gravStruct.ResidualAnomaly))
+
+	var singles []string
+	singles = append(singles, gravStruct.SurveyPurpose)
+	singles = append(singles, gravStruct.SurveyArea)
+	singles = append(singles, gravStruct.SurveyPOI)
+	singles = append(singles, gravStruct.SurveyAddress)
+	singles = append(singles, gravStruct.SurveyDate)
+	singles = append(singles, strconv.FormatFloat(gravStruct.OperationTempGrav, 'f', 18, 64))
+	singles = append(singles, strconv.FormatFloat(gravStruct.RefStationLat, 'f', 18, 64))
+	singles = append(singles, strconv.FormatFloat(gravStruct.GravSurveyDir, 'f', 18, 64))
+
+	for _, val := range singles {
+		singleEntreeArr := make([]string, len(gravStruct.Stations))
+		for i, n := 0, len(gravStruct.Stations); i < n; i++ {
+			if i == 0 {
+				singleEntreeArr[i] = val
+			} else {
+				singleEntreeArr[i] = ""
+			}
+		}
+		fetched = append(fetched, singleEntreeArr)
+	}
+
 	return fetched
 }
 
@@ -179,4 +179,3 @@ func PushToWorden807Struct(gravStruct *Worden807Struct, data []string, field str
 	}
 
 }
-

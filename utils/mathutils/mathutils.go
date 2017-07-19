@@ -18,8 +18,8 @@ func Round(val float64, roundOn float64, places int) (newVal float64) {
 
 func SumArr(data []float64) float64 {
 	sum := 0.0
-	for _, val := range data {
-		sum += val
+	for i := range data {
+		sum += data[i]
 	}
 	return sum
 }
