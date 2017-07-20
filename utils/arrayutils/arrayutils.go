@@ -47,8 +47,6 @@ func GetTotalNumberEls2D(data [][]float64) int {
 func InvertArrayStr(data [][]string) [][]string {
 	lenData := len(data)
 	lenRow := len(data[0])
-	log.Println(lenData)
-	log.Println(lenRow)
 
 	var arr [][]string
 	for i := 0; i < lenRow; i++ {

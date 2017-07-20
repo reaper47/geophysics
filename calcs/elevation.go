@@ -26,10 +26,13 @@ func PopulateTopoStruct(topoStruct *structs.TopoStruct, refStation int, altitude
 	topoStruct.ElevationDifferenceCorrected = elevationDiffCorrected
 
 	topoStruct.ElevationToRefStation = arrayutils.SubtractSameArrayOneIndexAhead(topoStruct.ElevationDifferenceCorrected)
+	lastElevToRef := topoStruct.ElevationDifferenceCorrected[len(topoStruct.ElevationDifferenceCorrected)/2]
 
-	lastElevToRef := -topoStruct.ElevationDifferenceCorrected[len(topoStruct.ElevationToRefStation)-1] / 2
 	errorStations := arrayutils.DivideArrByConstant(arrayutils.ConvIntToFloat64(topoStruct.StationOrder), 50)
 	topoStruct.ErrorDistributionBtwnStations = arrayutils.MultiplyArrByConstant(errorStations, lastElevToRef)
+
+	fmt.Println(len(topoStruct.ErrorDistributionBtwnStations))
+	fmt.Println(topoStruct.ErrorDistributionBtwnStations)
 
 	topoStruct.ElevationDifferenceCorrected = elevationDiffCorrected
 

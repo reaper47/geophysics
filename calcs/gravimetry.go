@@ -36,6 +36,7 @@ func PopulateWorden807(gravStruct *structs.Worden807Struct, topoStruct *structs.
 	gravStruct.AttractionDerivation = calculateAttractionDerivation(len(referenceStations), referenceStations, gravStruct)
 	gravStruct.LatCorrection = calculateLatitudeCorrection(gravStruct)
 	gravStruct.FreeAirCorrection = arrayutils.MultiplyArrByConstant(topoStruct.ElevationToRefStationCorrected[:26], constants.FreeAir)
+
 	gravStruct.BouguerCorrection = arrayutils.MultiplyArrByConstant(topoStruct.ElevationToRefStationCorrected[:26], constants.RockDensity*constants.Bouguer)
 	gravStruct.BouguerRelativeGravField = calculateBouguerRelativeGravField(gravStruct)
 
@@ -48,7 +49,6 @@ func PopulateWorden807(gravStruct *structs.Worden807Struct, topoStruct *structs.
 	}
 
 	gravStruct.ResidualAnomaly = residualAnomaly
-
 }
 
 func DialConstantCorrectionWorden807(temp float64, unit string) float64 {
@@ -145,14 +145,8 @@ func calculateTemporalVariations(refStations []int, gravStruct *structs.Worden80
 	var temporalVariations []float64
 	anomalies := gravStruct.GravAnomalyNotCorrected
 
-	temporalVariations = append(temporalVariations, 0)
-	for i, n, m := 1, len(refStations), len(gravStruct.Stations); i < m; i++ {
-		if i < n {
-			temporalVariations = append(temporalVariations, anomalies[refStations[i]]-anomalies[refStations[0]])
-		} else {
-			temporalVariations = append(temporalVariations, float64(math.MaxUint64))
-		}
-
+	for i, n := 0, len(refStations); i < n; i++ {
+		temporalVariations = append(temporalVariations, anomalies[refStations[i]]-anomalies[refStations[0]])
 	}
 
 	return temporalVariations
