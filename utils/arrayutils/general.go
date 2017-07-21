@@ -1,7 +1,6 @@
 package arrayutils
 
 import (
-	"log"
 	"strings"
 )
 
@@ -53,7 +52,6 @@ func InvertArrayStr(data [][]string) [][]string {
 		arr = append(arr, make([]string, 0))
 		for j := 0; j < lenData; j++ {
 			arr[i] = append(arr[i], data[j][i])
-			log.Println(arr)
 		}
 	}
 	return arr
@@ -66,6 +64,33 @@ func ResizeSlice(data []string, expand int) []string {
 		return newSlice
 	}
 	return data
+}
+
+func InsertElementInSlice(slice []float64, i int, val float64, insertAfterFirstChunk bool) []float64 {
+    /*
+     * add error mecanism when i is beyond the length of the slice
+     */
+    firstChunk := slice[:i]
+    secondChunk := slice[i:]
+    
+    newSlice := make([]float64, len(slice) + 1)
+    for i := range firstChunk {
+        newSlice[i] = firstChunk[i]
+    }
+        
+    if insertAfterFirstChunk {
+        newSlice[len(firstChunk)] = val
+        for i := range secondChunk {
+            newSlice[i + len(firstChunk) + 1] = secondChunk[i]
+        }
+    } else {
+        for i := range secondChunk {
+            newSlice[i + len(firstChunk)] = secondChunk[i]
+        }
+        newSlice[len(slice)] = val
+    }
+       
+    return newSlice
 }
 
 func RemoveElementFromSlice(slice []float64, i int) []float64 {

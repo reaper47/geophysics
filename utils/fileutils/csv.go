@@ -118,7 +118,7 @@ func WriteGravStructToCSV(delimiter rune, useCRLF bool, filename string, gravStr
 	buffer = append(buffer, headers)
 
 	wordenData := structs.FetchAllDataWorden807(gravStruct)
-	//wordenData = arrayutils.InvertArrayStr(wordenData)
+	wordenData = arrayutils.InvertArrayStr(wordenData)
 
 	for i := range wordenData {
 		buffer = append(buffer, wordenData[i])
