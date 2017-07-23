@@ -43,8 +43,9 @@ func CreateCSVHeadersWorden807(gravStruct *Worden807Struct) []string {
 		"Latitude Correction (m)", "Elevation in Relation to Reference Station (m)",
 		"Altitude in Relation to Average Sea Level (m)", "Free Air Correction (mGal)",
 		"Bouguer Correction (mGal)", "Bouguer Relative Gravitational Field (mGal)",
-		"Bouguer Anomaly in Relation to Reference Station (mGal)",
-		"Regional Anomaly (mGal)", "Residual Anomaly (mGal)"}
+		"Bouguer Anomaly in Relation to Reference Station (mGal)", "Regional Anomaly (mGal)",
+		"Residual Anomaly (mGal)", "Purpose", "Area", "POI", "Address", "Date of Survey",
+		"Operation Temperature (F)"}
 
 	for i, n := 0, len(gravStruct.Readings); i < n; i++ {
 		headers = append(headers, "Reading "+strconv.Itoa(i+1))

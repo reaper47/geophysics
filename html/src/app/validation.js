@@ -1,8 +1,5 @@
 function validateFileType(file, targets) {
-  if(!targets.includes(file.type)) {
-    return false
-  }
-  return true
+  return targets.includes(file.type)
 }
 
 function validateFileSize(file, maxSize) {

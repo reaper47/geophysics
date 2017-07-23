@@ -34,7 +34,7 @@ func PopulateWorden807(gravStruct *structs.Worden807Struct, topoStruct *structs.
 
 	gravStruct.TemporalVariations = calculateTemporalVariations(referenceStations, gravStruct)
 	gravStruct.AttractionDerivation = calculateAttractionDerivation(len(referenceStations), referenceStations, gravStruct)
-	gravStruct.LatCorrection = calculateLatitudeCorrection(gravStruct)		
+	gravStruct.LatCorrection = calculateLatitudeCorrection(gravStruct)
 	gravStruct.FreeAirCorrection = arrayutils.MultiplyArrByConstant(topoStruct.ElevationToRefStationCorrected[:26], constants.FreeAir)
 	gravStruct.BouguerCorrection = arrayutils.MultiplyArrByConstant(topoStruct.ElevationToRefStationCorrected[:26], constants.RockDensity*constants.Bouguer)
 	gravStruct.BouguerRelativeGravField = calculateBouguerRelativeGravField(gravStruct)
@@ -47,7 +47,7 @@ func PopulateWorden807(gravStruct *structs.Worden807Struct, topoStruct *structs.
 	}
 	gravStruct.ResidualAnomaly = residualAnomaly
 
-    normalizeArrayLengths(gravStruct)
+	normalizeArrayLengths(gravStruct)
 }
 
 func DialConstantCorrectionWorden807(temp float64, unit string) float64 {
@@ -172,28 +172,25 @@ func calculateLatitudeCorrection(gravStruct *structs.Worden807Struct) []float64 
  * Develop a general solution
  */
 func normalizeArrayLengths(gravStruct *structs.Worden807Struct) {
-    referenceStations := arrayutils.GatherItemsSameIndex(0.0, gravStruct.Stations)
-    
-    normalize := make([][]float64, 6)
-    normalize[0] = gravStruct.FreeAirCorrection
-    normalize[1] = gravStruct.BouguerCorrection
-    normalize[2] = gravStruct.BouguerRelativeGravField
-    normalize[3] = gravStruct.BouguerAnomaly
-    normalize[4] = gravStruct.RegionalAnomaly
-    normalize[5] = gravStruct.ResidualAnomaly
-    
-    for i := range normalize {
-        normalize[i] = arrayutils.InsertElementInSlice(normalize[i], referenceStations[1], -999, true)
-        normalize[i] = arrayutils.InsertElementInSlice(normalize[i], referenceStations[2], -999, false)
-    }
-    
-    gravStruct.FreeAirCorrection = normalize[0]
-    gravStruct.BouguerCorrection = normalize[1]
-    gravStruct.BouguerRelativeGravField = normalize[2]
-    gravStruct.BouguerAnomaly = normalize[3]
-    gravStruct.RegionalAnomaly = normalize[4]
-    gravStruct.ResidualAnomaly = normalize[5]
+	referenceStations := arrayutils.GatherItemsSameIndex(0.0, gravStruct.Stations)
+
+	normalize := make([][]float64, 6)
+	normalize[0] = gravStruct.FreeAirCorrection
+	normalize[1] = gravStruct.BouguerCorrection
+	normalize[2] = gravStruct.BouguerRelativeGravField
+	normalize[3] = gravStruct.BouguerAnomaly
+	normalize[4] = gravStruct.RegionalAnomaly
+	normalize[5] = gravStruct.ResidualAnomaly
+
+	for i := range normalize {
+		normalize[i] = arrayutils.InsertElementInSlice(normalize[i], referenceStations[1], -999, true)
+		normalize[i] = arrayutils.InsertElementInSlice(normalize[i], referenceStations[2], -999, false)
+	}
+
+	gravStruct.FreeAirCorrection = normalize[0]
+	gravStruct.BouguerCorrection = normalize[1]
+	gravStruct.BouguerRelativeGravField = normalize[2]
+	gravStruct.BouguerAnomaly = normalize[3]
+	gravStruct.RegionalAnomaly = normalize[4]
+	gravStruct.ResidualAnomaly = normalize[5]
 }
-
-
-
