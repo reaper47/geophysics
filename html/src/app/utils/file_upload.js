@@ -1,21 +1,18 @@
 function fileDragHover(e) {
-  let fileDrag = document.getElementById('file-drag')
+  let fileDrag = document.getElementById('file_upload_drag')
   
   e.stopPropagation()
   e.preventDefault()
 
-  fileDrag.className = (e.type === 'dragover' ? 'hover' : 'modal-body file-upload')
+  fileDrag.className = (e.type === 'dragover' ? 'hover' : 'modal_body file_upload')
 }
 
 function fileSelectHandler(e) {
   fileDragHover(e);
   
   const files = e.target.files || e.dataTransfer.files
-  for (let i = 0, f; f = files[i]; i++) {     
-    const parsed = parseFile(f)
-    if(parsed) {
-      uploadFile(f)
-    }
+  for (let i = 0, f; f = files[i]; i++) {
+    if(parseFile(f)) uploadFile(f)
   }
 }
 
@@ -29,26 +26,26 @@ function parseFile(file) {
   let isGood = (/\.(?=csv)/gi).test(fileName)
   
   if (isGood) {
-    document.getElementById('start').classList.add("hidden")
-    document.getElementById('response').classList.remove("hidden")
+    document.getElementById('file_upload_start').classList.add("hidden")
+    document.getElementById('file_upload_response').classList.remove("hidden")
     document.getElementById('notimage').classList.add("hidden")
     
     // Thumbnail Preview
-    document.getElementById('file-image').classList.remove("hidden")
-    document.getElementById('file-image').src = 'https://unsplash.it/200/?random'
+    document.getElementById('file_image').classList.remove("hidden")
+    document.getElementById('file_image').src = 'https://unsplash.it/200/?random'
   }
   else {
-    document.getElementById('file-image').classList.add("hidden")
+    document.getElementById('file_upload_image').classList.add("hidden")
     document.getElementById('notimage').classList.remove("hidden")
-    document.getElementById('start').classList.remove("hidden")
-    document.getElementById('response').classList.add("hidden")
-    document.getElementById("file-upload-form").reset()
+    document.getElementById('file_upload_start').classList.remove("hidden")
+    document.getElementById('file_upload_response').classList.add("hidden")
+    document.getElementById("form__file_upload").reset()
   }
   return true
 }
 
 function setProgressMaxValue(e) {
-  let pBar = document.getElementById('file-progress')
+  let pBar = document.getElementById('file_progress')
 
   if (e.lengthComputable) {
     pBar.max = e.total;
@@ -56,7 +53,7 @@ function setProgressMaxValue(e) {
 }
 
 function updateFileProgress(e) {
-  let pBar = document.getElementById('file-progress')
+  let pBar = document.getElementById('file_progress')
 
   if (e.lengthComputable) {
     pBar.value = e.loaded
@@ -65,10 +62,10 @@ function updateFileProgress(e) {
 
 function uploadFile(file) {
   let xhr = new XMLHttpRequest()
-  let pBar = document.getElementById('file-progress')
+  let pBar = document.getElementById('file_progress')
   let fileSizeLimit = 1024; // In MB
   
-  let form = document.getElementById('file-upload-form')
+  let form = document.getElementById('form__file_upload')
   let formData = new FormData(form)
   formData.append('file', file, file.name)
   
@@ -78,7 +75,7 @@ function uploadFile(file) {
       xhr.upload.addEventListener('loadstart', setProgressMaxValue, false)
       xhr.upload.addEventListener('progress', updateFileProgress, false)
 
-      xhr.open('POST', document.getElementById('file-upload-form').action, true);
+      xhr.open('POST', document.getElementById('form__file_upload').action, true);
       xhr.send(formData);
     } else {
       output('Please upload a smaller file (< ' + fileSizeLimit + ' MB).');
@@ -92,9 +89,9 @@ function output(msg) {
 }
 
 function uploadInit() {
-  const fileSelect = document.getElementById('file-upload')
-  const fileDrag = document.getElementById('file-drag')
-  const submitButton = document.getElementById('submit-button')
+  const fileSelect = document.getElementById('file_upload')
+  const fileDrag = document.getElementById('file_upload_drag')
+  const submitButton = document.getElementById('file_upload_submit')
 
   fileSelect.addEventListener('change', fileSelectHandler, false)
 
@@ -104,11 +101,5 @@ function uploadInit() {
     fileDrag.addEventListener('dragleave', fileDragHover, false)
     fileDrag.addEventListener('drop', fileSelectHandler, false)
   }
-}
-
-if (window.File && window.FileList && window.FileReader) {
-  uploadInit();
-} else {
-  document.getElementById('file-drag').style.display = 'none';
 }
 

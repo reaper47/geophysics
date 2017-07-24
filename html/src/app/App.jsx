@@ -1,26 +1,14 @@
-import React, { Component } from 'react';
-import cat from 'images/cat';
-import dog from 'images/dog';
-import dogs from 'images/dogs';
+import React from 'react';
+import About from './components/About.jsx'
+import Header from './components/Header.jsx'
+import Main from './components/Main.jsx'
 
-const hello = () => {
-  return (
-    <div className="container">
+const App = () => (
+  <div>
+    <Header />
+    <Main />          
+  </div>
+)
 
-      <div className="image-wrapper">
-        <img src={cat} className="image-wrapper__image" alt=""/>
-      </div>
+export default App;
 
-      <div className="image-wrapper">
-        <img src={dog} className="image-wrapper__image" alt=""/>
-      </div>
-
-      <div className="image-wrapper">
-        <img src={dogs} className="image-wrapper__image" alt=""/>
-      </div>
-
-    </div>
-  )
-}
-
-export default hello;
