@@ -11590,19 +11590,15 @@ var css = './assets/styles';
 __webpack_require__(246)(css + '/imports.scss');
 __webpack_require__(248)(css + '/general.scss');
 __webpack_require__(250)(css + '/file_upload.scss');
-__webpack_require__(260)(css + '/header.scss');
-__webpack_require__(266)(css + '/scrollbar.scss');
+__webpack_require__(265)(css + '/file_upload_button.scss');
+__webpack_require__(252)(css + '/header.scss');
+__webpack_require__(254)(css + '/scrollbar.scss');
 
 _reactDom2.default.render(_react2.default.createElement(
   _reactRouterDom.BrowserRouter,
   null,
   _react2.default.createElement(_App2.default, null)
 ), document.getElementById('root'));
-
-function requireUtils(r) {
-  r.keys().forEach(r);
-}
-requireUtils(__webpack_require__(252));
 
 /***/ }),
 /* 101 */
@@ -26108,30 +26104,6 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-/*
-<div id="container__file_upload">
-      <h2>File Upload</h2>
-      <form id="form__file_upload" action="/api/upload" method="post" encType="multipart/form-data">
-        <input id="file_upload" type="file" name="fileUpload" accept=".csv" />
-        <label id="file_upload_drag" htmlFor="file_upload">
-          <img id="file_upload_image" src="#" alt="preview" className="hidden" />
-          <div id="file_upload_start">
-            <i className="fa fa-download" aria-hidden="true"></i>
-            <div>Select a file or drag here</div>
-            <div id="notimage" className="hidden">Please select a csv file</div>
-            <span id="file_upload_submit" className="btn btn-primary">Select a file</span>
-          </div>
-          <div id="file_upload_response" className="hidden">
-            <div id="file_upload_messages"></div>
-            <progress className="progress" value="0">
-              <span>0</span>%
-            </progress>
-          </div>
-        </label>
-      </form>
-  </div>
-*/
-
 var FileUpload = function (_Component) {
   _inherits(FileUpload, _Component);
 
@@ -26176,37 +26148,121 @@ var FileUpload = function (_Component) {
 
       var dropzoneRef = void 0;
 
-      return _react2.default.createElement(
-        'section',
-        null,
-        _react2.default.createElement(
-          'div',
-          { className: 'dropzone' },
-          _react2.default.createElement(
-            _reactDropzone2.default,
-            { accept: 'text/csv',
-              id: 'form__file_upload',
-              onDrop: function onDrop(accepted, rejected) {
-                return _this3.onDrop(accepted, rejected);
-              },
-              ref: function ref(node) {
-                dropzoneRef = node;
-              } },
-            function (_ref) {
-              var isDragActive = _ref.isDragActive,
-                  isDragReject = _ref.isDragReject,
-                  acceptedFiles = _ref.acceptedFiles,
-                  rejectedFiles = _ref.rejectedFiles;
+      var dropzoneStyle = {
+        background: "#F9F9F9",
+        border: "2px dashed #000",
+        height: "50rem",
+        width: "50rem",
+        paddingTop: "5rem"
+      };
 
-              if (isDragActive) return "This files is authorized";
-              if (isDragReject) return "This file is not authorized";
-              return acceptedFiles.length || rejectedFiles.length ? 'Accepted ' + acceptedFiles.length + ', rejected ' + rejectedFiles.length + ' files' : 'Select a file or drop here.';
-            }
-          )
+      var activeStyle = {
+        borderColor: "#2980b9"
+      };
+
+      var rejectStyle = {
+        borderColor: "#c0392b"
+      };
+
+      return _react2.default.createElement(
+        'div',
+        { id: 'form__upload_div' },
+        _react2.default.createElement(
+          'section',
+          { id: 'form__upload_section' },
+          _react2.default.createElement(
+            'div',
+            { className: 'dropzone' },
+            _react2.default.createElement(
+              _reactDropzone2.default,
+              { accept: 'text/csv',
+                activeStyle: activeStyle,
+                id: 'form__file_upload',
+                onDrop: function onDrop(accepted, rejected) {
+                  return _this3.onDrop(accepted, rejected);
+                },
+                ref: function ref(node) {
+                  dropzoneRef = node;
+                },
+                rejectStyle: rejectStyle,
+                style: dropzoneStyle },
+              function (_ref) {
+                var isDragActive = _ref.isDragActive,
+                    isDragReject = _ref.isDragReject,
+                    acceptedFiles = _ref.acceptedFiles,
+                    rejectedFiles = _ref.rejectedFiles;
+
+                if (isDragActive) return _react2.default.createElement(
+                  'div',
+                  null,
+                  _react2.default.createElement(
+                    'p',
+                    null,
+                    'These files are authorized.'
+                  ),
+                  _react2.default.createElement(
+                    'svg',
+                    { style: { fill: '#2980b9' }, width: '25rem', height: '25rem', viewBox: '0 0 24 24' },
+                    _react2.default.createElement('path', { d: 'M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM10 17l-3.5-3.5 1.41-1.41L10 14.17 15.18 9l1.41 1.41L10 17z' })
+                  )
+                );
+
+                if (isDragReject) return _react2.default.createElement(
+                  'div',
+                  null,
+                  _react2.default.createElement(
+                    'p',
+                    null,
+                    'These files are not authorized.'
+                  ),
+                  _react2.default.createElement(
+                    'svg',
+                    { style: { fill: '#c0392b' }, width: '25rem', height: '25rem', viewBox: '0 0 24 24' },
+                    _react2.default.createElement('path', { d: 'M19.35 10.04C18.67 6.59 15.64 4 12 4c-1.48 0-2.85.43-4.01 1.17l1.46 1.46C10.21 6.23 11.08 6 12 6c3.04 0 5.5 2.46 5.5 5.5v.5H19c1.66 0 3 1.34 3 3 0 1.13-.64 2.11-1.56 2.62l1.45 1.45C23.16 18.16 24 16.68 24 15c0-2.64-2.05-4.78-4.65-4.96zM3 5.27l2.75 2.74C2.56 8.15 0 10.77 0 14c0 3.31 2.69 6 6 6h11.73l2 2L21 20.73 4.27 4 3 5.27zM7.73 10l8 8H6c-2.21 0-4-1.79-4-4s1.79-4 4-4h1.73z' })
+                  )
+                );
+
+                return acceptedFiles.length || rejectedFiles.length ? _react2.default.createElement(
+                  'div',
+                  null,
+                  _react2.default.createElement(
+                    'p',
+                    null,
+                    'Accepted ',
+                    acceptedFiles.length,
+                    ' ',
+                    acceptedFiles.length > 1 ? 'files' : 'file',
+                    ', rejected ',
+                    rejectedFiles.length,
+                    ' ',
+                    rejectedFiles.length > 1 ? 'files' : 'file'
+                  ),
+                  _react2.default.createElement(
+                    'svg',
+                    { style: { fill: '#27ae60' }, width: '25rem', height: '25rem', viewBox: '0 0 24 24' },
+                    _react2.default.createElement('path', { d: 'M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z' })
+                  )
+                ) : _react2.default.createElement(
+                  'div',
+                  null,
+                  _react2.default.createElement(
+                    'p',
+                    null,
+                    'Click the button or drop files here'
+                  ),
+                  _react2.default.createElement(
+                    'svg',
+                    { width: '25rem', height: '25rem', viewBox: '0 0 24 24' },
+                    _react2.default.createElement('path', { d: 'M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z' })
+                  )
+                );
+              }
+            )
+          ),
+          _react2.default.createElement(_Button2.default, { text: 'Open File Dialog', onClickEvent: function onClickEvent() {
+              return dropzoneRef.open();
+            } })
         ),
-        _react2.default.createElement(_Button2.default, { text: 'Open File Dialog', onClickEvent: function onClickEvent() {
-            return dropzoneRef.open();
-          } }),
         _react2.default.createElement(_FileUploadAside2.default, { accepted: this.state.accepted, rejected: this.state.rejected })
       );
     }
@@ -27137,7 +27193,11 @@ var Button = function Button(_ref) {
   return _react2.default.createElement(
     "button",
     { type: "button", onClick: onClickEvent },
-    text
+    _react2.default.createElement(
+      "span",
+      null,
+      text
+    )
   );
 };
 
@@ -27804,7 +27864,7 @@ webpackContext.id = 250;
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
-	"./file_upload.js": 253
+	"./assets/styles/header.scss": 253
 };
 function webpackContext(req) {
 	return __webpack_require__(webpackContextResolve(req));
@@ -27824,160 +27884,16 @@ webpackContext.id = 252;
 
 /***/ }),
 /* 253 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-function fileDragHover(e) {
-  var fileDrag = document.getElementById('file_upload_drag');
-
-  e.stopPropagation();
-  e.preventDefault();
-
-  fileDrag.className = e.type === 'dragover' ? 'hover' : 'modal_body file_upload';
-}
-
-function fileSelectHandler(e) {
-  fileDragHover(e);
-
-  var files = e.target.files || e.dataTransfer.files;
-  for (var i = 0, f; f = files[i]; i++) {
-    if (parseFile(f)) uploadFile(f);
-  }
-}
-
-function parseFile(file) {
-  if (!validateSizeAndType(file)) {
-    return false;
-  }
-
-  var fileName = file.name;
-  output('<strong>' + encodeURI(fileName) + '</strong>');
-  var isGood = /\.(?=csv)/gi.test(fileName);
-
-  if (isGood) {
-    document.getElementById('file_upload_start').classList.add("hidden");
-    document.getElementById('file_upload_response').classList.remove("hidden");
-    document.getElementById('notimage').classList.add("hidden");
-
-    // Thumbnail Preview
-    document.getElementById('file_image').classList.remove("hidden");
-    document.getElementById('file_image').src = 'https://unsplash.it/200/?random';
-  } else {
-    document.getElementById('file_upload_image').classList.add("hidden");
-    document.getElementById('notimage').classList.remove("hidden");
-    document.getElementById('file_upload_start').classList.remove("hidden");
-    document.getElementById('file_upload_response').classList.add("hidden");
-    document.getElementById("form__file_upload").reset();
-  }
-  return true;
-}
-
-function setProgressMaxValue(e) {
-  var pBar = document.getElementById('file_progress');
-
-  if (e.lengthComputable) {
-    pBar.max = e.total;
-  }
-}
-
-function updateFileProgress(e) {
-  var pBar = document.getElementById('file_progress');
-
-  if (e.lengthComputable) {
-    pBar.value = e.loaded;
-  }
-}
-
-function uploadFile(file) {
-  var xhr = new XMLHttpRequest();
-  var pBar = document.getElementById('file_progress');
-  var fileSizeLimit = 1024; // In MB
-
-  var form = document.getElementById('form__file_upload');
-  var formData = new FormData(form);
-  formData.append('file', file, file.name);
-
-  if (xhr.upload) {
-    if (file.size <= fileSizeLimit * 1024 * 1024) {
-      pBar.style.display = 'inline';
-      xhr.upload.addEventListener('loadstart', setProgressMaxValue, false);
-      xhr.upload.addEventListener('progress', updateFileProgress, false);
-
-      xhr.open('POST', document.getElementById('form__file_upload').action, true);
-      xhr.send(formData);
-    } else {
-      output('Please upload a smaller file (< ' + fileSizeLimit + ' MB).');
-    }
-  }
-}
-
-function output(msg) {
-  var m = document.getElementById('messages');
-  m.innerHTML = msg;
-}
-
-function uploadInit() {
-  var fileSelect = document.getElementById('file_upload');
-  var fileDrag = document.getElementById('file_upload_drag');
-  var submitButton = document.getElementById('file_upload_submit');
-
-  fileSelect.addEventListener('change', fileSelectHandler, false);
-
-  var xhr = new XMLHttpRequest();
-  if (xhr.upload) {
-    fileDrag.addEventListener('dragover', fileDragHover, false);
-    fileDrag.addEventListener('dragleave', fileDragHover, false);
-    fileDrag.addEventListener('drop', fileSelectHandler, false);
-  }
-}
-
-/***/ }),
-/* 254 */,
-/* 255 */,
-/* 256 */,
-/* 257 */,
-/* 258 */,
-/* 259 */,
-/* 260 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var map = {
-	"./assets/styles/header.scss": 261
-};
-function webpackContext(req) {
-	return __webpack_require__(webpackContextResolve(req));
-};
-function webpackContextResolve(req) {
-	var id = map[req];
-	if(!(id + 1)) // check for number or string
-		throw new Error("Cannot find module '" + req + "'.");
-	return id;
-};
-webpackContext.keys = function webpackContextKeys() {
-	return Object.keys(map);
-};
-webpackContext.resolve = webpackContextResolve;
-module.exports = webpackContext;
-webpackContext.id = 260;
-
-/***/ }),
-/* 261 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
-/* 262 */,
-/* 263 */,
-/* 264 */,
-/* 265 */,
-/* 266 */
+/* 254 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
-	"./assets/styles/scrollbar.scss": 267
+	"./assets/styles/scrollbar.scss": 255
 };
 function webpackContext(req) {
 	return __webpack_require__(webpackContextResolve(req));
@@ -27993,10 +27909,48 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = 266;
+webpackContext.id = 254;
 
 /***/ }),
-/* 267 */
+/* 255 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 256 */,
+/* 257 */,
+/* 258 */,
+/* 259 */,
+/* 260 */,
+/* 261 */,
+/* 262 */,
+/* 263 */,
+/* 264 */,
+/* 265 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var map = {
+	"./assets/styles/file_upload_button.scss": 266
+};
+function webpackContext(req) {
+	return __webpack_require__(webpackContextResolve(req));
+};
+function webpackContextResolve(req) {
+	var id = map[req];
+	if(!(id + 1)) // check for number or string
+		throw new Error("Cannot find module '" + req + "'.");
+	return id;
+};
+webpackContext.keys = function webpackContextKeys() {
+	return Object.keys(map);
+};
+webpackContext.resolve = webpackContextResolve;
+module.exports = webpackContext;
+webpackContext.id = 265;
+
+/***/ }),
+/* 266 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin

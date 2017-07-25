@@ -7,32 +7,32 @@ import (
 )
 
 type Worden807Struct struct {
-	Stations                 []float64
-	Comments                 []string
-	Time                     []float64
-	TimeMin                  []float64
-	Readings                 [][]float64
-	AvgReading               []float64
-	Std                      []float64
-	RelativeGravField        []float64
-	GravAnomalyNotCorrected  []float64
-	TemporalVariations       []float64
-	AttractionDerivation     []float64
-	LatCorrection            []float64
-	FreeAirCorrection        []float64
-	BouguerCorrection        []float64
-	BouguerRelativeGravField []float64
-	BouguerAnomaly           []float64
-	RegionalAnomaly          []float64
-	ResidualAnomaly          []float64
-	SurveyPurpose            string
-	SurveyArea               string
-	SurveyPOI                string
-	SurveyAddress            string
-	SurveyDate               string
-	OperationTempGrav        float64
-	RefStationLat            float64
-	GravSurveyDir            float64
+	Stations                 []float64   `json:"stations"`
+	Comments                 []string    `json:"comments"`
+	Time                     []float64   `json:"time"`
+	TimeMin                  []float64   `json:"time_min"`
+	Readings                 [][]float64 `json:"readings"`
+	AvgReading               []float64   `json:"avg_reading"`
+	Std                      []float64   `json:"std"`
+	RelativeGravField        []float64   `json:"relative_grav_field"`
+	GravAnomalyNotCorrected  []float64   `json:"grav_anomaly_not_corrected"`
+	TemporalVariations       []float64   `json:"temporal_variations"`
+	AttractionDerivation     []float64   `json:"attraction_derivation"`
+	LatCorrection            []float64   `json:"lat_correction"`
+	FreeAirCorrection        []float64   `json:"free_air_correction"`
+	BouguerCorrection        []float64   `json:"bouguer_correction"`
+	BouguerRelativeGravField []float64   `json:"bouguer_relative_grav_field"`
+	BouguerAnomaly           []float64   `json:"bouguer_anomaly"`
+	RegionalAnomaly          []float64   `json:"regional_anomaly"`
+	ResidualAnomaly          []float64   `json:"residual_anomaly"`
+	SurveyPurpose            string      `json:"survey_purpose"`
+	SurveyArea               string      `json:"survey_area"`
+	SurveyPOI                string      `json:"survey_POI"`
+	SurveyAddress            string      `json:"survey_address"`
+	SurveyDate               string      `json:"survey_date"`
+	OperationTempGrav        float64     `json:"operation_temp_grav"`
+	RefStationLat            float64     `json:"ref_station_lat"`
+	GravSurveyDir            float64     `json:"grav_survey_dir"`
 }
 
 func CreateCSVHeadersWorden807(gravStruct *Worden807Struct) []string {

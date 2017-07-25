@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"encoding/json"
 	"geophysics/actions"
 	"geophysics/calcs"
 	"geophysics/utils/fileutils"
@@ -39,6 +40,15 @@ func test(w http.ResponseWriter, r *http.Request) {
 	t := calcs.InitWorden807Struct(grav)
 	calcs.PopulateWorden807(t, t2)
 	fileutils.WriteGravStructToCSV(',', false, "ehllo.csv", t)
+	
+	body, err := json.Marshal(t)
+	if err != nil {
+	    panic(err)
+	}
+	
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(body)
 }
 
 func main() {

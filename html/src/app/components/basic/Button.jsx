@@ -2,7 +2,7 @@ import React from 'react'
 
 const Button = ({ text, onClickEvent }) => (
   <button type="button" onClick={onClickEvent}>
-    {text}
+    <span>{text}</span>
   </button>
 )
 

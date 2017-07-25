@@ -6,6 +6,7 @@ const css = './assets/styles'
 require(`${css}/imports.scss`)
 require(`${css}/general.scss`)
 require(`${css}/file_upload.scss`)
+require(`${css}/file_upload_button.scss`)
 require(`${css}/header.scss`)
 require(`${css}/scrollbar.scss`)
 
@@ -17,5 +18,3 @@ ReactDOM.render((
   </BrowserRouter>
 ), document.getElementById('root'))
 
-function requireUtils(r) { r.keys().forEach(r); }
-requireUtils(require.context('./app/utils', true, /\.js$/));
