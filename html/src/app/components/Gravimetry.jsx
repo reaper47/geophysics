@@ -2,9 +2,9 @@ import React, { Component } from 'react'
 import { Switch, Route } from 'react-router-dom'
 import FileUpload from './file_upload/FileUpload.jsx'
 
-const About = () => (
+const Gravimetry = () => (
     <FileUpload />
 )
 
-export default About
+export default Gravimetry
 

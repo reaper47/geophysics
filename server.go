@@ -52,7 +52,8 @@ func test(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	http.Handle("/", http.FileServer(http.Dir("html/public")))
+    http.Handle("/", http.FileServer(http.Dir("html/public")))
+	http.Handle("/gravimetry", http.StripPrefix("/gravimetry", http.FileServer(http.Dir("html/public"))))
 	http.HandleFunc("/api/openCSV", test)
 
 	serveSingle("/sitemap.xml", "./sitemap.xml")

@@ -1,2 +1,4 @@
 /node_modules
-
+/html/public/bundle.js
+/html/public/style.css
+/html/public/images/

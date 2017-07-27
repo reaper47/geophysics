@@ -1,5 +1,5 @@
 import React from 'react';
-import About from './components/About.jsx'
+import About from './components/Gravimetry.jsx'
 import Header from './components/Header.jsx'
 import Main from './components/Main.jsx'
 

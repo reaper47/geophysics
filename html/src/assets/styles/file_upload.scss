@@ -5,6 +5,17 @@ $width: 30rem;
 #form__upload_div {
   cursor: default;
   
+  .dropzone {
+    position: relative;
+  }
+  
+  #form__upload_help {
+    margin-right: 3rem;
+    margin-top: 1rem;
+    position: absolute;
+    right: 0;
+  }
+  
   h2, p {
     user-select: none;
   }
@@ -41,6 +52,13 @@ $width: 30rem;
   
   aside div:last-child > h2 {
     color: #e74c3c;
-  }
+  } 
   
+  .file_upload_item {
+    color: #212121;
+    line-height: 2;
+    list-style: none;
+    margin-right: 2rem;
+  } 
 }
+

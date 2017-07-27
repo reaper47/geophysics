@@ -15,13 +15,8 @@
     "extract-text-webpack-plugin": "^3.0.0",
     "file-loader": "^0.11.2",
     "image-webpack-loader": "^3.3.1",
-    "jsx-control-statements": "^3.2.5",
     "node-sass": "^4.5.3",
     "optimize-css-assets-webpack-plugin": "^2.0.0",
-    "react": "^15.6.1",
-    "react-dom": "^15.6.1",
-    "react-dropzone": "^3.13.3",
-    "react-router-dom": "^4.1.2",
     "sass-loader": "^6.0.6",
     "style-loader": "^0.18.2",
     "uglifyjs-webpack-plugin": "^0.4.6",
@@ -31,5 +26,11 @@
     "build": "NODE_ENV=production webpack",
     "build-dev": "webpack --watch"
   },
-  "dependencies": {}
+  "dependencies": {
+    "jsx-control-statements": "^3.2.5",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1",
+    "react-dropzone": "^3.13.3",
+    "react-router-dom": "^4.1.2"
+  }
 }

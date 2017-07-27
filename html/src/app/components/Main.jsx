@@ -1,13 +1,13 @@
 import React from 'react'
 import { Switch, Route } from 'react-router-dom'
 import Home from './Home.jsx'
-import About from './About.jsx'
+import Gravimetry from './Gravimetry.jsx'
 
 const Main = () => (
   <main>
     <Switch>
       <Route exact path='/' component={Home} />
-      <Route path='/about' component={About} />
+      <Route path='/gravimetry' component={Gravimetry} />
     </Switch>
   </main>
 )
