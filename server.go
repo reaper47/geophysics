@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"strconv"
 	"sync"
+	"html/template"
 )
 
 var counter int
@@ -41,20 +42,40 @@ func test(w http.ResponseWriter, r *http.Request) {
 	calcs.PopulateWorden807(t, t2)
 	fileutils.WriteGravStructToCSV(',', false, "ehllo.csv", t)
 	
-	body, err := json.Marshal(t)
+	jsonData, err := json.Marshal(t)
 	if err != nil {
 	    panic(err)
 	}
 	
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Accept-Charset", "utf-8")
+	
 	w.WriteHeader(http.StatusOK)
-	w.Write(body)
+	w.Write(jsonData)
+}
+
+type Todo struct {
+    Task string
+    Done bool
 }
 
 func main() {
     http.Handle("/", http.FileServer(http.Dir("html/public")))
 	http.Handle("/gravimetry", http.StripPrefix("/gravimetry", http.FileServer(http.Dir("html/public"))))
+	http.Handle("/gravimetry/", http.StripPrefix("/gravimetry/", http.FileServer(http.Dir("html/public"))))
+	http.Handle("/gravimetry/graphs", http.StripPrefix("/gravimetry/graphs", http.FileServer(http.Dir("html/public"))))
+	http.Handle("/gravimetry/graphs/", http.StripPrefix("/gravimetry/graphs/", http.FileServer(http.Dir("html/public"))))
+
 	http.HandleFunc("/api/openCSV", test)
+	
+	tmpl := template.Must(template.ParseFiles("./html/templates/todos.html"))
+	todos := []Todo{
+	    {"Learn Go", true},
+	    {"Read Go Web Examples", true},
+	    {"Create a web app in Go", false},
+	}
+	http.HandleFunc("/template", func(w http.ResponseWriter, r *http.Request) {
+	    tmpl.Execute(w, struct{ Todos []Todo}{todos})
+	})
 
 	serveSingle("/sitemap.xml", "./sitemap.xml")
 	serveSingle("/favicon.ico", "./favicon.ico")

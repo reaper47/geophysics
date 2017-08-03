@@ -54,7 +54,8 @@ let config = {
             }
           }
         }]
-      }
+      },
+      { test: /\.csv$/, loader: 'file-loader?&name=assets/[hash].[ext]' }
     ]
   },
   plugins: [

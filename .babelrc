@@ -3,5 +3,9 @@
     "es2015",
     "react"
   ],
-  "plugins": ["jsx-control-statements"]
+  "plugins": [
+    "jsx-control-statements",
+    "transform-class-properties",
+    "transform-object-rest-spread"
+  ]
 }

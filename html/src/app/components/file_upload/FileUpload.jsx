@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import Dropzone from 'react-dropzone'
 import Button from '../basic/Button.jsx'
+import LinkDiv from '../basic/LinkDiv.jsx'
 import FileUploadAside from './FileUploadAside.jsx'
 import 'jsx-control-statements'
 
@@ -11,24 +12,49 @@ class FileUpload extends Component {
     
     this.state = { 
       accepted: [],
-      rejected: []
+      rejected: [],
+      toGraphs: JSON.parse(localStorage.getItem('toGraphs'))
     }
+    
+    this.isGavimetricDataPresent = this.isGavimetricDataPresent.bind(this)
   }
   
   onDrop(accepted, rejected) {
     this.setState({ accepted, rejected }, () => this.uploadToServer())
   }
-  
-  uploadToServer() {
+        
+  async uploadToServer() {
     for(let i = 0, n = this.state.accepted.length; i < n; i++) {
-      const xhr = new XMLHttpRequest()
-      const file = this.state.accepted[i]
       let data = new FormData()
-      
+      const file = this.state.accepted[i]
       data.append('file', file, file.name)
-      xhr.open('POST', '/api/openCSV', true);
-      xhr.send(data);
+        
+      const response = await fetch('/api/openCSV', { 
+        method: 'POST',
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: data
+      })
+      
+      await response.json().then(gravimetricData => {
+          localStorage.setItem('gravimetricData', JSON.stringify({gravimetricData}))
+          localStorage.setItem('toGraphs', true)
+          this.setState({ toGraphs: true })
+      })
     }
+  }
+    
+  isGavimetricDataPresent() {
+    return JSON.parse(localStorage.getItem('gravimetricData'))
+  }
+  
+  askForNewGravimetricData() {
+    if(this.isGavimetricDataPresent()) {
+      
+    }
+  }
+  
+  proceedToGraphs() {
+    localStorage.setItem('toGraphs', false)
   }
     
   render() {  
@@ -54,9 +80,6 @@ class FileUpload extends Component {
       <div id="form__upload_div">
         <section id="form__upload_section">
           <div className="dropzone">
-            <div id="form__upload_help">
-
-            </div>
             <Dropzone  accept="text/csv"
                        activeStyle ={activeStyle}
                        id="form__file_upload"
@@ -114,6 +137,14 @@ class FileUpload extends Component {
           <Button text="Open File Dialog" onClickEvent={() => dropzoneRef.open()} />
         </section>
         <FileUploadAside accepted={this.state.accepted} rejected={this.state.rejected} />
+        <If condition={this.state.toGraphs}>
+          <LinkDiv id='file__upload_toGraphs_btn' 
+                   linkTo='/gravimetry/graphs' 
+                   title='Data Processed Successfully'
+                   instruction='You can now view your graphs.'
+                   proceedText='Proceed'
+                   onClickFnc={() => this.proceedToGraphs()} />
+        </If>
       </div>
     )
   }
