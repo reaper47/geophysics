@@ -61,5 +61,10 @@ $(BUILDDIR)/%.$(OBJEXT): $(SRCDIR)/%.$(SRCEXT)
 	@sed -e 's/.*://' -e 's/\\$$//' < $(BUILDDIR)/$*.$(DEPEXT).tmp | fmt -1 | sed -e 's/^ *//' -e 's/$$/:/' >> $(BUILDDIR)/$*.$(DEPEXT)
 	@rm -f $(BUILDDIR)/$*.$(DEPEXT).tmp
 
+tests: ./tests/test_arrays.c ./tests/test_csv.c ./tests/test_gravimetry.c
+	$(CC) $(CFLAGS) ./src/utils/arrays.c ./tests/test_arrays.c -o tests/test_arrays
+	$(CC) $(CFLAGS) ./tests/test_csv.c ./src/utils/csv.h -o tests/test_csv
+	$(CC) $(CFLAGS) ./tests/test_gravimetry.c -o tests/test_gravimetry
+
 .PHONY: all remake clean purge resources
 	

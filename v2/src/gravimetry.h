@@ -36,8 +36,8 @@ struct worden807_t {
 	float *times_min;
 };
 
-int init_worden807(struct worden807_t *worden, unsigned int n);
-void free_worden807(struct worden807_t *worden);
+int   alloc_worden807(struct worden807_t *worden, unsigned int n);
+void  free_worden807(struct worden807_t *worden);
 void  load_grav_csv(struct worden807_t *worden, const char *csv_file, const char *delim);
 
 #endif /* gravimetry.h */

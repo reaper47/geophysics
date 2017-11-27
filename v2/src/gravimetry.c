@@ -1,7 +1,7 @@
 #include "utils/csv.h"
 #include "gravimetry.h"
 
-int init_worden807(struct worden807_t *worden, unsigned int n)
+int alloc_worden807(struct worden807_t *worden, unsigned int n)
 {
 	worden->attract_derivations     = malloc(sizeof(worden->attract_derivations) * n);
 	worden->avg_readings            = malloc(sizeof(worden->avg_readings) * n);
@@ -35,6 +35,8 @@ int init_worden807(struct worden807_t *worden, unsigned int n)
 	return 0;
 }
 
+
+
 void free_worden807(struct worden807_t *worden)
 {
 	free(worden->attract_derivations);
@@ -48,7 +50,7 @@ void free_worden807(struct worden807_t *worden)
 	free(worden->readings);
 	free(worden->rel_grav_fields);
 	free(worden->regional_anomaly);
-	free( worden->residual_anomaly);
+	free(worden->residual_anomaly);
 	free(worden->stations);
 	free(worden->std);
 	free(worden->temporal_vars);
@@ -56,22 +58,25 @@ void free_worden807(struct worden807_t *worden)
 	free(worden->times_min);
 }
 
+
+
 void load_grav_csv(struct worden807_t *worden, const char *csv_file, const char *delim)
 {
 	FILE *fp = fopen(csv_file, "rb");
 	if(fp == NULL) {
 		printf("unable to open %s\n", csv_file);
+		fclose(fp);
 		exit(EXIT_FAILURE);
 	}
+		
+	unsigned int num_lines = num_lines_file(fp);
+	alloc_worden807(worden, num_lines);
+	num_lines = 0;
 	
 	char *tok, *line = NULL;
-	ssize_t read;
+	long read;
 	size_t len = 0;
 	int i;
-	
-	unsigned int num_lines = num_lines_file(fp);
-	init_worden807(worden, num_lines);
-	num_lines = 0;
 	
 	while((read = getline(&line, &len, fp)) != -1) {
 		if(num_lines == 0) {
@@ -83,14 +88,16 @@ void load_grav_csv(struct worden807_t *worden, const char *csv_file, const char 
 		i = 0;
 		
 		while(tok != NULL) {
+			float tokf = (float)atof(tok);
+			
 			if(i == 0)
-				worden->stations[num_lines-1] = (float)atof(tok);
+				worden->stations[num_lines-1] = tokf;
 			else if(i == 2)
-				worden->times[num_lines-1] = (float)atof(tok);
+				worden->times[num_lines-1] = tokf;
 			else if(i == 3)
-				worden->times_min[num_lines-1] = (float)atof(tok);
+				worden->times_min[num_lines-1] = tokf;
 			else if(i > 3)
-				worden->readings[(int)(num_lines-1)*NUM_READINGS + (i - NUM_READINGS)] = (float)atof(tok);
+				worden->readings[(int)(num_lines-1)*NUM_READINGS + (i - NUM_READINGS)] = tokf;
 			
 			i++;
 			tok = strtok_imprv(NULL, delim);
