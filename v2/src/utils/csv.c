@@ -1,23 +1,92 @@
 #include "csv.h"
 
-unsigned int num_lines_file(FILE *fp)
+char determine_delim(FILE *fp)
 {
-	ssize_t read;
-	char *line = NULL;
-	size_t len = 0;
+	fseek(fp, 0, SEEK_SET);
 	
-	unsigned int n = 0;
-	while((read = getline(&line, &len, fp)) != -1)
-		n++;
+	int c, nl;
+	struct delims_t delims = {
+		.comma = 0,
+		.semi  = 0,
+		.colon = 0,
+		.pipe  = 0,
+		.tab   = 0
+	};
+	
+	nl = 0;
+	while(nl < 10 && (c = fgetc(fp)) != EOF) {
+		switch(c) {
+			case ',':
+				delims.comma++;
+				break;
+			case ';':
+				delims.semi++;
+				break;
+			case ':':
+				delims.colon++;
+				break;
+			case '|':
+				delims.pipe++;
+				break;
+			case '	':
+				delims.tab++;
+				break;
+			case '\n':
+				++nl;
+			default:
+				break;
+		}
+	}
+	
+	char delim = 0;
+	int max = 0;
+	
+	if(delims.comma > 0) {
+		max = delims.comma;
+		delim = ',';
+	}
+	
+	if(delims.semi > max) {
+		max = delims.semi;
+		delim = ';';
+	} 
+	
+	if(delims.colon > max) {
+		max = delims.colon;
+		delim = ':';
+	}
+
+	if(delims.pipe > max) {
+		max = delims.pipe;
+		delim = '|';
+	}
+
+	if(delims.tab > max)
+		delim = '	';
 	
 	fseek(fp, 0, SEEK_SET);
-	free(line);
-	return n;
+	return delim;
+}
+
+
+
+int num_lines_file(FILE *fp)
+{
+	fseek(fp, 0, SEEK_SET);
+	int c, nl;
+	
+	nl = 0;
+	while((c = fgetc(fp)) != EOF)
+		if(c == '\n')
+			++nl;
+	
+	fseek(fp, 0, SEEK_SET);
+	return nl;
 }
 
 char *strtok_imprv(char *str, const char *delim)
 {
-	// see https://stackoverflow.com/questions/26522583/
+	// https://stackoverflow.com/questions/26522583/
 	
 	static char *tpos;
 	static char *tok;
