@@ -93,7 +93,19 @@ MU_TEST(test_assert_determine_delim)
 	mu_assert_int_eq(csvf1_delim_expected, csvf1_delim_actual);
 	mu_assert_int_eq(csvf2_delim_expected, csvf2_delim_actual);
 }
- 
+
+
+
+/*
+ * tests - parse_header
+ *
+ */
+MU_TEST(test_assert_parse_header)
+{
+	char *headers = "Year;Month;Total Gas Production (Million Cubic Feet);Natural Gas (Million Cubic Feet);Associated Gas (Million Cubic Feet);Associated Gas (,000) U.S. Barrel;Naphtha (,000) U.S. Barrel;Butane (,000) U.S. Barrel;Propane (,000) U.S. Barrel";
+
+}
+
 
 
 MU_TEST_SUITE(test_suite)
