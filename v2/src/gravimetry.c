@@ -1,4 +1,3 @@
-#include "utils/csv.h"
 #include "gravimetry.h"
 
 int alloc_worden807(struct worden807_t *worden, unsigned int n)
@@ -60,7 +59,43 @@ void free_worden807(struct worden807_t *worden)
 
 
 
-void load_grav_csv(struct worden807_t *worden, const char *csv_file, const char *delim)
+void assign_idx_node(struct list_t *list)
+{
+	struct node_t *curr;
+	uint8_t read_idx = 50;
+	
+	for(curr = list->head; curr != NULL; curr = curr->next) {
+		printf("current: %s\n", curr->data);
+		if(strstr(curr->data, STATION) != NULL)
+			curr->idx = IDX_STATION;
+		else if(strstr(curr->data, TIME) != NULL && strstr(curr->data, TIME_MIN) != NULL) 
+			curr->idx = IDX_TIME_MIN;
+		else if(strstr(curr->data, TIME) != NULL) 
+			curr->idx = IDX_TIME;
+		else if(strstr(curr->data, READING) != NULL)
+			curr->idx = ++read_idx;
+		else if(strstr(curr->data, PURPOSE) != NULL)
+			curr->idx = IDX_PURPOSE;
+		else if(strstr(curr->data, AREA) != NULL)
+			curr->idx = IDX_AREA;
+		else if(strstr(curr->data, POI) != NULL)
+			curr->idx = IDX_POI;		
+		else if(strstr(curr->data, ADDRESS) != NULL)
+			curr->idx = IDX_ADDRESS;
+		else if(strstr(curr->data, DATE) != NULL)
+			curr->idx = IDX_DATE;
+		else if(strstr(curr->data, TEMP) != NULL)
+			curr->idx = IDX_TEMP;
+		else if(strstr(curr->data, LAT) != NULL)
+			curr->idx = IDX_LAT;
+		else if(strstr(curr->data, DIR) != NULL)
+			curr->idx = IDX_DIR;
+	}
+}
+
+
+
+int load_grav_csv(struct worden807_t *worden, const char *csv_file)
 {
 	FILE *fp = fopen(csv_file, "rb");
 	if(fp == NULL) {
@@ -68,15 +103,28 @@ void load_grav_csv(struct worden807_t *worden, const char *csv_file, const char 
 		fclose(fp);
 		exit(EXIT_FAILURE);
 	}
+	printf("%f\n", worden->stations[0]);
+	
+	struct list_t *headers = parse_header(fp);
+	assign_idx_node(headers);
+	
+
+	
+	/*unsigned int num_lines = num_lines_file(fp);
+	if(alloc_worden807(worden, num_lines) != 0) {
+		printf("malloc worden807 failed\n");
+		return -1;
+	}		
 		
-	unsigned int num_lines = num_lines_file(fp);
-	alloc_worden807(worden, num_lines);
 	num_lines = 0;
 	
 	char *tok, *line = NULL;
 	long read;
 	size_t len = 0;
 	int i;
+	
+	char delim = determine_delim(fp);
+	
 	
 	while((read = getline(&line, &len, fp)) != -1) {
 		if(num_lines == 0) {
@@ -90,14 +138,6 @@ void load_grav_csv(struct worden807_t *worden, const char *csv_file, const char 
 		while(tok != NULL) {
 			float tokf = (float)atof(tok);
 			
-			if(i == 0)
-				worden->stations[num_lines-1] = tokf;
-			else if(i == 2)
-				worden->times[num_lines-1] = tokf;
-			else if(i == 3)
-				worden->times_min[num_lines-1] = tokf;
-			else if(i > 3)
-				worden->readings[(int)(num_lines-1)*NUM_READINGS + (i - NUM_READINGS)] = tokf;
 			
 			i++;
 			tok = strtok_imprv(NULL, delim);
@@ -106,7 +146,9 @@ void load_grav_csv(struct worden807_t *worden, const char *csv_file, const char 
 		num_lines++;
 	}
 	
-	free(line);
+	delete_list(headers);
+	free(line);*/
 	fclose(fp);
-	return;
+	
+	return 1;
 }

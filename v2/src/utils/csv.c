@@ -14,7 +14,7 @@ char determine_delim(FILE *fp)
 	};
 	
 	nl = 0;
-	while(nl < 10 && (c = fgetc(fp)) != EOF) {
+	while(nl < NUM_LINES_PROCESS && (c = fgetc(fp)) != EOF) {
 		switch(c) {
 			case ',':
 				delims.comma++;
@@ -83,6 +83,39 @@ int num_lines_file(FILE *fp)
 	fseek(fp, 0, SEEK_SET);
 	return nl;
 }
+
+
+
+struct list_t *parse_header(FILE *fp)
+{
+	struct list_t *list = create_list();
+	
+	char *line = NULL;
+	size_t len = 0;
+	const char delim = determine_delim(fp);
+
+	if(getline(&line, &len, fp) != 0) {
+		char *tok = strtok_imprv(line, &delim);
+		
+		while(tok != NULL) {
+			char *field = malloc(strlen(tok)+1 * sizeof(char));
+			strcpy(field, tok);
+
+			if(field[strlen(field)-1] == LF)
+				field[strlen(field)-1] = '\0';
+			
+			add_head_list(list, field, FREE_DATA);
+			tok = strtok_imprv(NULL, &delim);
+		}
+		
+		free(tok);
+	}
+
+	free(line);
+	return list;
+}
+
+
 
 char *strtok_imprv(char *str, const char *delim)
 {

@@ -3,8 +3,9 @@
 
 #define TST_CSV1 "./test_data/gas-production.csv"
 #define TST_CSV2 "./test_data/TB_laboratories_2017-12-03.csv"
+#define TST_CSV3 "./test_data/grav.csv"
 
-static FILE *csv_f1, *csv_f2;
+static FILE *csv_f1, *csv_f2, *csv_f3;
 static int num_lines1_expected = 0;
 
 
@@ -13,6 +14,8 @@ void test_setup(void)
 {
 	csv_f1 = fopen(TST_CSV1, "rb");
 	csv_f2 = fopen(TST_CSV2, "rb");
+	csv_f3 = fopen(TST_CSV3, "rb");
+	
 	num_lines1_expected = 36;
 }
 
@@ -22,6 +25,7 @@ void test_teardown(void)
 {
 	fclose(csv_f1);
 	fclose(csv_f2);
+	fclose(csv_f3);
 }
 
 
@@ -55,8 +59,8 @@ MU_TEST(test_assert_num_lines_file_csv_f1)
 MU_TEST(test_assert_strtok_imprv)
 {
 	char str[41] = ",hello, world, this is the,, speaking,";
-	char delim = ',';
-	char *tok_actual = strtok_imprv(str, &delim);
+	const char *delim = ",";
+	char *tok_actual = strtok_imprv(str, delim);
 	
 	const char *tok_expected[7] = {
 		"",
@@ -72,8 +76,10 @@ MU_TEST(test_assert_strtok_imprv)
 	while(tok_actual != NULL) {
 		mu_assert_string_eq(tok_expected[i], tok_actual);
 		++i;
-		tok_actual = strtok_imprv(NULL, &delim);
+		tok_actual = strtok_imprv(NULL, delim);
 	}
+	
+	free(tok_actual);
 }
  
 
@@ -102,8 +108,65 @@ MU_TEST(test_assert_determine_delim)
  */
 MU_TEST(test_assert_parse_header)
 {
-	char *headers = "Year;Month;Total Gas Production (Million Cubic Feet);Natural Gas (Million Cubic Feet);Associated Gas (Million Cubic Feet);Associated Gas (,000) U.S. Barrel;Naphtha (,000) U.S. Barrel;Butane (,000) U.S. Barrel;Propane (,000) U.S. Barrel";
+	fseek(csv_f1, 0, SEEK_SET);
+	
+	const char *headers_expected[] = {
+		"year",
+		"month",
+		"total gas production (million cubic feet)",
+		"natural gas (million cubic feet)",
+		"associated gas (million cubic feet)",
+		"associated gas (,000) u.s. barrel",
+		"naphtha (,000) u.s. barrel",
+		"butane (,000) u.s. barrel",
+		"propane (,000) u.s. barrel"
+	};
+	
+	struct list_t *list_headers = parse_header(csv_f1);
+	
+	struct node_t *curr;
+	int i = 0;
+	
+	for(curr = list_headers->head; curr != NULL; curr = curr->next, i++)
+		mu_assert_string_eq(headers_expected[i], curr->data);
 
+	delete_list(list_headers);
+}
+
+
+
+MU_TEST(test_assert_parse_header_grav)
+{
+	fseek(csv_f3, 0, SEEK_SET);
+	
+	const char *headers_expected[] = {
+		"station (m)",
+		"time",
+		"time (min)",
+		"reading 1",
+		"reading 2",
+		"reading 3",
+		"reading 4",
+		"purpose",
+		"area",
+		"poi",
+		"address",
+		"date of survey",
+		"operation temperature (f)",
+		"reference station latitude",
+		"gravimetric survey direction",
+		"comments"
+	};
+	
+	struct list_t *list_headers = parse_header(csv_f3);
+	
+	struct node_t *curr;
+	int i = 0;
+	
+	for(curr = list_headers->head; curr != NULL; curr = curr->next, i++)
+		mu_assert_string_eq(headers_expected[i], curr->data);
+
+	delete_list(list_headers);
 }
 
 
@@ -116,6 +179,8 @@ MU_TEST_SUITE(test_suite)
 	MU_RUN_TEST(test_assert_num_lines_file_csv_f1);
 	MU_RUN_TEST(test_assert_strtok_imprv);
 	MU_RUN_TEST(test_assert_determine_delim);
+	MU_RUN_TEST(test_assert_parse_header);
+	MU_RUN_TEST(test_assert_parse_header_grav);
 }
 
 

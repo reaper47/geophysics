@@ -1,10 +1,11 @@
 #include "sll.h"
 
-struct node_t *create_node(const char *data)
+struct node_t *create_node(const char *data, bool free_data)
 {
 	struct node_t *node = malloc(sizeof(struct node_t));
-	if(node) {
-		node->data = data;
+	if(node) {	
+		node->data = strlower((char*)data);
+		node->free_data = free_data;
 		node->next = NULL;
 	}
 	
@@ -34,9 +35,9 @@ unsigned int get_cnt_list(const struct list_t *list)
 
 
 
-void add_head_list(struct list_t *list, const char *data)
+void add_head_list(struct list_t *list, const char *data, bool free_data)
 {
-	struct node_t *node = create_node(data);
+	struct node_t *node = create_node(data, free_data);
 	
 	if(list->tail == NULL) {
 		list->head = node;
@@ -47,43 +48,6 @@ void add_head_list(struct list_t *list, const char *data)
 	}
 	
 	list->cnt++;
-}
-
-
-
-void insert_before_list(struct list_t *list, struct node_t *node, struct node_t *prev, const char *data)
-{
-	if(node == list->head)
-		add_head_list(list, data);
-	else {
-		struct node_t *new_node = create_node(data);
-		new_node->next = node;
-		prev->next = new_node;
-		list->cnt++;
-	}
-}
-
-
-
-void insert_after_list(struct list_t *list, struct node_t *node, const char *data)
-{
-	struct node_t *new_node;
-	if(node == NULL) {
-		add_head_list(list, data);
-		new_node = list->head;
-	} else {
-		new_node = create_node(data);\
-		
-		if(new_node) {
-			new_node->next = node->next;
-			node->next = new_node;
-			
-			if(node == list->tail)
-				list->tail = new_node;
-		}
-		
-		list->cnt++;
-	}
 }
 
 
@@ -110,9 +74,9 @@ void remove_head_list(struct list_t *list)
 
 
 
-void add_tail_list(struct list_t *list, const char *data)
+void add_tail_list(struct list_t *list, const char *data, bool free_data)
 {
-	struct node_t *node = create_node(data);
+	struct node_t *node = create_node(data, free_data);
 	
 	if(list->head == NULL) {
 		list->head = node;
@@ -161,6 +125,10 @@ void empty_list(struct list_t *list)
 	node = list->head;
 	while(node != NULL) {
 		tmp = node->next;
+		
+		if(node->free_data == true)
+			free((char*)node->data);
+		
 		free(node);
 		node = tmp;
 		list->cnt --;
@@ -171,8 +139,10 @@ void empty_list(struct list_t *list)
 
 void delete_list(struct list_t *list)
 {
-	if(list) {
-		empty_list(list);
+	if(list->cnt == 0)
+		free(list);
+	else {
+		empty_list(list);		
 		free(list);
 		list = NULL;
 	}
