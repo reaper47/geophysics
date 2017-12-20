@@ -1,11 +1,11 @@
 #include "sll.h"
 
-struct node_t *create_node(const char *data, bool free_data)
+struct node_t *create_node(const char *data)
 {
 	struct node_t *node = malloc(sizeof(struct node_t));
+	
 	if(node) {	
-		node->data = strlower((char*)data);
-		node->free_data = free_data;
+		node->data = strdup((char*)data);
 		node->next = NULL;
 	}
 	
@@ -17,6 +17,7 @@ struct node_t *create_node(const char *data, bool free_data)
 struct list_t *create_list(void)
 {
 	struct list_t *list = malloc(sizeof(struct list_t));
+	
 	if(list) {
 		list->head = NULL;
 		list->tail = NULL;
@@ -35,9 +36,9 @@ unsigned int get_cnt_list(const struct list_t *list)
 
 
 
-void add_head_list(struct list_t *list, const char *data, bool free_data)
+void add_head_list(struct list_t *list, const char *data)
 {
-	struct node_t *node = create_node(data, free_data);
+	struct node_t *node = create_node(data);
 	
 	if(list->tail == NULL) {
 		list->head = node;
@@ -63,7 +64,7 @@ void remove_head_list(struct list_t *list)
 			list->head = NULL;
 			list->tail = NULL;
 		}
-		
+		free(tmp->data);
 		free(tmp);
 		
 		list->cnt--;
@@ -74,9 +75,9 @@ void remove_head_list(struct list_t *list)
 
 
 
-void add_tail_list(struct list_t *list, const char *data, bool free_data)
+void add_tail_list(struct list_t *list, const char *data)
 {
-	struct node_t *node = create_node(data, free_data);
+	struct node_t *node = create_node(data);
 	
 	if(list->head == NULL) {
 		list->head = node;
@@ -101,6 +102,7 @@ void remove_tail_list(struct list_t *list)
 			prev = curr;
 			curr = curr->next;
 		}
+		free(curr->data);
 		free(curr);
 		
 		if(prev)
@@ -125,13 +127,10 @@ void empty_list(struct list_t *list)
 	node = list->head;
 	while(node != NULL) {
 		tmp = node->next;
-		
-		if(node->free_data == true)
-			free((char*)node->data);
-		
+		free(node->data);
 		free(node);
 		node = tmp;
-		list->cnt --;
+		list->cnt--;
 	}
 }
 
@@ -142,7 +141,7 @@ void delete_list(struct list_t *list)
 	if(list->cnt == 0)
 		free(list);
 	else {
-		empty_list(list);		
+		empty_list(list);
 		free(list);
 		list = NULL;
 	}

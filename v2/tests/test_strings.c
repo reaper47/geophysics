@@ -36,14 +36,32 @@ MU_TEST(test_assert_rm_spaces)
  * tests - strlower
  *
  */
-MU_TEST(test_assert_strlower)
+MU_TEST(test_assert_strlower_not_csv)
 {
 	char str_tst[]      = "I, MARKUS, WAS AT HOME YESTERDAY!";
 	char str_expected[] = "i, markus, was at home yesterday!";
+	char *str_actual, *tofree;
 	
-	char *str_actual = strlower(str_tst);
+	tofree = str_actual = strdup(str_tst);
+	strlower(str_actual, false);
 	
 	mu_assert_string_eq(str_expected, str_actual);
+	free(tofree);
+}
+
+
+
+MU_TEST(test_assert_strlower_csv)
+{
+	char str_tst[]      = "I, MARKUS, WAS AT HOME YESTERDAY!\n";
+	char str_expected[] = "i, markus, was at home yesterday!";
+	char *str_actual, *tofree;
+	
+	tofree = str_actual = strdup(str_tst);
+	strlower(str_actual, true);
+	
+	mu_assert_string_eq(str_expected, str_actual);
+	free(tofree);
 }
 
 
@@ -53,7 +71,8 @@ MU_TEST_SUITE(test_suite)
 	MU_SUITE_CONFIGURE(&test_setup, &test_teardown);
 	
 	MU_RUN_TEST(test_assert_rm_spaces);
-	MU_RUN_TEST(test_assert_strlower);
+	MU_RUN_TEST(test_assert_strlower_not_csv);
+	MU_RUN_TEST(test_assert_strlower_csv);
 
 }
 

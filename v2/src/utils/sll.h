@@ -4,7 +4,6 @@
 #define _GNU_SOURCE
 #include <ctype.h>
 #include <stdlib.h>
-#include <stdbool.h>
 #include <string.h>
 #include <stdint.h>
 #include "./strings.h"
@@ -13,8 +12,6 @@
 
 struct node_t {
 	char   *data;
-	bool    free_data;
-	uint8_t idx;
 	struct  node_t *next;
 };
 
@@ -24,14 +21,14 @@ struct list_t {
 	unsigned int cnt;
 };
 
-struct node_t *create_node(const char *data, bool free_data);
+struct node_t *create_node(const char *data);
 struct list_t *create_list(void);
 unsigned int get_cnt_list(const struct list_t *list);
 
-void add_head_list(struct list_t *list, const char *data, bool free_data);
+void add_head_list(struct list_t *list, const char *data);
 void remove_head_list(struct list_t *list);
 
-void add_tail_list(struct list_t *list, const char *data, bool free_data);
+void add_tail_list(struct list_t *list, const char *data);
 void remove_tail_list(struct list_t *list);
 
 void delete_list(struct list_t *list);

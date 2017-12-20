@@ -13,14 +13,12 @@ void rm_spaces(char *src)
 	} while(*src++ != 0);
 }
 
-char *strlower(char *src)
+void strlower(char *src, bool is_csv)
 {
-	char *str = malloc(sizeof(char) * strlen(src)+1);
-	strcpy(str, src);
-	
-	int n = (int)strlen(str);
+	int n = (int)strlen(src);
 	for(int i = 0; i < n; i++)
-		str[i] = (char)tolower(str[i]);
-		
-	return str;
+		src[i] = (char)tolower(src[i]);
+	
+	if(is_csv)
+		src[n-1] = '\0';
 }

@@ -51,38 +51,6 @@ MU_TEST(test_assert_num_lines_file_csv_f1)
 }
 
 
-
-/*
- * tests - strtok_imprv
- *
- */
-MU_TEST(test_assert_strtok_imprv)
-{
-	char str[41] = ",hello, world, this is the,, speaking,";
-	const char *delim = ",";
-	char *tok_actual = strtok_imprv(str, delim);
-	
-	const char *tok_expected[7] = {
-		"",
-		"hello",
-		" world",
-		" this is the",
-		"",
-		" speaking",
-		""
-	};
-	
-	int i = 0;
-	while(tok_actual != NULL) {
-		mu_assert_string_eq(tok_expected[i], tok_actual);
-		++i;
-		tok_actual = strtok_imprv(NULL, delim);
-	}
-	
-	free(tok_actual);
-}
- 
-
  
 /*
  * tests - determine_delim
@@ -159,11 +127,11 @@ MU_TEST(test_assert_parse_header_grav)
 	};
 	
 	struct list_t *list_headers = parse_header(csv_f3);
-	
-	struct node_t *curr;
+
+	struct node_t *curr = list_headers->head;
 	int i = 0;
-	
-	for(curr = list_headers->head; curr != NULL; curr = curr->next, i++)
+
+	for( ; curr != NULL; curr = curr->next, i++)
 		mu_assert_string_eq(headers_expected[i], curr->data);
 
 	delete_list(list_headers);
@@ -177,7 +145,6 @@ MU_TEST_SUITE(test_suite)
 	
 	MU_RUN_TEST(test_check_numlines1);
 	MU_RUN_TEST(test_assert_num_lines_file_csv_f1);
-	MU_RUN_TEST(test_assert_strtok_imprv);
 	MU_RUN_TEST(test_assert_determine_delim);
 	MU_RUN_TEST(test_assert_parse_header);
 	MU_RUN_TEST(test_assert_parse_header_grav);

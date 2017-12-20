@@ -7,8 +7,6 @@
 #define NODE4_DATA "lo"
 #define NODE5_DATA "o"
 
-#define FREE_DATA true
-
 const char *node1_data;
 const char *node2_data;
 const char *node3_data;
@@ -55,11 +53,12 @@ MU_TEST(test_check_setup)
 MU_TEST(test_assert_create_node)
 {
 	const char *data_expected = node1_data;
-	struct node_t *node = create_node(data_expected, FREE_DATA);
+	struct node_t *node = create_node(data_expected);
 	
 	mu_assert_string_eq(data_expected, node->data);
 	mu_assert(node->next == NULL, "next should be null");
 	
+	free(node->data);
 	free(node);
 }
 
@@ -95,12 +94,40 @@ MU_TEST(test_assert_add_head_list)
 	unsigned int cnt_expected = 1;
 	const char *data_expected = node1_data;
 	
-	add_head_list(list, data_expected, 0);
+	add_head_list(list, data_expected);
 	
 	const char *data_actual = list->head->data;
 	mu_assert_string_eq(data_expected, data_actual);
 	mu_assert_uint_eq(cnt_expected, list->cnt);
 	
+	delete_list(list);
+}
+
+
+
+MU_TEST(test_assert_add_head_list2)
+{
+	struct list_t *list = create_list();
+	
+	const char *line_actual = "hello,this,is,a,test";
+	const char *line_expected[] = { "hello", "this", "is", "a", "test" };	
+	const char delim = ',';
+	
+	char *tok, *str, *tofree;
+	tofree = str = strdup(line_actual);
+	
+	while((tok = strsep(&str, &delim)))
+		add_head_list(list, tok);
+	free(tofree);	
+		
+	struct node_t *node = list->head;
+	int i = 0;
+	while(node != NULL) {
+		mu_assert_string_eq(line_expected[i], node->data);
+		node = node->next;
+		i++;
+	}
+
 	delete_list(list);
 }
 
@@ -114,9 +141,9 @@ MU_TEST(test_assert_get_cnt_list)
 {
 	struct list_t *list = create_list();
 	
-	add_head_list(list, node1_data, FREE_DATA);
-	add_head_list(list, node1_data, FREE_DATA);
-	add_head_list(list, node2_data, FREE_DATA);
+	add_head_list(list, node1_data);
+	add_head_list(list, node1_data);
+	add_head_list(list, node2_data);
 	
 	unsigned int cnt_expected = 3;
 	unsigned int data_actual = get_cnt_list(list);
@@ -136,8 +163,8 @@ MU_TEST(test_assert_remove_head_list)
 {
 	struct list_t *list = create_list();
 	
-	add_head_list(list, node1_data, FREE_DATA);
-	add_head_list(list, node1_data, FREE_DATA);
+	add_head_list(list, node1_data);
+	add_head_list(list, node1_data);
 	unsigned int cnt_expected = 2;
 	
 	remove_head_list(list);
@@ -170,7 +197,7 @@ MU_TEST(test_assert_add_tail_list)
 	unsigned int cnt_expected = 1;
 	const char *data_expected = node1_data;
 	
-	add_tail_list(list, data_expected, FREE_DATA);
+	add_tail_list(list, data_expected);
 	
 	const char *data_actual = list->tail->data;
 	mu_assert_string_eq(data_expected, data_actual);
@@ -189,7 +216,7 @@ MU_TEST(test_assert_remove_tail_list)
 {
 	struct list_t *list = create_list();
 	
-	add_tail_list(list, node1_data, FREE_DATA);
+	add_tail_list(list, node1_data);
 	remove_tail_list(list);
 	
 	unsigned int cnt_expected = 0;
@@ -209,13 +236,14 @@ MU_TEST(test_assert_remove_list)
 {
 	struct list_t *list = create_list();
 	
-	struct node_t *node1 = create_node(node1_data, FREE_DATA);
-	struct node_t *node2 = create_node(node2_data, FREE_DATA);
+	struct node_t *node1 = create_node(node1_data);
+	struct node_t *node2 = create_node(node2_data);
 	unsigned int cnt_expected = 2;
 	
-	add_head_list(list, node1->data, FREE_DATA);
-	add_head_list(list, node2->data, FREE_DATA);
+	add_head_list(list, node1->data);
+	add_head_list(list, node2->data);
 	
+	free(node2->data);
 	remove_list(list, node2, node1);
 	
 	cnt_expected--;
@@ -225,8 +253,10 @@ MU_TEST(test_assert_remove_list)
 	const char *data_actual = list->tail->data;
 	mu_assert_string_eq(data_expected, data_actual);
 	
-	delete_list(list);
+	free(node1->data);
 	free(node1);
+	
+	delete_list(list);
 }
 
 
@@ -239,7 +269,7 @@ MU_TEST(test_assert_empty_list)
 {
 	struct list_t *list = create_list();
 	
-	add_tail_list(list, node1_data, FREE_DATA);
+	add_tail_list(list, node1_data);
 	unsigned int cnt_expected = 0;
 
 	empty_list(list);
@@ -260,6 +290,7 @@ MU_TEST_SUITE(test_suite)
 	MU_RUN_TEST(test_assert_get_cnt_list);
 	
 	MU_RUN_TEST(test_assert_add_head_list);
+	MU_RUN_TEST(test_assert_add_head_list2);
 	MU_RUN_TEST(test_assert_remove_head_list);
 	
 	MU_RUN_TEST(test_assert_add_tail_list);
