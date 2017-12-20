@@ -72,7 +72,7 @@ void test_teardown(void)
 
 
 /*
- * tests - load_grav_csv
+ * tests - assign_idx_nod
  *
  */ 
 MU_TEST(test_assert_assign_idx_node)
@@ -80,7 +80,6 @@ MU_TEST(test_assert_assign_idx_node)
 	FILE *fp = fopen(GRAV_FILE, "rb");
 	
 	struct list_t *headers_expected = create_list();
-	struct list_t *headers_actual   = create_list();
 
 	const char *station     = "station (m)";
 	const char *time        = "time";
@@ -98,26 +97,25 @@ MU_TEST(test_assert_assign_idx_node)
 	const char *latitude    = "reference station latitude";
 	const char *direction   = "gravimetric survey direction";
 	
-	add_head_list(headers_expected, station, 0);
-	add_head_list(headers_expected, time, 0);
-	add_head_list(headers_expected, time_min, 0);
-	add_head_list(headers_expected, reading1, 0);
-	add_head_list(headers_expected, reading2, 0);
-	add_head_list(headers_expected, reading3, 0);
-	add_head_list(headers_expected, reading4, 0);
-	add_head_list(headers_expected, purpose, 0);
-	add_head_list(headers_expected, area, 0);
-	add_head_list(headers_expected, poi, 0);
-	add_head_list(headers_expected, address, 0);
-	add_head_list(headers_expected, date, 0);
-	add_head_list(headers_expected, temperature, 0);
-	add_head_list(headers_expected, latitude, 0);
-	add_head_list(headers_expected, direction, 0);
+	add_head_list(headers_expected, station);
+	add_head_list(headers_expected, time);
+	add_head_list(headers_expected, time_min);
+	add_head_list(headers_expected, reading1);
+	add_head_list(headers_expected, reading2);
+	add_head_list(headers_expected, reading3);
+	add_head_list(headers_expected, reading4);
+	add_head_list(headers_expected, purpose);
+	add_head_list(headers_expected, area);
+	add_head_list(headers_expected, poi);
+	add_head_list(headers_expected, address);
+	add_head_list(headers_expected, date);
+	add_head_list(headers_expected, temperature);
+	add_head_list(headers_expected, latitude);
+	add_head_list(headers_expected, direction);
 	
 	uint8_t read_idx = 50;
-	struct node_t *curr_expect, *curr_actual;
+	struct node_t *curr_expect = headers_expected->head;
 	
-	curr_expect = headers_expected->head;
 	for( ; curr_expect != NULL; curr_expect = curr_expect->next) {
 		if(strcmp(curr_expect->data, station) == 0)
 			curr_expect->idx = IDX_STATION;
@@ -150,23 +148,21 @@ MU_TEST(test_assert_assign_idx_node)
 		else if(strcmp(curr_expect->data, direction) == 0)
 			curr_expect->idx = IDX_DIR;
 	}
-		
-	headers_actual = parse_header(fp);
+	
+	const char delim = determine_delim(fp);
+	struct list_t *headers_actual = parse_line(fp, delim);
 	assign_idx_node(headers_actual);
 	
 	curr_expect = headers_expected->head;
-	curr_actual = headers_actual->head;
-	
-	for(curr_expect = headers_expected->head; curr_expect != NULL; curr_expect = curr_expect->next) {
+	struct node_t *curr_actual = headers_actual->head;
+
+	for( ; curr_expect != NULL; curr_expect = curr_expect->next) {
 		for(curr_actual = headers_actual->head; curr_actual != NULL; curr_actual = curr_actual->next) {
 			if(strcmp(curr_expect->data, curr_actual->data) == 0) {
 				break;
 			}
 		}
 	}
-	
-	free(curr_expect);
-	free(curr_actual);
 	
 	delete_list(headers_expected);
 	delete_list(headers_actual);

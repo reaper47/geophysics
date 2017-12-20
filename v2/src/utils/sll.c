@@ -6,6 +6,7 @@ struct node_t *create_node(const char *data)
 	
 	if(node) {	
 		node->data = strdup((char*)data);
+		node->idx = 128;
 		node->next = NULL;
 	}
 	

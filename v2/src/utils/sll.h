@@ -12,6 +12,7 @@
 
 struct node_t {
 	char   *data;
+	uint8_t idx;
 	struct  node_t *next;
 };
 

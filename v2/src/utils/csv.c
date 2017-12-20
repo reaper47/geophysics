@@ -2,7 +2,7 @@
 
 char determine_delim(FILE *fp)
 {
-	fseek(fp, 0, SEEK_SET);
+	rewind(fp);
 	
 	int c, nl;
 	struct delims_t delims = {
@@ -70,40 +70,117 @@ char determine_delim(FILE *fp)
 
 
 
-int num_lines_file(FILE *fp)
+struct list_t *gather_lines(FILE *fp)
 {
-	fseek(fp, 0, SEEK_SET);
-	int c, nl;
+	rewind(fp);
+	struct list_t *list = create_list();
+	
+	char *line = NULL;
+	size_t len = 0;
+	long read;
+	int header = 1;
+	
+	while((read = getline(&line, &len, fp)) != -1) {
+		if(header == 1) {
+			header = 0;
+			continue;
+		}
+		
+		size_t n = strlen(line);
+		char *buffer = malloc(sizeof(char) * n+1);
+		
+		for(int i = 0; i < (int)n; i++)
+			buffer[i] = line[i];
+		buffer[(int)n-1] = '\0';
+		
+		add_head_list(list, buffer);
+		free(buffer);
+	}
+	
+	if(line)
+		free(line);
+	
+	rewind(fp);
+	return list;
+}
+
+
+
+unsigned int num_lines_file(FILE *fp)
+{
+	rewind(fp);
+	
+	int c;
+	unsigned int nl;
 	
 	nl = 0;
 	while((c = fgetc(fp)) != EOF)
 		if(c == '\n')
 			++nl;
 	
-	fseek(fp, 0, SEEK_SET);
+	rewind(fp);
 	return nl;
 }
 
 
 
-struct list_t *parse_header(FILE *fp)
+struct list_t *parse_header(FILE *fp, const char delim)
 {
 	struct list_t *list = create_list();
 	
 	char *line = NULL, *tok, *str, *tofree;
 	size_t len = 0;
-	const char delim = determine_delim(fp);
+	const char delim_cpy = delim;
 	
 	if(getline(&line, &len, fp) != 0) {
 		tofree = str = strdup(line);
 		strlower(str, true);
 		
-		while((tok = strsep(&str, &delim)))
+		while((tok = strsep(&str, &delim_cpy)))
 			add_head_list(list, tok);
 
 		free(tofree);
 	}
+	
+	if(line)
+		free(line);
+	
+	return list;
+}
 
-	free(line);
+
+
+struct list_t *parse_line(const char *str, const char delim)
+{
+	struct list_t *list = create_list();
+	
+	int have_quotes = -1;
+	int n = (int)strlen(str);
+	char *tok = malloc(128*sizeof(char));
+	int cnt = 0;
+	
+	for(int i = 0; i < n; i++) {
+		char c = str[i];
+
+		if(c == QUOTES && have_quotes == -1)
+			have_quotes = 1;
+		else if(c == QUOTES && have_quotes != -1)
+			have_quotes = -1;
+
+		if(c == delim && have_quotes == -1) {
+			tok[cnt] = '\0';
+			cnt = 0;
+			add_head_list(list, tok);
+		} else if(i == n-1) {
+			tok[cnt] = c;
+			tok[cnt+1] = '\0';
+			add_head_list(list, tok);
+		} else {
+			tok[cnt] = c;
+			++cnt;
+		}
+	}
+	
+	free(tok);
 	return list;
 }
