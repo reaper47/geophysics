@@ -30,9 +30,10 @@ Details to come...
 Development of this software follows test-driven development practices with
 [MinUnit][0], a minimal unit testing framework for C/C++. 
 
-A test is first written and failed every time a new function is created. Then,
-the function making the test pass is written. This cycle continues throughout 
-the development process. Commits are only pushed if all tests pass.
+A test is first written and failed every time a new function has to be created.
+Then, the function associated to the test is written and its test turns green. 
+This cycle continues throughout the development process. 
+Commits are only pushed if all tests pass.
 
 Test files are stored under [/v2/tests/][1].
 

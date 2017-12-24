@@ -111,15 +111,65 @@ int load_grav_csv(struct worden807_t *worden, const char *csv_file)
 
 	const char delim = determine_delim(fp);
 	
+	struct list_t *lines = gather_lines(fp);
 	struct list_t *headers = parse_header(fp, delim);
 	assign_idx_node(headers);
 	
-	struct list_t *lines = gather_lines(fp);
+	int arr_idx = 0;
+	int readings_idx = 0;
 	
-
+	for(struct node_t *node = lines->head ; node != NULL; node = node->next) {
+		struct list_t *fields = parse_line(node->data, delim);
+		store_fields_struct(fields, headers, worden, arr_idx, &readings_idx);
+		arr_idx++;
+		delete_list(fields);
+	}
 	
+	delete_list(lines);
 	delete_list(headers);
 	fclose(fp);
 	
 	return 0;
+}
+
+
+
+void store_fields_struct(struct list_t *fields, struct list_t *headers, struct worden807_t *worden, int idx, int *ridx)
+{	
+	struct node_t *field  = fields->head;
+	struct node_t *header = headers->head;
+	
+	while(field != NULL) {
+		uint8_t hidx = header->idx;
+		
+		if(hidx >= IDX_READING && hidx < 128) {
+			worden->readings[*ridx] = (float)atof(field->data);
+			*ridx += 1;
+		}
+		else if(hidx == IDX_STATION)
+			worden->stations[idx] = (float)atof(field->data);
+		else if(hidx == IDX_TIME_MIN)
+			worden->times_min[idx] = (float)atof(field->data);
+		else if(hidx == IDX_TIME)
+			worden->times[idx] = (float)atof(field->data);
+		else if(idx == 0 && hidx == IDX_TEMP)
+			worden->operation_temp = (float)atof(field->data);
+		else if(idx == 0 && hidx == IDX_DIR)
+			worden->survey_dir = (float)atof(field->data);
+		else if(idx == 0 && hidx == IDX_PURPOSE)
+			worden->survey_purpose = strdup(field->data);
+		else if(idx == 0 && hidx == IDX_LAT)
+			worden->ref_station_lat = (float)atof(field->data);
+		else if(idx == 0 && hidx == IDX_AREA)
+			worden->survey_area = strdup(field->data);
+		else if(idx == 0 && hidx == IDX_POI)
+			worden->survey_poi = strdup(field->data);
+		else if(idx == 0 && hidx == IDX_ADDRESS)
+			worden->survey_address = strdup(field->data);
+		else if(idx == 0 && hidx == IDX_DATE)
+			worden->survey_date = strdup(field->data);
+		
+		header = header->next;
+		field  = field->next;
+	}	
 }

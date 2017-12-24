@@ -69,5 +69,6 @@ int   alloc_worden807(struct worden807_t *worden, unsigned int n);
 void  assign_idx_node(struct list_t *list);
 void  free_worden807(struct worden807_t *worden);
 int   load_grav_csv(struct worden807_t *worden, const char *csv_file);
+void store_fields_struct(struct list_t *fields, struct list_t *headers, struct worden807_t *worden, int idx, int *ridx);
 
 #endif /* gravimetry.h */

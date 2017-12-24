@@ -48,7 +48,7 @@ void test_setup(void)
 	const char *purpose = "LABORATOIRE 1 - LEVE GRAVIMETRIQUE";
 	const char *area = "LES PLAINES D’ABRAHAM - QUEBEC";
 	const char *poi = "RESERVOIR D'EAU MUNICIPAL DE LA VILLE DE QUEBEC";
-	const char *addr = "555 plaines abraham, quebec, canada, g2j 5h6";
+	const char *addr = "\"555 plaines abraham, quebec, canada, g2j 5h6\"";
 	const char *date = "1997-12-09";
 	
 	worden807_expected.survey_purpose = (char*)purpose;
@@ -56,9 +56,9 @@ void test_setup(void)
 	worden807_expected.survey_poi = (char*)poi;
 	worden807_expected.survey_address = (char*)addr;
 	worden807_expected.survey_date = (char*)date;
-	worden807_expected.operation_temp = 74.0;
+	worden807_expected.operation_temp = 74.0f;
 	worden807_expected.ref_station_lat = 46.8f;
-	worden807_expected.survey_dir = 34.25;
+	worden807_expected.survey_dir = 34.25f;
 }
 
 
@@ -150,7 +150,7 @@ MU_TEST(test_assert_assign_idx_node)
 	}
 	
 	const char delim = determine_delim(fp);
-	struct list_t *headers_actual = parse_line(fp, delim);
+	struct list_t *headers_actual = parse_header(fp, delim);
 	assign_idx_node(headers_actual);
 	
 	curr_expect = headers_expected->head;
@@ -214,7 +214,7 @@ MU_TEST(test_assert_load_grav_csv)
 	const char *poi_actual = worden807_actual.survey_poi;
 	mu_assert_string_eq(poi_expected, poi_actual);
 	
-	const char *address_expected = "555 plaines abraham, quebec, canada, g2j 5h6";
+	const char *address_expected = "\"555 plaines abraham, quebec, canada, g2j 5h6\"";
 	const char *address_actual = worden807_actual.survey_address;
 	mu_assert_string_eq(address_expected, address_actual);
 	
@@ -234,7 +234,8 @@ MU_TEST(test_assert_load_grav_csv)
 	float dir_actual = worden807_actual.survey_dir;
 	mu_assert_double_eq(dir_expected, dir_actual);
 }
- 
+
+
  
  
 MU_TEST_SUITE(test_suite)

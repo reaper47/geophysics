@@ -1,5 +1,5 @@
 STATION (m),Time,Time (min),Reading 1,Reading 2,Reading 3,Reading 4,purpose,Area,POI,Address,Date of Survey,operation temperature (F),Reference Station Latitude,Gravimetric Survey Direction,Comments
-0,0.580555556,0,1802.8,1802.5,1802.3,1802.2,LABORATOIRE 1 - LEVÉ GRAVIMÉTRIQUE,LES PLAINES D’ABRAHAM - QUÉBEC,RÉSERVOIR D'EAU MUNICIPAL DE LA VILLE DE QUÉBEC,"555 plaines abraham, quebec, canada, g2j 5h6",1997-12-09,74,46.8,34.25,hello
+0,0.580555556,0,1802.8,1802.5,1802.3,1802.2,laboratoire 1 - leve gravimetrique,les plaines d’abraham - quebec,reservoir d'eau municipal de la ville de quebec,"555 plaines abraham, quebec, canada, g2j 5h6",1997-12-09,74,46.8,34.25,hello
 20,0.588194444,11,1802.3,1802.5,1802.6,1802.4,,,,,,,,,bye
 40,0.597222222,24,1802.4,1802.3,1802.3,1802.3,,,,,,,,,yay
 60,0.604166667,34,1801,1801.4,1801.7,1801.1,,,,,,,,,nay
