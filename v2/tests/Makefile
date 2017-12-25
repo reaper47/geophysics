@@ -32,12 +32,17 @@ HDRSSTR = ./test.h ../src/utils/strings.h
 SRCSSTR =  ../src/utils/strings.c ./test_strings.c
 OBJSSTR = $(SRCSSTR:.c=.o)
 
+HDRSCALCS = ./test.h ../src/utils/calcs.h
+SRCSCALCS =  ../src/utils/calcs.c ./test_calcs.c
+OBJSCALCS = $(SRCSCALCS:.c=.o)
+
 all:
 	make test_array
 	make test_csv
 	make test_sll
 	make test_grav
 	make test_strings
+	make test_calcs
 	make clean
 
 test:
@@ -60,8 +65,11 @@ test_grav: $(OBJSGRAV) $(HDRSGRAV) Makefile
 	$(CC) $(CFLAGS) -o $@ $(OBJSGRAV) $(LIBS)
 	
 test_strings: $(OBJSSTR) $(HDRSSTR) Makefile
-	$(CC) $(CFLAGS) -o $@ $(OBJSSTR) $(LIBS)	
+	$(CC) $(CFLAGS) -o $@ $(OBJSSTR) $(LIBS)
 
+test_calcs: $(OBJSCALCS) $(HDRSCALCS) Makefile
+	$(CC) $(CFLAGS) -o $@ $(OBJSCALCS) $(LIBS)
+	
 .PHONY: clean
 clean:
 	rm -f core $(EXE) *.o
