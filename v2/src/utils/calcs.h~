@@ -6,7 +6,8 @@
 #include <stdbool.h>
 #include <math.h>
 
-#define EPSILON 1e-7f  
+#define EPSILON 1e-7f
+#define ROUND   100000000
 
 bool  approx_eq(float a, float b, float epsilon);
 float avg_arrf(float *arr, int n);
