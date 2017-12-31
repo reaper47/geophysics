@@ -1,16 +1,16 @@
 #include "calcs.h"
 
-float avg_arrf(float *arr, int n)
+double avg_arrf(double *arr, int n)
 {
-	float sum = 0;
+	double sum = 0;
 	for(int i = 0; i < n; i++)
 		sum += arr[i];
-	return sum/(float)n;
+	return sum/n;
 }
 
 
-#include <stdio.h>
-bool approx_eq(float a, float b, float epsilon)
+
+bool approx_eq(double a, double b, double epsilon)
 {
 	double fabsa = fabs(a), fabsb = fabs(b);
 
@@ -18,12 +18,12 @@ bool approx_eq(float a, float b, float epsilon)
 }
 
 
-#include <stdio.h>
-float std_arrf(float *arr, float avg, int n)
+
+double std_arrf(double *arr, double avg, int n)
 {
-	float sum = 0.0f;
+	double sum = 0.0;
 	for(int i = 0; i < n; i++)
 		sum += (arr[i] - avg) * (arr[i] - avg);
-	return (float)(sqrt(sum/(float)n));
+	return sqrt(sum/n);
 }
 

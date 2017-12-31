@@ -145,7 +145,7 @@ void store_avg_readings_std(struct worden807_t *worden, int is_std)
 
 	int pos = 0;
 	int c = 0;
-	float readings[num_readings];
+	double readings[num_readings];
 
 	for(unsigned int i = 0; i < n; i++) {
 		readings[c] = worden->readings[i];
@@ -155,7 +155,7 @@ void store_avg_readings_std(struct worden807_t *worden, int is_std)
 			if(is_std == 0)
 				worden->avg_readings[pos] = avg_arrf(readings, num_readings);
 			else {
-				float avg = worden->avg_readings[pos];
+				double avg = worden->avg_readings[pos];
 				worden->std[pos] = std_arrf(readings, avg, num_readings);
 			}
 
@@ -177,23 +177,23 @@ void store_fields_struct(struct list_t *fields, struct list_t *headers, struct w
 		uint8_t hidx = header->idx;
 		
 		if(hidx >= IDX_READING && hidx < 128) {
-			worden->readings[*ridx] = (float)atof(field->data);
+			worden->readings[*ridx] = atof(field->data);
 			*ridx += 1;
 		}
 		else if(hidx == IDX_STATION)
-			worden->stations[idx] = (float)atof(field->data);
+			worden->stations[idx] = atof(field->data);
 		else if(hidx == IDX_TIME_MIN)
-			worden->times_min[idx] = (float)atof(field->data);
+			worden->times_min[idx] = atof(field->data);
 		else if(hidx == IDX_TIME)
-			worden->times[idx] = (float)atof(field->data);
+			worden->times[idx] = atof(field->data);
 		else if(idx == 0 && hidx == IDX_TEMP)
-			worden->operation_temp = (float)atof(field->data);
+			worden->operation_temp = atof(field->data);
 		else if(idx == 0 && hidx == IDX_DIR)
-			worden->survey_dir = (float)atof(field->data);
+			worden->survey_dir = atof(field->data);
 		else if(idx == 0 && hidx == IDX_PURPOSE)
 			worden->survey_purpose = strdup(field->data);
 		else if(idx == 0 && hidx == IDX_LAT)
-			worden->ref_station_lat = (float)atof(field->data);
+			worden->ref_station_lat = atof(field->data);
 		else if(idx == 0 && hidx == IDX_AREA)
 			worden->survey_area = strdup(field->data);
 		else if(idx == 0 && hidx == IDX_POI)

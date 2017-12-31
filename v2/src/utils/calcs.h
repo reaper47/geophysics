@@ -6,10 +6,10 @@
 #include <stdbool.h>
 #include <math.h>
 
-#define EPSILON 1e-7f  
+#define EPSILON 1e-7
 
-bool  approx_eq(float a, float b, float epsilon);
-float avg_arrf(float *arr, int n);
-float std_arrf(float *arr, float avg, int n);
+bool approx_eq(double a, double b, double epsilon);
+double avg_arrf(double *arr, int n);
+double std_arrf(double *arr, double avg, int n);
 
 #endif /* CALCS_H_ */

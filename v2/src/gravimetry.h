@@ -39,33 +39,33 @@
 #define NUM_READINGS 4
 
 struct worden807_t {
-	float *attract_derivations;
-	float *avg_readings;
-	float *bouguer_anomaly;
-	float *bouguer_corr;
-	float *bouguer_rel_grav_fields;
-	float *free_air_corr;
-	float *grav_anomaly_notcorr;
-	float *lat_corr;
+	double *attract_derivations;
+	double *avg_readings;
+	double *bouguer_anomaly;
+	double *bouguer_corr;
+	double *bouguer_rel_grav_fields;
+	double *free_air_corr;
+	double *grav_anomaly_notcorr;
+	double *lat_corr;
 	uint8_t num_readings;
 	unsigned int num_lines;
-	float  operation_temp;
-	float *readings;
-	float  ref_station_lat;
-	float *rel_grav_fields;
-	float *regional_anomaly;
-	float *residual_anomaly;
-	float *stations;
-	float *std;
+	double  operation_temp;
+	double *readings;
+	double  ref_station_lat;
+	double *rel_grav_fields;
+	double *regional_anomaly;
+	double *residual_anomaly;
+	double *stations;
+	double *std;
 	char  *survey_address;
 	char  *survey_area;
 	char  *survey_date;
-	float  survey_dir;
+	double  survey_dir;
 	char  *survey_poi;
 	char  *survey_purpose;
-	float *temporal_vars;
-	float *times;
-	float *times_min;
+	double *temporal_vars;
+	double *times;
+	double *times_min;
 };
 
 int  alloc_worden807(struct worden807_t *worden, unsigned int n);

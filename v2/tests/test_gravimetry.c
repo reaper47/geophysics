@@ -14,28 +14,28 @@ void test_setup(void)
 	if(alloc_worden807(&worden807_expected, ROWS) == -1)
 		return;
 	
-	float stations[] = { 
-		0.0f, 20.0f, 40.0f, 
-		60.0f, 80.0f, 100.0f 
+	double stations[] = { 
+		0.0, 20.0, 40.0, 
+		60.0, 80.0, 100.0 
 	};
 	
-	float times[] = { 
-		0.580555556f, 0.588194444f, 0.597222222f,
-		0.604166667f, 0.611111111f, 0.622916667f
+	double times[] = { 
+		0.580555556, 0.588194444, 0.597222222,
+		0.604166667, 0.611111111, 0.622916667
 	};
 	
-	float times_min[] = {
-		0.0f, 11.0f, 24.0f,
-		34.0f, 44.0f, 61.0f
+	double times_min[] = {
+		0.0, 11.0, 24.0,
+		34.0, 44.0, 61.0
 	};
 	
-	float readings[] = {
-		1802.8f, 1802.5f, 1802.3f, 1802.2f,
-		1802.3f, 1802.5f, 1802.6f, 1802.4f,
-		1802.4f, 1802.3f, 1802.3f, 1802.3f,
-		1801.0f, 1801.4f, 1801.7f, 1801.1f,
-		1800.7f, 1801.1f, 1800.7f, 1800.8f,
-		1801.1f, 1801.0f, 1801.2f, 1801.1f
+	double readings[] = {
+		1802.8, 1802.5, 1802.3, 1802.2,
+		1802.3, 1802.5, 1802.6, 1802.4,
+		1802.4, 1802.3, 1802.3, 1802.3,
+		1801.0, 1801.4, 1801.7, 1801.1,
+		1800.7, 1801.1, 1800.7, 1800.8,
+		1801.1, 1801.0, 1801.2, 1801.1
 	};
 	
 	for(int i = 0; i < ROWS; i++) {
@@ -59,9 +59,9 @@ void test_setup(void)
 	worden807_expected.survey_poi = (char*)poi;
 	worden807_expected.survey_address = (char*)addr;
 	worden807_expected.survey_date = (char*)date;
-	worden807_expected.operation_temp = 74.0f;
-	worden807_expected.ref_station_lat = 46.8f;
-	worden807_expected.survey_dir = 34.25f;
+	worden807_expected.operation_temp = 74.0;
+	worden807_expected.ref_station_lat = 46.8;
+	worden807_expected.survey_dir = 34.25;
 }
 
 
@@ -187,7 +187,7 @@ MU_TEST(test_assert_load_grav_csv)
 	int status_actual = load_grav_csv(&worden807_actual, GRAV_FILE);
 	mu_assert_int_eq(status_expected, status_actual);
 	
-	float expected, actual;
+	double expected, actual;
 	for(int i = 0; i < ROWS; i++) {
 		expected = worden807_expected.stations[i];
 		actual = worden807_actual.stations[i];
@@ -224,16 +224,16 @@ MU_TEST(test_assert_load_grav_csv)
 	const char *date_actual = worden807_actual.survey_date;
 	mu_assert_string_eq(date_expected, date_actual);
 	
-	float temp_expected = 74.0;
-	float temp_actual = worden807_actual.operation_temp;
+	double temp_expected = 74.0;
+	double temp_actual = worden807_actual.operation_temp;
 	mu_assert_double_eq(temp_expected, temp_actual);
 	
-	float lat_expected = 46.8f;
-	float lat_actual = worden807_actual.ref_station_lat;
+	double lat_expected = 46.8;
+	double lat_actual = worden807_actual.ref_station_lat;
 	mu_assert_double_eq(lat_expected, lat_actual);
 	
-	float dir_expected = 34.25;
-	float dir_actual = worden807_actual.survey_dir;
+	double dir_expected = 34.25;
+	double dir_actual = worden807_actual.survey_dir;
 	mu_assert_double_eq(dir_expected, dir_actual);
 }
 
@@ -245,9 +245,9 @@ MU_TEST(test_assert_load_grav_csv)
  */
 MU_TEST(test_assert_store_avg_readings)
 {
-	float expected[] = {
-		1802.45f, 1802.45f, 1802.325f, 
-		1801.3f, 1800.825f, 1801.1f
+	double expected[] = {
+		1802.45, 1802.45, 1802.325, 
+		1801.3, 1800.825, 1801.1
 	};
 
 	for(int i = 0; i < ROWS; i++)
@@ -263,9 +263,9 @@ MU_TEST(test_assert_store_avg_readings)
 
 MU_TEST(test_assert_store_std)
 {
-	float expected[] = {
-		0.229128784f, 0.111803398f, 0.04330127f,
-		0.273861279f, 0.163935963f, 0.07071067f
+	double expected[] = {
+		0.22912878474777, 0.111803398874964, 0.043301270189281,
+		0.273861289, 0.163935963107496, 0.070710678118671
 	};
 
 	for(int i = 0; i < ROWS; i++)
@@ -273,10 +273,8 @@ MU_TEST(test_assert_store_std)
 	
 	store_avg_readings_std(&worden807_actual, 1);
 
-	for(int i = 0; i < ROWS; i++) {
-		printf("e: %.10f | a: %.10f | y: %i\n", worden807_expected.std[i], worden807_actual.std[i], approx_eq(worden807_expected.std[i], worden807_actual.std[i], EPSILON));
+	for(int i = 0; i < ROWS; i++)
 		mu_assert(approx_eq(worden807_expected.std[i], worden807_actual.std[i], EPSILON), "unexpected std value");
-	}
 }
 
 

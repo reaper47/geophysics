@@ -1,11 +1,11 @@
 #include "../src/utils/calcs.h"
 #include "test.h"
-#include <float.h>
+
 #define NUM_ELS 10
 
-float vals[10];
-float vals_avg_expected;
-float vals_std_expected;
+double vals[10];
+double vals_avg_expected;
+double vals_std_expected;
 
 void test_setup(void)
 {
@@ -62,7 +62,7 @@ MU_TEST(test_check_setup)
  */
 MU_TEST(test_assert_avg_arrf)
 {
-	float avg_actual = avg_arrf(vals, NUM_ELS);
+	double avg_actual = avg_arrf(vals, NUM_ELS);
 
 	mu_assert(approx_eq(avg_actual, vals_avg_expected, EPSILON), "avg_actual not as expected");
 }
@@ -70,8 +70,8 @@ MU_TEST(test_assert_avg_arrf)
 
 
 MU_TEST(test_assert_std_arrf) {
-	float avg = avg_arrf(vals, NUM_ELS);
-	float std_actual = std_arrf(vals, avg, NUM_ELS);
+	double avg = avg_arrf(vals, NUM_ELS);
+	double std_actual = std_arrf(vals, avg, NUM_ELS);
 
 	mu_assert(approx_eq(std_actual, vals_std_expected, EPSILON), "std_actual not as expected");
 }

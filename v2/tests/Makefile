@@ -43,6 +43,7 @@ all:
 	make test_grav
 	make test_strings
 	make test_calcs
+	make test_grav
 	make clean
 
 test:
