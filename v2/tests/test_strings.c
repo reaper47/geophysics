@@ -51,6 +51,10 @@ MU_TEST(test_assert_strlower_not_csv)
 
 
 
+/*
+ * tests - strlower_csv
+ *
+ */
 MU_TEST(test_assert_strlower_csv)
 {
 	char str_tst[]      = "I, MARKUS, WAS AT HOME YESTERDAY!\n";
@@ -66,6 +70,23 @@ MU_TEST(test_assert_strlower_csv)
 
 
 
+/*
+ * tests - char* to char[]
+ *
+ */
+MU_TEST(test_assert_charptr_to_static)
+{
+	const char *s_expected = "Hello, World (F)!";
+
+	int n = (int)strlen(s_expected);
+	char s_actual[n+1];
+	charptr_to_static((char*)s_expected, s_actual, n);
+
+	mu_assert_string_eq(s_expected, s_actual);
+}
+
+
+
 MU_TEST_SUITE(test_suite)
 {
 	MU_SUITE_CONFIGURE(&test_setup, &test_teardown);
@@ -73,7 +94,7 @@ MU_TEST_SUITE(test_suite)
 	MU_RUN_TEST(test_assert_rm_spaces);
 	MU_RUN_TEST(test_assert_strlower_not_csv);
 	MU_RUN_TEST(test_assert_strlower_csv);
-
+	MU_RUN_TEST(test_assert_charptr_to_static);
 }
 
 

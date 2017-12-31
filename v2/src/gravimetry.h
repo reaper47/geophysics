@@ -16,12 +16,12 @@
 #define READING  "reading"
 #define PURPOSE  "purpose"
 #define AREA	 "area"
-#define POI	 "poi"
+#define POI      "poi"
 #define ADDRESS  "address"
 #define DATE	 "date"
 #define TEMP	 "temperature"
 #define LAT      "latitude"
-#define DIR	 "direction"
+#define DIR      "direction"
 
 #define IDX_STATION  0
 #define IDX_TIME     1
@@ -36,7 +36,21 @@
 #define IDX_LAT      9
 #define IDX_DIR	     10
 
+#define DEFAULT_TEMP_UNIT 'z'
+#define CELSIUS 'c'
+#define FAHR 'f'
+#define TEMP_BTWN "("
+
 #define NUM_READINGS 4
+
+/* Instrument Dial Constants */
+#define WORDEN807_LEFTX_C   48.8889
+#define WORDEN807_LEFTX_F  120.0
+#define WORDEN807_LOWERY     0.40514
+#define WORDEN807_RIGHTX_C -17.7778
+#define WORDEN807_RIGHTX_F   0.0
+#define WORDEN807_UPPERY     0.40546
+#define INVALID_TEMP -999
 
 struct worden807_t {
 	double *attract_derivations;
@@ -50,6 +64,7 @@ struct worden807_t {
 	uint8_t num_readings;
 	unsigned int num_lines;
 	double  operation_temp;
+	char    operation_temp_unit;
 	double *readings;
 	double  ref_station_lat;
 	double *rel_grav_fields;
@@ -70,9 +85,11 @@ struct worden807_t {
 
 int  alloc_worden807(struct worden807_t *worden, unsigned int n);
 void assign_idx_node(struct list_t *list, struct worden807_t *worden);
-void store_avg_readings_std(struct worden807_t *worden, int is_std);
+double dial_const_worden807(struct worden807_t *worden);
 void free_worden807(struct worden807_t *worden);
 int  load_grav_csv(struct worden807_t *worden, const char *csv_file);
+void store_avg_readings_std(struct worden807_t *worden, int is_std);
 void store_fields_struct(struct list_t *fields, struct list_t *headers, struct worden807_t *worden, int idx, int *ridx);
 
 #endif /* gravimetry.h */
+

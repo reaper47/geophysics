@@ -7,6 +7,7 @@
 #include <string.h>
 #include <ctype.h>
 
+void charptr_to_static(char *str, char *buff, int cnt); 
 void rm_spaces(char *src);
 void strlower(char *src, bool is_csv);
 

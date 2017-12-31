@@ -20,6 +20,7 @@ int alloc_worden807(struct worden807_t *worden, unsigned int n)
 	worden->times                   = malloc(sizeof(worden->times) * n);
 	worden->times_min               = malloc(sizeof(worden->times_min) * n);
 	worden->num_readings = 0;
+	worden->operation_temp_unit = DEFAULT_TEMP_UNIT;
 	
 	if(worden->attract_derivations      == NULL || worden->avg_readings     == NULL ||
 		worden->bouguer_anomaly         == NULL || worden->bouguer_corr     == NULL ||
@@ -86,13 +87,47 @@ void assign_idx_node(struct list_t *list, struct worden807_t *worden)
 			curr->idx = IDX_ADDRESS;
 		else if(strstr(curr->data, DATE) != NULL)
 			curr->idx = IDX_DATE;
-		else if(strstr(curr->data, TEMP) != NULL)
+		else if(strstr(curr->data, TEMP) != NULL) {
 			curr->idx = IDX_TEMP;
+
+			int n = (int)strlen(curr->data);
+			char s[n+1];
+			charptr_to_static(curr->data, s, n);
+
+			char *unit = NULL;
+			for(char *p = strtok(s, TEMP_BTWN); p != NULL; p = strtok(NULL, TEMP_BTWN))
+				unit = strdup(p);
+			worden->operation_temp_unit = (char)tolower(unit[0]);
+			free(unit);
+		}
 		else if(strstr(curr->data, DIR) != NULL)
 			curr->idx = IDX_DIR;
 	}
 
 	worden->num_readings = (uint8_t)(read_idx - IDX_READING);
+}
+
+
+
+double dial_const_worden807(struct worden807_t *worden)
+{
+	const double uppery = WORDEN807_UPPERY;
+	const double lowery = WORDEN807_LOWERY;
+
+	double leftx, rightx, dial_const;
+	leftx = rightx = dial_const = 0.0;
+
+	if(worden->operation_temp_unit == CELSIUS) {
+		leftx  = WORDEN807_LEFTX_C;
+		rightx = WORDEN807_RIGHTX_C;
+	} else if(worden->operation_temp_unit == FAHR) {
+		leftx  = WORDEN807_LEFTX_F;
+		rightx = WORDEN807_RIGHTX_F;
+	} else {
+		return INVALID_TEMP;
+	}
+
+	return ((uppery-lowery)/(leftx-rightx)) * worden->operation_temp + lowery;
 }
 
 
@@ -186,7 +221,7 @@ void store_fields_struct(struct list_t *fields, struct list_t *headers, struct w
 			worden->times_min[idx] = atof(field->data);
 		else if(hidx == IDX_TIME)
 			worden->times[idx] = atof(field->data);
-		else if(idx == 0 && hidx == IDX_TEMP)
+		else if(idx == 0 && hidx == IDX_TEMP) 
 			worden->operation_temp = atof(field->data);
 		else if(idx == 0 && hidx == IDX_DIR)
 			worden->survey_dir = atof(field->data);
@@ -207,3 +242,4 @@ void store_fields_struct(struct list_t *fields, struct list_t *headers, struct w
 		field  = field->next;
 	}	
 }
+

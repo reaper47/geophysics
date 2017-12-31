@@ -62,6 +62,7 @@ void test_setup(void)
 	worden807_expected.operation_temp = 74.0;
 	worden807_expected.ref_station_lat = 46.8;
 	worden807_expected.survey_dir = 34.25;
+	worden807_expected.operation_temp_unit = 'F';
 }
 
 
@@ -235,6 +236,10 @@ MU_TEST(test_assert_load_grav_csv)
 	double dir_expected = 34.25;
 	double dir_actual = worden807_actual.survey_dir;
 	mu_assert_double_eq(dir_expected, dir_actual);
+
+	char temp_unit_expected = 'f';
+	char temp_unit_actual = worden807_actual.operation_temp_unit;
+	mu_assert_int_eq(temp_unit_expected, temp_unit_actual);
 }
 
 
@@ -261,6 +266,10 @@ MU_TEST(test_assert_store_avg_readings)
 
 
 
+/*
+ * tests - store_std
+ *
+ */
 MU_TEST(test_assert_store_std)
 {
 	double expected[] = {
@@ -279,6 +288,35 @@ MU_TEST(test_assert_store_std)
 
 
 
+/*
+ * tests - dial_const_worden807
+ *
+ */
+MU_TEST(test_assert_dial_const_worden807)
+{
+	double dial_expected = 0.4053373;
+
+	double dial_actual = dial_const_worden807(&worden807_actual);
+
+	mu_assert(approx_eq(dial_expected, dial_actual, EPSILON), "dial const incorrect");
+}
+
+
+
+MU_TEST(test_assert_dial_const_worden807_invalid)
+{
+	double dial_expected = INVALID_TEMP;
+
+	char tmp = worden807_actual.operation_temp_unit;
+	worden807_actual.operation_temp_unit = 'v';
+	double dial_actual = dial_const_worden807(&worden807_actual);
+	worden807_actual.operation_temp_unit = tmp;
+
+	mu_assert_double_eq(dial_expected, dial_actual);
+}
+
+
+
 MU_TEST_SUITE(test_suite)
 {
 	MU_SUITE_CONFIGURE(&test_setup, &test_teardown);
@@ -287,6 +325,8 @@ MU_TEST_SUITE(test_suite)
 	MU_RUN_TEST(test_assert_load_grav_csv);
 	MU_RUN_TEST(test_assert_store_avg_readings);
 	MU_RUN_TEST(test_assert_store_std);
+	MU_RUN_TEST(test_assert_dial_const_worden807);
+	MU_RUN_TEST(test_assert_dial_const_worden807_invalid);
 }
 
  
