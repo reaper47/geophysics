@@ -243,3 +243,15 @@ void store_fields_struct(struct list_t *fields, struct list_t *headers, struct w
 	}	
 }
 
+
+
+void store_rel_grav_fields(struct worden807_t *worden)
+{
+	unsigned int num_lines = worden->num_lines;
+	double dial_const = dial_const_worden807(worden);
+	
+	for(unsigned int i = 0; i < num_lines; i++)
+		worden->rel_grav_fields[i] = worden->avg_readings[i] * dial_const;
+
+}
+

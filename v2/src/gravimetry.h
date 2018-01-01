@@ -90,6 +90,7 @@ void free_worden807(struct worden807_t *worden);
 int  load_grav_csv(struct worden807_t *worden, const char *csv_file);
 void store_avg_readings_std(struct worden807_t *worden, int is_std);
 void store_fields_struct(struct list_t *fields, struct list_t *headers, struct worden807_t *worden, int idx, int *ridx);
+void store_rel_grav_fields(struct worden807_t *worden);
 
 #endif /* gravimetry.h */
 

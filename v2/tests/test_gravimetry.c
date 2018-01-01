@@ -161,7 +161,9 @@ MU_TEST(test_assert_assign_idx_node)
 	struct node_t *curr_actual = headers_actual->head;
 
 	for( ; curr_expect != NULL; curr_expect = curr_expect->next) {
-		for(curr_actual = headers_actual->head; curr_actual != NULL; curr_actual = curr_actual->next) {
+		curr_actual = headers_actual->head;
+
+		for( ; curr_actual != NULL; curr_actual = curr_actual->next) {
 			if(strcmp(curr_expect->data, curr_actual->data) == 0) {
 				break;
 			}
@@ -260,8 +262,14 @@ MU_TEST(test_assert_store_avg_readings)
 
 	store_avg_readings_std(&worden807_actual, 0);
 
-	for(int i = 0; i < ROWS; i++)		
-		mu_assert(approx_eq(worden807_expected.avg_readings[i], worden807_actual.avg_readings[i], EPSILON), "unexpected average in average readings");	
+	const char *msg = "unexpected average in average readings";
+	for(int i = 0; i < ROWS; i++) {
+		double e = worden807_expected.avg_readings[i];
+	       	double a = worden807_actual.avg_readings[i];
+
+		mu_assert(approx_eq(e, a, EPSILON), msg);
+	}
+
 }
 
 
@@ -282,8 +290,13 @@ MU_TEST(test_assert_store_std)
 	
 	store_avg_readings_std(&worden807_actual, 1);
 
-	for(int i = 0; i < ROWS; i++)
-		mu_assert(approx_eq(worden807_expected.std[i], worden807_actual.std[i], EPSILON), "unexpected std value");
+	const char *msg = "unexpected std value";
+	for(int i = 0; i < ROWS; i++) {
+		double e = worden807_expected.std[i];
+		double a = worden807_actual.std[i];
+
+		mu_assert(approx_eq(e, a, EPSILON), msg);
+	}
 }
 
 
@@ -317,6 +330,33 @@ MU_TEST(test_assert_dial_const_worden807_invalid)
 
 
 
+/*
+ * tests - store_relative_grav_field
+ *
+ */
+MU_TEST(test_assert_store_rel_grav_fields)
+{
+	double grav_expected[] = {
+		730.600216385, 730.600216385, 730.5495492225,
+		730.13407849, 729.9415432725, 730.05301103
+	};
+
+	for(int i = 0; i < ROWS; i++)
+		worden807_expected.rel_grav_fields[i] = grav_expected[i];
+
+	store_rel_grav_fields(&worden807_actual);
+
+	const char *msg = "error when calculating relative gravitational fields";
+	for(int i = 0; i < ROWS; i++) {
+		double e = worden807_expected.rel_grav_fields[i];
+		double a = worden807_actual.rel_grav_fields[i];
+		
+		mu_assert(approx_eq(e, a, EPSILON), msg);
+	}
+}
+
+
+
 MU_TEST_SUITE(test_suite)
 {
 	MU_SUITE_CONFIGURE(&test_setup, &test_teardown);
@@ -327,6 +367,7 @@ MU_TEST_SUITE(test_suite)
 	MU_RUN_TEST(test_assert_store_std);
 	MU_RUN_TEST(test_assert_dial_const_worden807);
 	MU_RUN_TEST(test_assert_dial_const_worden807_invalid);
+	MU_RUN_TEST(test_assert_store_rel_grav_fields);
 }
 
  

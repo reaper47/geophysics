@@ -64,7 +64,8 @@ MU_TEST(test_assert_avg_arrf)
 {
 	double avg_actual = avg_arrf(vals, NUM_ELS);
 
-	mu_assert(approx_eq(avg_actual, vals_avg_expected, EPSILON), "avg_actual not as expected");
+	const char *msg = "avg_actual not as expected";
+	mu_assert(approx_eq(avg_actual, vals_avg_expected, EPSILON), msg);
 }
 
 
@@ -73,7 +74,8 @@ MU_TEST(test_assert_std_arrf) {
 	double avg = avg_arrf(vals, NUM_ELS);
 	double std_actual = std_arrf(vals, avg, NUM_ELS);
 
-	mu_assert(approx_eq(std_actual, vals_std_expected, EPSILON), "std_actual not as expected");
+	const char *msg = "std_actual not as expected";
+	mu_assert(approx_eq(std_actual, vals_std_expected, EPSILON), msg);
 }
 
 
