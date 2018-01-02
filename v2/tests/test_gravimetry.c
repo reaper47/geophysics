@@ -357,6 +357,32 @@ MU_TEST(test_assert_store_rel_grav_fields)
 
 
 
+/*
+ * tests - store_grav_anomaly_notcorr
+ *
+ */
+MU_TEST(test_assert_store_grav_anomaly_notcorr)
+{
+	double grav_expected[] = {
+		0.0, 0.0, 0.050667162499963, 0.466137894999974, 
+		0.658673112499969, 0.54720535499996
+	};
+
+	for(int i = 0; i < ROWS; i++)
+		worden807_expected.grav_anomaly_notcorr[i] = grav_expected[i];
+
+	store_grav_anomaly_notcorr(&worden807_actual);
+
+	const char *msg = "error when calculating uncorrected gravimetric anomalies"; 
+	for(int i = 0; i < ROWS; i++) {
+		double e = worden807_expected.grav_anomaly_notcorr[i];
+		double a = worden807_actual.grav_anomaly_notcorr[i];
+		mu_assert(approx_eq(e, a, EPSILON), msg);
+	}
+}
+
+
+
 MU_TEST_SUITE(test_suite)
 {
 	MU_SUITE_CONFIGURE(&test_setup, &test_teardown);
@@ -368,6 +394,7 @@ MU_TEST_SUITE(test_suite)
 	MU_RUN_TEST(test_assert_dial_const_worden807);
 	MU_RUN_TEST(test_assert_dial_const_worden807_invalid);
 	MU_RUN_TEST(test_assert_store_rel_grav_fields);
+	MU_RUN_TEST(test_assert_store_grav_anomaly_notcorr);
 }
 
  

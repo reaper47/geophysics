@@ -245,6 +245,19 @@ void store_fields_struct(struct list_t *fields, struct list_t *headers, struct w
 
 
 
+void store_grav_anomaly_notcorr(struct worden807_t *worden)
+{
+	double ref_station_grav = worden->rel_grav_fields[0];
+	unsigned int num_lines = worden->num_lines;
+
+	for(unsigned int i = 0; i < num_lines; i++) {
+		double grav = worden->rel_grav_fields[i];
+		worden->grav_anomaly_notcorr[i] = ref_station_grav - grav;
+	}	
+}
+
+
+
 void store_rel_grav_fields(struct worden807_t *worden)
 {
 	unsigned int num_lines = worden->num_lines;
