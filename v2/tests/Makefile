@@ -5,7 +5,7 @@ WARNINGS ?= -Wall -Wextra -Wshadow -Wpointer-arith -Wcast-align \
             -Wredundant-decls -Wnested-externs -Winline -Wno-long-long \
             -Wuninitialized -Wconversion -Wstrict-prototypes -Werror
 			
-CFLAGS := -std=c11 -Ofast $(WARNINGS) 
+CFLAGS := -std=c11 -O3 $(WARNINGS) 
 
 DEBUG := -g3
 #CFLAG += -g3
@@ -79,4 +79,4 @@ clean:
 .PHONY: purge
 purge:
 	rm -f core $(EXE) *.o
-	rm -rf ../src/*.o ../src/utils/*.o ./test_array ./test_csv ./test_csv ./test_sll ./test_grav ./test_strings
+	rm -rf ../src/*.o ../src/utils/*.o ./test_array ./test_csv ./test_csv ./test_sll ./test_grav ./test_strings ./test_calcs

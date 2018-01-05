@@ -268,3 +268,23 @@ void store_rel_grav_fields(struct worden807_t *worden)
 
 }
 
+
+
+void store_temporal_vars(struct worden807_t *worden)
+{
+	unsigned int num_lines = worden->num_lines;
+	double epsilon = 1e-1;
+	
+	for(unsigned int i = 0; i < num_lines; i++) {
+		double station = worden->stations[i];
+		double ref_station = 0.0;
+
+		if(approx_eq(station, ref_station, epsilon)) {
+			double anomaly = worden->grav_anomaly_notcorr[i];
+			worden->temporal_vars[i] = -anomaly;
+		} else {
+			worden->temporal_vars[i] = 0.0;
+		}
+	}
+}
+

@@ -38,15 +38,11 @@ void test_setup(void)
 		1801.1, 1801.0, 1801.2, 1801.1
 	};
 	
-	for(int i = 0; i < ROWS; i++) {
-		worden807_expected.stations[i] = stations[i];
-		worden807_expected.times[i] = times[i];
-		worden807_expected.times_min[i] = times_min[i];
-	}
-	
-	for(int i = 0; i < TOTAL_READINGS; i++)
-		worden807_expected.readings[i] = readings[i];
-	
+	memcpy(worden807_expected.stations, stations, sizeof(stations));
+	memcpy(worden807_expected.times, times, sizeof(times));
+	memcpy(worden807_expected.times_min, times_min, sizeof(times_min));
+	memcpy(worden807_expected.readings, readings, sizeof(readings));
+
 	const char *purpose = "LABORATOIRE 1 - LEVE GRAVIMETRIQUE";
 	const char *area = "LES PLAINES D’ABRAHAM - QUEBEC";
 	const char *poi = "RESERVOIR D'EAU MUNICIPAL DE LA VILLE DE QUEBEC";
@@ -68,8 +64,7 @@ void test_setup(void)
 
 
 void test_teardown(void)
-{
-	
+{	
 	free_worden807(&worden807_expected);
 }
 
@@ -256,9 +251,8 @@ MU_TEST(test_assert_store_avg_readings)
 		1802.45, 1802.45, 1802.325, 
 		1801.3, 1800.825, 1801.1
 	};
-
-	for(int i = 0; i < ROWS; i++)
-		worden807_expected.avg_readings[i] = expected[i];
+	
+	memcpy(worden807_expected.avg_readings, expected, sizeof(expected));
 
 	store_avg_readings_std(&worden807_actual, 0);
 
@@ -285,8 +279,7 @@ MU_TEST(test_assert_store_std)
 		0.273861289, 0.163935963107496, 0.070710678118671
 	};
 
-	for(int i = 0; i < ROWS; i++)
-		worden807_expected.std[i] = expected[i];
+	memcpy(worden807_expected.std, expected, sizeof(expected));
 	
 	store_avg_readings_std(&worden807_actual, 1);
 
@@ -341,8 +334,7 @@ MU_TEST(test_assert_store_rel_grav_fields)
 		730.13407849, 729.9415432725, 730.05301103
 	};
 
-	for(int i = 0; i < ROWS; i++)
-		worden807_expected.rel_grav_fields[i] = grav_expected[i];
+	memcpy(worden807_expected.rel_grav_fields, grav_expected, sizeof(grav_expected));
 
 	store_rel_grav_fields(&worden807_actual);
 
@@ -368,8 +360,7 @@ MU_TEST(test_assert_store_grav_anomaly_notcorr)
 		0.658673112499969, 0.54720535499996
 	};
 
-	for(int i = 0; i < ROWS; i++)
-		worden807_expected.grav_anomaly_notcorr[i] = grav_expected[i];
+	memcpy(worden807_expected.grav_anomaly_notcorr, grav_expected, sizeof(grav_expected));
 
 	store_grav_anomaly_notcorr(&worden807_actual);
 
@@ -377,6 +368,31 @@ MU_TEST(test_assert_store_grav_anomaly_notcorr)
 	for(int i = 0; i < ROWS; i++) {
 		double e = worden807_expected.grav_anomaly_notcorr[i];
 		double a = worden807_actual.grav_anomaly_notcorr[i];
+		mu_assert(approx_eq(e, a, EPSILON), msg);
+	}
+}
+
+
+
+/*
+ * tests - store_temporal_vars
+ *
+ */
+MU_TEST(test_assert_store_temporal_vars)
+{
+	double expected[] = {
+		0.0, 0.0, 0.0,
+		0.0, 0.0, 0.0
+	};
+
+	memcpy(worden807_expected.temporal_vars, expected, sizeof(expected));
+
+	store_temporal_vars(&worden807_actual);
+
+	const char *msg = "error when calculating temporal variations of ref stations";
+	for(int i = 0; i < ROWS; i++) {
+		double e = worden807_expected.temporal_vars[i];
+		double a = worden807_actual.temporal_vars[i];
 		mu_assert(approx_eq(e, a, EPSILON), msg);
 	}
 }
@@ -395,6 +411,7 @@ MU_TEST_SUITE(test_suite)
 	MU_RUN_TEST(test_assert_dial_const_worden807_invalid);
 	MU_RUN_TEST(test_assert_store_rel_grav_fields);
 	MU_RUN_TEST(test_assert_store_grav_anomaly_notcorr);
+	MU_RUN_TEST(test_assert_store_temporal_vars);
 }
 
  

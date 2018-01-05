@@ -92,6 +92,7 @@ void store_avg_readings_std(struct worden807_t *worden, int is_std);
 void store_fields_struct(struct list_t *fields, struct list_t *headers, struct worden807_t *worden, int idx, int *ridx);
 void store_grav_anomaly_notcorr(struct worden807_t *worden);
 void store_rel_grav_fields(struct worden807_t *worden);
+void store_temporal_vars(struct worden807_t *worden);
 
 #endif /* gravimetry.h */
 
