@@ -53,7 +53,7 @@
 #define INVALID_TEMP -999
 
 struct worden807_t {
-	double *attract_derivations;
+	double *attraction_deviation;
 	double *avg_readings;
 	double *bouguer_anomaly;
 	double *bouguer_corr;
@@ -93,6 +93,7 @@ void store_fields_struct(struct list_t *fields, struct list_t *headers, struct w
 void store_grav_anomaly_notcorr(struct worden807_t *worden);
 void store_rel_grav_fields(struct worden807_t *worden);
 void store_temporal_vars(struct worden807_t *worden);
+void store_attraction_deviation(struct worden807_t *worden);
 
 #endif /* gravimetry.h */
 

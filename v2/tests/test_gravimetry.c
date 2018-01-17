@@ -3,8 +3,8 @@
 #include "test.h"
 
 #define GRAV_FILE "./test_data/grav.csv"
-#define ROWS 6
-#define TOTAL_READINGS 24
+#define ROWS 13
+#define TOTAL_READINGS 52 
 
 struct worden807_t worden807_expected;
 struct worden807_t worden807_actual;
@@ -16,17 +16,26 @@ void test_setup(void)
 	
 	double stations[] = { 
 		0.0, 20.0, 40.0, 
-		60.0, 80.0, 100.0 
+		60.0, 80.0, 100.0,
+		120.0, 140.0, 160.0, 
+		180.0, 200.0, 220.0, 
+		0.0
 	};
 	
 	double times[] = { 
 		0.580555556, 0.588194444, 0.597222222,
-		0.604166667, 0.611111111, 0.622916667
+		0.604166667, 0.611111111, 0.622916667,
+		0.630555556, 0.636111111, 0.642361111,
+		0.647222222, 0.650694444, 0.654861111,
+		0.663888889
 	};
 	
 	double times_min[] = {
 		0.0, 11.0, 24.0,
-		34.0, 44.0, 61.0
+		34.0, 44.0, 61.0,
+		72.0, 80.0, 89.0,
+		96.0, 101.0, 107.0,
+		120.0
 	};
 	
 	double readings[] = {
@@ -35,7 +44,15 @@ void test_setup(void)
 		1802.4, 1802.3, 1802.3, 1802.3,
 		1801.0, 1801.4, 1801.7, 1801.1,
 		1800.7, 1801.1, 1800.7, 1800.8,
-		1801.1, 1801.0, 1801.2, 1801.1
+		1801.1, 1801.0, 1801.2, 1801.1,
+		1801.0,	1801.1,	1801.0,	1801.0,
+		1799.5,	1799.6,	1799.5,	1799.5,
+		1798.8,	1799.0,	1799.1,	1799.1,
+		1798.8,	1799.1,	1799.0,	1799.1,
+		1798.9,	1799.0,	1799.1,	1799.0,
+		1799.3,	1799.1,	1799.1,	1799.3,
+		1802.6,	1802.4,	1802.6,	1802.3
+
 	};
 	
 	memcpy(worden807_expected.stations, stations, sizeof(stations));
@@ -237,6 +254,10 @@ MU_TEST(test_assert_load_grav_csv)
 	char temp_unit_expected = 'f';
 	char temp_unit_actual = worden807_actual.operation_temp_unit;
 	mu_assert_int_eq(temp_unit_expected, temp_unit_actual);
+
+	unsigned int num_lines_expected = 13;
+	unsigned int num_lines_actual = worden807_actual.num_lines;
+	mu_assert_int_eq((int)num_lines_expected, (int)num_lines_actual);
 }
 
 
@@ -249,7 +270,10 @@ MU_TEST(test_assert_store_avg_readings)
 {
 	double expected[] = {
 		1802.45, 1802.45, 1802.325, 
-		1801.3, 1800.825, 1801.1
+		1801.3, 1800.825, 1801.1,
+		1801.025, 1799.525, 1799.0,
+		1799.0, 1799.0, 1799.2,
+		1802.475
 	};
 	
 	memcpy(worden807_expected.avg_readings, expected, sizeof(expected));
@@ -275,8 +299,11 @@ MU_TEST(test_assert_store_avg_readings)
 MU_TEST(test_assert_store_std)
 {
 	double expected[] = {
-		0.22912878474777, 0.111803398874964, 0.043301270189281,
-		0.273861289, 0.163935963107496, 0.070710678118671
+		0.229128784747770, 0.111803398874964, 0.043301270189281,
+		0.273861278752625, 0.163935963107496, 0.070710678118671,
+		0.043301270189183, 0.043301270189183, 0.122474487139140,
+		0.122474487139140, 0.070710678118591, 0.100000000000023,
+		0.129903810567624
 	};
 
 	memcpy(worden807_expected.std, expected, sizeof(expected));
@@ -287,7 +314,7 @@ MU_TEST(test_assert_store_std)
 	for(int i = 0; i < ROWS; i++) {
 		double e = worden807_expected.std[i];
 		double a = worden807_actual.std[i];
-
+		
 		mu_assert(approx_eq(e, a, EPSILON), msg);
 	}
 }
@@ -330,8 +357,11 @@ MU_TEST(test_assert_dial_const_worden807_invalid)
 MU_TEST(test_assert_store_rel_grav_fields)
 {
 	double grav_expected[] = {
-		730.600216385, 730.600216385, 730.5495492225,
-		730.13407849, 729.9415432725, 730.05301103
+		730.6002163850, 730.6002163850, 730.5495492225,
+		730.1340784900, 729.9415432725, 730.0530110300, 
+		730.0226107325, 729.4146047825, 729.2018027000,
+		729.2018027000, 729.2018027000, 729.2828701600, 
+		730.6103498175
 	};
 
 	memcpy(worden807_expected.rel_grav_fields, grav_expected, sizeof(grav_expected));
@@ -356,8 +386,11 @@ MU_TEST(test_assert_store_rel_grav_fields)
 MU_TEST(test_assert_store_grav_anomaly_notcorr)
 {
 	double grav_expected[] = {
-		0.0, 0.0, 0.050667162499963, 0.466137894999974, 
-		0.658673112499969, 0.54720535499996
+		0.000000000000000, 0.000000000000000, 0.050667162499963,
+		0.466137895000088, 0.658673112499969, 0.547205355000074,
+		0.577605652499983, 1.185611602499990, 1.398413685000040,
+		1.398413685000040, 1.3984136850000400, 1.31734622500005000,
+		-0.01013343249997	
 	};
 
 	memcpy(worden807_expected.grav_anomaly_notcorr, grav_expected, sizeof(grav_expected));
@@ -382,7 +415,10 @@ MU_TEST(test_assert_store_temporal_vars)
 {
 	double expected[] = {
 		0.0, 0.0, 0.0,
-		0.0, 0.0, 0.0
+		0.0, 0.0, 0.0,
+		0.0, 0.0, 0.0,
+		0.0, 0.0, 0.0,
+		0.010133433333294
 	};
 
 	memcpy(worden807_expected.temporal_vars, expected, sizeof(expected));
@@ -393,6 +429,35 @@ MU_TEST(test_assert_store_temporal_vars)
 	for(int i = 0; i < ROWS; i++) {
 		double e = worden807_expected.temporal_vars[i];
 		double a = worden807_actual.temporal_vars[i];
+		mu_assert(approx_eq(e, a, EPSILON), msg);
+	}
+}
+
+
+
+/*
+ * tests - store attraction_deviation
+ *
+ */
+MU_TEST(test_assert_store_attraction_deviation)
+{
+	double expected[] = { 
+		-0.000000000000000, -0.000844452777775, -0.001688905555549,
+		-0.002533358333324, -0.003377811111098, -0.004222263888873,
+		-0.005066716666647, -0.005911169444422, -0.006755622222196, 
+		-0.007600074999971, -0.008444527777745, -0.009288980555520,
+		-0.010133433333294	
+	};
+
+	memcpy(worden807_expected.attraction_deviation, expected, sizeof(expected));
+	
+	store_attraction_deviation(&worden807_actual);
+
+	const char *msg = "attraction deviations do not match";
+	for(int i = 0; i < ROWS; i++) {
+		double e = worden807_expected.attraction_deviation[i];
+		double a = worden807_actual.attraction_deviation[i];
+		
 		mu_assert(approx_eq(e, a, EPSILON), msg);
 	}
 }
@@ -412,6 +477,7 @@ MU_TEST_SUITE(test_suite)
 	MU_RUN_TEST(test_assert_store_rel_grav_fields);
 	MU_RUN_TEST(test_assert_store_grav_anomaly_notcorr);
 	MU_RUN_TEST(test_assert_store_temporal_vars);
+	MU_RUN_TEST(test_assert_store_attraction_deviation);
 }
 
  

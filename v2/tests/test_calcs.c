@@ -70,12 +70,50 @@ MU_TEST(test_assert_avg_arrf)
 
 
 
-MU_TEST(test_assert_std_arrf) {
+/*
+ * tests - std_arrf
+ * 
+ */
+MU_TEST(test_assert_std_arrf)
+{
 	double avg = avg_arrf(vals, NUM_ELS);
 	double std_actual = std_arrf(vals, avg, NUM_ELS);
 
 	const char *msg = "std_actual not as expected";
 	mu_assert(approx_eq(std_actual, vals_std_expected, EPSILON), msg);
+}
+
+
+
+/*
+ * tests - interpolate_pts
+ *
+ */
+MU_TEST(test_assert_interpolate_pts)
+{
+	double start_value = 0.0;
+	double end_value = 0.010133433333294;
+	int num_steps = 13;
+
+	double arr_expected[] = {
+		-0.000000000000000, -0.000844452777775, -0.001688905555549,
+		-0.002533358333324, -0.003377811111098, -0.004222263888873,
+		-0.005066716666647, -0.005911169444422, -0.006755622222196, 
+		-0.007600074999971, -0.008444527777745, -0.009288980555520,
+		-0.010133433333294	
+	};
+
+	double *arr_actual = interpolate_pts(start_value, end_value, num_steps);
+
+	const char *msg = "interpolation between two points error";
+	for(int i = 0; i < num_steps; i++) {
+		double expected = arr_expected[i];
+		double actual = arr_actual[i];
+			
+		mu_assert(approx_eq(expected, actual, EPSILON), msg);
+	}
+
+	free(arr_actual);
 }
 
 
@@ -86,6 +124,7 @@ MU_TEST_SUITE(test_suite)
 	
 	MU_RUN_TEST(test_check_setup);
 	MU_RUN_TEST(test_assert_avg_arrf);
+	MU_RUN_TEST(test_assert_interpolate_pts);
 	MU_RUN_TEST(test_assert_std_arrf);
 }
 

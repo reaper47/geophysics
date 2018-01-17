@@ -2,7 +2,7 @@
 
 int alloc_worden807(struct worden807_t *worden, unsigned int n)
 {
-	worden->attract_derivations     = malloc(sizeof(worden->attract_derivations) * n);
+	worden->attraction_deviation    = malloc(sizeof(worden->attraction_deviation) * n);
 	worden->avg_readings            = malloc(sizeof(worden->avg_readings) * n);
 	worden->bouguer_anomaly         = malloc(sizeof(worden->bouguer_anomaly) * n);
 	worden->bouguer_corr            = malloc(sizeof(worden->bouguer_corr) * n);
@@ -22,7 +22,7 @@ int alloc_worden807(struct worden807_t *worden, unsigned int n)
 	worden->num_readings = 0;
 	worden->operation_temp_unit = DEFAULT_TEMP_UNIT;
 	
-	if(worden->attract_derivations      == NULL || worden->avg_readings     == NULL ||
+	if(worden->attraction_deviation         == NULL || worden->avg_readings     == NULL ||
 		worden->bouguer_anomaly         == NULL || worden->bouguer_corr     == NULL ||
 		worden->bouguer_rel_grav_fields == NULL || worden->free_air_corr    == NULL ||
 		worden->grav_anomaly_notcorr    == NULL || worden->lat_corr         == NULL ||
@@ -40,7 +40,7 @@ int alloc_worden807(struct worden807_t *worden, unsigned int n)
 
 void free_worden807(struct worden807_t *worden)
 {
-	free(worden->attract_derivations);
+	free(worden->attraction_deviation);
 	free(worden->avg_readings);
 	free(worden->bouguer_anomaly);
 	free(worden->bouguer_corr);
@@ -146,7 +146,8 @@ int load_grav_csv(struct worden807_t *worden, const char *csv_file)
 		printf("malloc worden807 failed\n");
 		return -1;
 	}
-	worden->num_lines = num_lines;
+	unsigned int header_line_number = 1;
+	worden->num_lines = num_lines - header_line_number;
 
 	const char delim = determine_delim(fp);
 	
@@ -284,6 +285,50 @@ void store_temporal_vars(struct worden807_t *worden)
 			worden->temporal_vars[i] = -anomaly;
 		} else {
 			worden->temporal_vars[i] = 0.0;
+		}
+	}
+}
+
+
+
+void store_attraction_deviation(struct worden807_t *worden)
+{
+	unsigned int num_lines = worden->num_lines;
+
+	double epsilon = 1e-1;
+	double ref_station = 0.0;
+	int ref_station_count = 1;
+	int cpy_idx = 0;
+
+	double start_value = 0.0;
+	double end_value = 0.0;
+	int num_steps = 0;
+
+	for(unsigned int i = 0; i < num_lines; i++) {
+		double station = worden->stations[i];
+		_Bool is_approx_eq = approx_eq(station, ref_station, epsilon);
+					
+		if(ref_station_count == 2 && is_approx_eq) {
+			end_value = worden->temporal_vars[i];
+			num_steps++;
+			
+			double *results = interpolate_pts(start_value, end_value, num_steps);
+			
+			for(int k = 0; k < num_steps; k++) {
+				worden->attraction_deviation[cpy_idx] = results[k];
+				cpy_idx++;	
+			}
+			free(results);
+
+
+			num_steps = 0;
+			ref_station_count--;
+		} else if(is_approx_eq) {
+			start_value = worden->temporal_vars[i];
+			num_steps++;
+			ref_station_count++;
+		} else {
+			num_steps++;
 		}
 	}
 }

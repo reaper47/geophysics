@@ -10,6 +10,7 @@
 
 bool approx_eq(double a, double b, double epsilon);
 double avg_arrf(double *arr, int n);
+double* interpolate_pts(double start_value, double end_value, int steps);
 double std_arrf(double *arr, double avg, int n);
 
 #endif /* CALCS_H_ */
