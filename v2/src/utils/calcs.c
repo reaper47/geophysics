@@ -19,6 +19,17 @@ bool approx_eq(double a, double b, double epsilon)
 
 
 
+double correct_latitude(double lat, double lng, double pos)
+{
+	double lat_rad = lat * M_PI / 180;
+	double lng_rad = lng * M_PI / 180;
+	double mGal_per_m = pos * LAT_CORR_mGAL_PER_KM / 1000;
+
+	return mGal_per_m * sin(2*lat_rad)*cos(lng_rad);
+}
+
+
+
 double* interpolate_pts(double start_value, double end_value, int steps)
 {
 	double *results = malloc(sizeof(double)*(size_t)steps);

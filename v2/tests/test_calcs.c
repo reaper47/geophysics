@@ -118,6 +118,26 @@ MU_TEST(test_assert_interpolate_pts)
 
 
 
+/*
+ * tests - correct_latitude
+ *
+ */
+MU_TEST(test_assert_correct_latitude)
+{
+	double lat_corr_expected = -0.335754051077702;
+	
+	double lat = 46.8;
+	double lng = 34.25;
+	double pos = 500.0;
+	double lat_corr_actual = correct_latitude(lat, lng, pos);
+
+	const char *msg = "error when correcting the latitude";
+	bool is_approx_eq = approx_eq(lat_corr_expected, lat_corr_actual, EPSILON);
+	mu_assert(is_approx_eq, msg);
+}
+
+
+
 MU_TEST_SUITE(test_suite)
 {
 	MU_SUITE_CONFIGURE(&test_setup, &test_teardown);
@@ -126,6 +146,7 @@ MU_TEST_SUITE(test_suite)
 	MU_RUN_TEST(test_assert_avg_arrf);
 	MU_RUN_TEST(test_assert_interpolate_pts);
 	MU_RUN_TEST(test_assert_std_arrf);
+	MU_RUN_TEST(test_assert_correct_latitude);
 }
 
 

@@ -94,6 +94,7 @@ void store_grav_anomaly_notcorr(struct worden807_t *worden);
 void store_rel_grav_fields(struct worden807_t *worden);
 void store_temporal_vars(struct worden807_t *worden);
 void store_attraction_deviation(struct worden807_t *worden);
+void store_lat_corr(struct worden807_t *worden);
 
 #endif /* gravimetry.h */
 

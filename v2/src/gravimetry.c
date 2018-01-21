@@ -333,3 +333,16 @@ void store_attraction_deviation(struct worden807_t *worden)
 	}
 }
 
+
+
+void store_lat_corr(struct worden807_t *worden)
+{
+	unsigned int num_lines = worden->num_lines;
+
+	double lat = worden->ref_station_lat;
+	double lng = worden->survey_dir;
+
+	for(unsigned int i = 0; i < num_lines; i++)
+		worden->lat_corr[i] = correct_latitude(lat, lng, worden->stations[i]);
+}
+

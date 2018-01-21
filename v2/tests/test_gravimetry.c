@@ -464,6 +464,35 @@ MU_TEST(test_assert_store_attraction_deviation)
 
 
 
+/*
+ * tests - store_lat_corr
+ *
+ */
+MU_TEST(test_assert_store_lat_corr)
+{
+	double lat_corr_expected[] = {
+        	 0.0000000000000000, -0.013430162043108, -0.026860324086216,
+		-0.0402904861293240, -0.053720648172432, -0.067150810215541,
+		-0.0805809722586490, -0.094011134301757, -0.107441296344865,
+		-0.1208714583879730, -0.134301620431081, -0.147731782474189,
+		 0.0000000000000000
+	};
+
+	memcpy(worden807_expected.lat_corr, lat_corr_expected, sizeof(lat_corr_expected));
+
+	store_lat_corr(&worden807_actual);
+
+	const char *msg = "corrected latitudes do not match";
+	for(int i = 0; i < ROWS; i++) {
+		double e = worden807_expected.lat_corr[i];
+		double a = worden807_actual.lat_corr[i];
+		
+		mu_assert(approx_eq(e, a, EPSILON), msg);
+	}
+}
+
+
+
 MU_TEST_SUITE(test_suite)
 {
 	MU_SUITE_CONFIGURE(&test_setup, &test_teardown);
@@ -478,6 +507,7 @@ MU_TEST_SUITE(test_suite)
 	MU_RUN_TEST(test_assert_store_grav_anomaly_notcorr);
 	MU_RUN_TEST(test_assert_store_temporal_vars);
 	MU_RUN_TEST(test_assert_store_attraction_deviation);
+	MU_RUN_TEST(test_assert_store_lat_corr);
 }
 
  
