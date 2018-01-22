@@ -117,7 +117,7 @@ unsigned int num_lines_file(FILE *fp)
 	while((c = fgetc(fp)) != EOF)
 		if(c == '\n')
 			++nl;
-	
+
 	rewind(fp);
 	return nl;
 }

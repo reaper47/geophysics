@@ -22,7 +22,7 @@ int alloc_worden807(struct worden807_t *worden, unsigned int n)
 	worden->num_readings = 0;
 	worden->operation_temp_unit = DEFAULT_TEMP_UNIT;
 	
-	if(worden->attraction_deviation         == NULL || worden->avg_readings     == NULL ||
+	if(worden->attraction_deviation     == NULL || worden->avg_readings     == NULL ||
 		worden->bouguer_anomaly         == NULL || worden->bouguer_corr     == NULL ||
 		worden->bouguer_rel_grav_fields == NULL || worden->free_air_corr    == NULL ||
 		worden->grav_anomaly_notcorr    == NULL || worden->lat_corr         == NULL ||
@@ -158,7 +158,7 @@ int load_grav_csv(struct worden807_t *worden, const char *csv_file)
 	int arr_idx = 0;
 	int readings_idx = 0;
 	
-	for(struct node_t *node = lines->head ; node != NULL; node = node->next) {
+	for(struct node_t *node = lines->head; node != NULL; node = node->next) {
 		struct list_t *fields = parse_line(node->data, delim);
 		store_fields_struct(fields, headers, worden, arr_idx, &readings_idx);
 		arr_idx++;

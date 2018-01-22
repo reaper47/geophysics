@@ -55,16 +55,16 @@ void test_setup(void)
 
 	};
 	
-	memcpy(worden807_expected.stations, stations, sizeof(stations));
-	memcpy(worden807_expected.times, times, sizeof(times));
-	memcpy(worden807_expected.times_min, times_min, sizeof(times_min));
-	memcpy(worden807_expected.readings, readings, sizeof(readings));
-
 	const char *purpose = "LABORATOIRE 1 - LEVE GRAVIMETRIQUE";
 	const char *area = "LES PLAINES D’ABRAHAM - QUEBEC";
 	const char *poi = "RESERVOIR D'EAU MUNICIPAL DE LA VILLE DE QUEBEC";
 	const char *addr = "\"555 plaines abraham, quebec, canada, g2j 5h6\"";
 	const char *date = "1997-12-09";
+	
+	memcpy(worden807_expected.stations, stations, sizeof(stations));
+	memcpy(worden807_expected.times, times, sizeof(times));
+	memcpy(worden807_expected.times_min, times_min, sizeof(times_min));
+	memcpy(worden807_expected.readings, readings, sizeof(readings));
 
 	worden807_expected.num_readings = 4;	
 	worden807_expected.survey_purpose = (char*)purpose;
@@ -176,9 +176,8 @@ MU_TEST(test_assert_assign_idx_node)
 		curr_actual = headers_actual->head;
 
 		for( ; curr_actual != NULL; curr_actual = curr_actual->next) {
-			if(strcmp(curr_expect->data, curr_actual->data) == 0) {
+			if(strcmp(curr_expect->data, curr_actual->data) == 0)
 				break;
-			}
 		}
 	}
 	
@@ -255,7 +254,7 @@ MU_TEST(test_assert_load_grav_csv)
 	char temp_unit_actual = worden807_actual.operation_temp_unit;
 	mu_assert_int_eq(temp_unit_expected, temp_unit_actual);
 
-	unsigned int num_lines_expected = 13;
+	unsigned int num_lines_expected = ROWS;
 	unsigned int num_lines_actual = worden807_actual.num_lines;
 	mu_assert_int_eq((int)num_lines_expected, (int)num_lines_actual);
 }
