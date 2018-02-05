@@ -9,19 +9,19 @@ double vals_std_expected;
 
 void test_setup(void)
 {
-	vals[0] = 78.100151533596f;
-	vals[1] = -14.161500690805f;
-	vals[2] = -38.867300464445f;
-	vals[3] = -53.610708785364f;
-	vals[4] = -20.892893578359f;
-	vals[5] = 99.988707450519f;
-	vals[6] = 74.090175607621f;
-	vals[7] = 4.7065723438196f;
-	vals[8] = 41.76149784796f;
-	vals[9] = 37.86441720121f;
+	vals[0] = 78.100151533596;
+	vals[1] = -14.161500690805;
+	vals[2] = -38.867300464445;
+	vals[3] = -53.610708785364;
+	vals[4] = -20.892893578359;
+	vals[5] = 99.988707450519;
+	vals[6] = 74.090175607621;
+	vals[7] = 4.7065723438196;
+	vals[8] = 41.76149784796;
+	vals[9] = 37.86441720121;
 	
-	vals_avg_expected = 20.89791184657f;
-	vals_std_expected = 50.4392972539932f;
+	vals_avg_expected = 20.89791184657;
+	vals_std_expected = 50.4392972539932;
 }
 
 
@@ -39,19 +39,19 @@ void test_teardown(void)
  */
 MU_TEST(test_check_setup)
 {
-	mu_check(vals[0] == 78.1001515335f);
-	mu_check(vals[1] == -14.161500690f);
-	mu_check(vals[2] == -38.86730046444f);
-	mu_check(vals[3] == -53.610708785f);
-	mu_check(vals[4] == -20.8928935783f);
-	mu_check(vals[5] == 99.9887074505f);
-	mu_check(vals[6] == 74.0901756076f);
-	mu_check(vals[7] == 4.70657234381f);
-	mu_check(vals[8] == 41.76149784796f);
-	mu_check(vals[9] == 37.86441720121f);
+	mu_check(vals[0] == 78.100151533596);
+	mu_check(vals[1] == -14.161500690805);
+	mu_check(vals[2] == -38.867300464445);
+	mu_check(vals[3] == -53.610708785364);
+	mu_check(vals[4] == -20.892893578359);
+	mu_check(vals[5] == 99.988707450519);
+	mu_check(vals[6] == 74.090175607621);
+	mu_check(vals[7] == 4.7065723438196);
+	mu_check(vals[8] == 41.76149784796);
+	mu_check(vals[9] == 37.86441720121);
 	
-	mu_check(vals_avg_expected == 20.89791184657f);
-	mu_check(vals_std_expected == 50.4392972539932f);
+	mu_check(vals_avg_expected == 20.89791184657);
+	mu_check(vals_std_expected == 50.4392972539932);
 }
 
 
@@ -138,6 +138,17 @@ MU_TEST(test_assert_correct_latitude)
 
 
 
+MU_TEST(test_assert_max_arrf)
+{
+	double max_val_expected = 99.988707450519;
+
+	double max_val_actual = max_arrf(vals, NUM_ELS);
+
+	mu_assert_double_eq(max_val_expected, max_val_actual);
+}
+
+
+
 MU_TEST_SUITE(test_suite)
 {
 	MU_SUITE_CONFIGURE(&test_setup, &test_teardown);
@@ -147,6 +158,7 @@ MU_TEST_SUITE(test_suite)
 	MU_RUN_TEST(test_assert_interpolate_pts);
 	MU_RUN_TEST(test_assert_std_arrf);
 	MU_RUN_TEST(test_assert_correct_latitude);
+	MU_RUN_TEST(test_assert_max_arrf);
 }
 
 

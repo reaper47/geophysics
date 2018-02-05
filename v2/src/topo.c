@@ -2,10 +2,13 @@
 
 int alloc_topo(struct topo_t *topo, unsigned int n)
 {
+	topo->altitudes	             = malloc(sizeof(topo->altitudes) * n);
+	topo->elevation_corr         = malloc(sizeof(topo->elevation_corr) * n);
 	topo->elevation_cmp_ref      = malloc(sizeof(topo->elevation_cmp_ref) * n);
 	topo->elevation_diff         = malloc(sizeof(topo->elevation_diff) * n);
 	topo->elevation_diff_corr    = malloc(sizeof(topo->elevation_diff_corr) * n);
 	topo->elevation_diff_quality = malloc(sizeof(topo->elevation_diff_quality) * n);
+	topo->err_dist_btwn_stations_m = malloc(sizeof(topo->err_dist_btwn_stations_m) * n);
 	topo->stations               = malloc(sizeof(topo->stations) * n);
 	topo->stations_numeric_order = malloc(sizeof(topo->stations_numeric_order) * n);
 	topo->zeros                  = malloc(sizeof(topo->zeros) * n);
@@ -14,7 +17,9 @@ int alloc_topo(struct topo_t *topo, unsigned int n)
 	if(topo->elevation_diff == NULL || topo->elevation_diff_quality == NULL ||
 	   topo->stations       == NULL || topo->stations_numeric_order == NULL ||
 	   topo->zeros          == NULL || topo->zeros_quality          == NULL ||
-	   topo->elevation_diff_corr == NULL || topo->elevation_cmp_ref == NULL)
+	   topo->elevation_diff_corr == NULL || topo->elevation_cmp_ref == NULL ||
+	   topo->err_dist_btwn_stations_m == NULL || topo->altitudes    == NULL ||
+	   topo->elevation_corr == NULL)
 		return -1;
 
 	return 0;
@@ -24,10 +29,13 @@ int alloc_topo(struct topo_t *topo, unsigned int n)
 
 void free_topo(struct topo_t *topo)
 {
+	free(topo->altitudes);
+	free(topo->elevation_corr);
 	free(topo->elevation_cmp_ref);
 	free(topo->elevation_diff);
 	free(topo->elevation_diff_corr);
 	free(topo->elevation_diff_quality);
+	free(topo->err_dist_btwn_stations_m);
 	free(topo->stations);
 	free(topo->stations_numeric_order);
 	free(topo->zeros);
@@ -179,4 +187,56 @@ void store_elevation_cmp_ref(struct topo_t *topo)
 }
 
 
+
+void store_err_dist_btwn_stations(struct topo_t *topo)
+{
+	unsigned int num_lines = topo->num_lines;
+
+	double max_station = max_arrf(topo->stations, (int)num_lines);
+	double last_elev_cmp_ref = topo->elevation_cmp_ref[num_lines-1];
+
+	for(unsigned int i = 0; i < num_lines; i++) {
+		double err = -last_elev_cmp_ref / 2*topo->stations[i] / max_station;
+		topo->err_dist_btwn_stations_m[i] = err;
+	}	
+}
+
+
+
+void store_elevation_corr(struct topo_t *topo)
+{
+	unsigned int num_lines = topo->num_lines;
+
+	for(unsigned int i = 0; i < num_lines; i++) {
+		double elev_cmp_ref = topo->elevation_cmp_ref[i];
+		double err_dist = topo->err_dist_btwn_stations_m[i];
+		
+		topo->elevation_corr[i] = elev_cmp_ref + err_dist;
+	}
+}
+
+
+
+void store_altitudes(struct topo_t *topo)
+{
+	unsigned int num_lines = topo->num_lines;
+
+	int station_num = topo->station_num_before_return_to_ref;
+	double elev_corr_before_return = topo->elevation_corr[station_num];
+
+	for(unsigned int i = 0; i < num_lines; i++)
+		topo->altitudes[i] = topo->elevation_corr[i] + elev_corr_before_return;
+	
+}
+
+
+
+void populate_calc_fields(struct topo_t *topo)
+{
+	store_elevation_diff_corr(topo);
+	store_elevation_cmp_ref(topo);
+	store_err_dist_btwn_stations(topo);
+	store_elevation_corr(topo);
+	store_altitudes(topo);	
+}
 

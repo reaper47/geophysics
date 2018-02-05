@@ -48,6 +48,21 @@ double* interpolate_pts(double start_value, double end_value, int steps)
 
 
 
+double max_arrf(double *arr, int n)
+{
+	double max = arr[0];
+	
+	for(int i = 0; i < n; i++) {
+		if(max < arr[i])
+			max = arr[i];
+	}
+
+
+	return max;
+}
+
+
+
 double std_arrf(double *arr, double avg, int n)
 {
 	double sum = 0.0;

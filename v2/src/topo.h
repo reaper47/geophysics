@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "./utils/calcs.h"
 #include "./utils/csv.h"
 #include "./utils/sll.h"
 #include "./utils/strings.h"
@@ -35,11 +36,15 @@
 #define HEADER_LINE_NUM       1
 
 struct topo_t {
+	double *altitudes;
+	double *elevation_corr;
 	double *elevation_cmp_ref;
 	double *elevation_diff;
 	double *elevation_diff_corr;
 	double *elevation_diff_quality;
+	double *err_dist_btwn_stations_m;
 	unsigned int num_lines;
+	int     station_num_before_return_to_ref;
 	double *stations;
 	int    *stations_numeric_order;
 	char   *survey_address;
@@ -58,6 +63,10 @@ int load_topo_csv(struct topo_t *topo, const char *csv_file);
 void store_fields_topo_struct(struct list_t *fields, struct list_t *headers, struct topo_t *topo, int idx);
 void store_elevation_diff_corr(struct topo_t *topo);
 void store_elevation_cmp_ref(struct topo_t *topo);
+void store_err_dist_btwn_stations(struct topo_t *topo);
+void store_elevation_corr(struct topo_t *topo);
+void store_altitudes(struct topo_t *topo);
+void populate_calc_fields(struct topo_t *topo);
 
 
 #endif /* topo.h */

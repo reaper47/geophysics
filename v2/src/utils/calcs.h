@@ -13,6 +13,7 @@ bool approx_eq(double a, double b, double epsilon);
 double avg_arrf(double *arr, int n);
 double correct_latitude(double lat, double lng, double pos);
 double* interpolate_pts(double start_value, double end_value, int steps);
+double max_arrf(double *arr, int n);
 double std_arrf(double *arr, double avg, int n);
 
 #endif /* CALCS_H_ */
