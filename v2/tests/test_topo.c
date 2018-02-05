@@ -21,11 +21,6 @@ void test_setup(void)
 		240.0, 260.0
 	};
 
-	int stations_numeric_order[] = {
-		0, 1, 2, 3, 4, 5, 6, 7,
-		8, 9, 10, 11, 12, 13
-	};
-
 	double zeros[] = {
 		0.000, 0.048, 0.045, 0.039, 
 		0.044, 0.039, 0.013, 0.032,
@@ -59,9 +54,9 @@ void test_setup(void)
 	const char *survey_poi = "reservoir d'eau municipal de la ville de quebec";
 	const char *survey_address = " ";
 	const char *survey_date = "1997-12-09";
+	double avg_sea_lvl = 99.0;
 
 	memcpy(topo_expected.stations, stations, sizeof(stations));
-	memcpy(topo_expected.stations_numeric_order, stations_numeric_order, sizeof(stations_numeric_order));
 	memcpy(topo_expected.zeros, zeros, sizeof(zeros));
 	memcpy(topo_expected.zeros_quality, zeros_quality, sizeof(zeros_quality));
 	memcpy(topo_expected.elevation_diff, elevation_diff, sizeof(elevation_diff));
@@ -72,7 +67,8 @@ void test_setup(void)
 	topo_expected.survey_poi = (char*)survey_poi;
 	topo_expected.survey_address = (char*)survey_address;
 	topo_expected.survey_date = (char*)survey_date;
-
+	
+	topo_expected.avg_sea_lvl = avg_sea_lvl;
 	topo_expected.num_lines = ROWS;
 	topo_expected.station_num_before_return_to_ref = STATION_NUM_BEFORE_RETURN_TO_REF;
 }
@@ -99,6 +95,7 @@ MU_TEST(test_assert_assign_idx_node_topo)
 	const char *poi               = "poi";
 	const char *address           = "address";
 	const char *date              = "date of survey";
+	const char *avg_sea_lvl       = "average sea level (m)";
 
 	add_head_list(headers_expected, station);
 	add_head_list(headers_expected, zero);
@@ -110,29 +107,32 @@ MU_TEST(test_assert_assign_idx_node_topo)
 	add_head_list(headers_expected, poi);
 	add_head_list(headers_expected, address);
 	add_head_list(headers_expected, date);
+	add_head_list(headers_expected, avg_sea_lvl);
 
 	struct node_t *curr_expect = headers_expected->head;
 	for( ; curr_expect != NULL; curr_expect = curr_expect->next) {
 		if(strcmp(curr_expect->data, station) == 0)
-			curr_expect->idx = IDX_STATION;
+			curr_expect->idx = IDX_STATION_TOPO;
 		else if(strcmp(curr_expect->data, zero) == 0)
-			curr_expect->idx = IDX_ZERO;
+			curr_expect->idx = IDX_ZERO_TOPO;
 		else if(strcmp(curr_expect->data, zero_quality) == 0)
-			curr_expect->idx = IDX_ZERO_QUALITY;
+			curr_expect->idx = IDX_ZERO_QUALITY_TOPO;
 		else if(strcmp(curr_expect->data, elev_diff) == 0)
-			curr_expect->idx = IDX_ELEV_DIFF;
+			curr_expect->idx = IDX_ELEV_DIFF_TOPO;
 		else if(strcmp(curr_expect->data, elev_diff_quality) == 0)
-			curr_expect->idx = IDX_ELEV_DIFF_QUALITY;
+			curr_expect->idx = IDX_ELEV_DIFF_QUALITY_TOPO;
 		else if(strcmp(curr_expect->data, purpose) == 0)
-			curr_expect->idx = IDX_PURPOSE;
+			curr_expect->idx = IDX_PURPOSE_TOPO;
 		else if(strcmp(curr_expect->data, area) == 0)
-			curr_expect->idx = IDX_AREA;
+			curr_expect->idx = IDX_AREA_TOPO;
 		else if(strcmp(curr_expect->data, poi) == 0)
-			curr_expect->idx = IDX_POI;
+			curr_expect->idx = IDX_POI_TOPO;
 		else if(strcmp(curr_expect->data, address) == 0)
-			curr_expect->idx = IDX_ADDRESS;
+			curr_expect->idx = IDX_ADDRESS_TOPO;
 		else if(strcmp(curr_expect->data, date) == 0)
-			curr_expect->idx = IDX_DATE;
+			curr_expect->idx = IDX_DATE_TOPO;
+		else if(strcmp(curr_expect->data, avg_sea_lvl) == 0)
+		       curr_expect->idx = IDX_AVG_SEA_LVL_TOPO;	
 	}
 
 	const char delim = determine_delim(fp);
@@ -223,6 +223,10 @@ MU_TEST(test_assert_load_topo_csv)
 	const char *survey_date_expected = "1997-12-09";
 	const char *survey_date_actual = topo_actual.survey_date;
 	mu_assert_string_eq(survey_date_expected, survey_date_actual);
+
+	double avg_sea_lvl_expected = 99.0;
+	double avg_sea_lbl_actual = topo_actual.avg_sea_lvl;
+	mu_assert_double_eq(avg_sea_lvl_expected, avg_sea_lbl_actual);
 }
 
 
@@ -289,23 +293,31 @@ MU_TEST(test_assert_store_elevation_cmp_ref)
  */
 MU_TEST(test_assert_store_err_dist_btwn_stations_m)
 {
+	topo_actual.elevation_cmp_ref[ROWS-1] = 0.200;
+	topo_actual.stations[ROWS-1] = 500;
+
 	double expected[] = {
-		 0.000000000000000, -0.232346153846154, -0.464692307692308,
-		-0.697038461538461, -0.929384615384615, -1.161730769230770,
-	       	-1.394076923076920, -1.626423076923080, -1.858769230769230, 
-		-2.091115384615380, -2.323461538461540, -2.55580769230769,
-	       	-2.78815384615385, -3.020500000000000
+		 0.000, -0.004, -0.008,
+		-0.012, -0.016, -0.020,
+		-0.024, -0.028, -0.032,
+		-0.036, -0.040, -0.044,
+		-0.048, -0.052
+
 	};
 
 	memcpy(topo_expected.err_dist_btwn_stations_m, expected, sizeof(expected));
 
 	store_err_dist_btwn_stations(&topo_actual);
 
+	topo_actual.elevation_cmp_ref[ROWS-1] = 6.041;
+	topo_actual.stations[ROWS-1] = 260.0;
+	topo_actual.err_dist_btwn_stations_m[ROWS-1] = -0.052;
+
 	const char *msg = "error when calculating the error distribution between stations";
 	for(int i = 0; i < ROWS; i++) {
 		double e = topo_expected.err_dist_btwn_stations_m[i];
 		double a = topo_actual.err_dist_btwn_stations_m[i];
-		
+
 		mu_assert(approx_eq(e, a, EPSILON), msg);
 	}
 }
@@ -319,11 +331,11 @@ MU_TEST(test_assert_store_err_dist_btwn_stations_m)
 MU_TEST(test_assert_store_elevation_corr)
 {
 	double expected[] = {
-		0.0000000000000000, 0.0146538461538460, -0.434692307692308,
-		1.5619615384615400, 2.5576153846153800,  2.6752692307692300,
-		2.5849230769230800, 4.1505769230769200,  4.1382307692307700,
-		3.8268846153846200, 3.7145384615384600,  3.4041923076923100,
-		3.2088461538461500, 3.0205000000000000
+		0.000, 0.243, 0.022, 
+		2.247, 3.471, 3.817, 
+		3.955, 5.749, 5.965, 
+		5.882, 5.998, 5.916, 
+		5.949, 5.989
 	};
 
 	memcpy(topo_expected.elevation_corr, expected, sizeof(expected));
@@ -350,11 +362,12 @@ MU_TEST(test_assert_store_altitudes)
 	topo_actual.station_num_before_return_to_ref = topo_expected.station_num_before_return_to_ref;
 
 	double expected[] = {
-		95.29, 95.30, 94.85,
-		96.85, 97.84, 97.96,
-		97.87, 99.44, 99.42,
-		99.11, 99.00, 98.69,
-		98.49, 98.31
+		93.084, 93.327, 93.106, 
+		95.331, 96.555, 96.901, 
+		97.039, 98.833, 99.049, 
+		98.966, 99.082, 99.000, 
+		99.033, 99.073
+
 	};
 
 	memcpy(topo_expected.altitudes, expected, sizeof(expected));
@@ -364,7 +377,7 @@ MU_TEST(test_assert_store_altitudes)
 	const char *msg = "error when determining altitude";
 	for(int i = 0; i < ROWS; i++) {
 		double e = topo_expected.altitudes[i];
-		double a = topo_expected.altitudes[i];
+		double a = topo_actual.altitudes[i];
 
 		mu_assert(approx_eq(e, a, EPSILON), msg);
 	}

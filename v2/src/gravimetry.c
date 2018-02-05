@@ -2,11 +2,13 @@
 
 int alloc_worden807(struct worden807_t *worden, unsigned int n)
 {
+	worden->altitudes 		= malloc(sizeof(worden->altitudes) * n);
 	worden->attraction_deviation    = malloc(sizeof(worden->attraction_deviation) * n);
 	worden->avg_readings            = malloc(sizeof(worden->avg_readings) * n);
 	worden->bouguer_anomaly         = malloc(sizeof(worden->bouguer_anomaly) * n);
 	worden->bouguer_corr            = malloc(sizeof(worden->bouguer_corr) * n);
 	worden->bouguer_rel_grav_fields = malloc(sizeof(worden->bouguer_rel_grav_fields) * n);
+	worden->elevations		= malloc(sizeof(worden->elevations) * n);
 	worden->free_air_corr           = malloc(sizeof(worden->free_air_corr) * n);
 	worden->grav_anomaly_notcorr    = malloc(sizeof(worden->grav_anomaly_notcorr) * n);
 	worden->lat_corr                = malloc(sizeof(worden->lat_corr) * n);
@@ -22,7 +24,7 @@ int alloc_worden807(struct worden807_t *worden, unsigned int n)
 	worden->num_readings = 0;
 	worden->operation_temp_unit = DEFAULT_TEMP_UNIT;
 	
-	if(worden->attraction_deviation     == NULL || worden->avg_readings     == NULL ||
+	if(worden->attraction_deviation         == NULL || worden->avg_readings     == NULL ||
 		worden->bouguer_anomaly         == NULL || worden->bouguer_corr     == NULL ||
 		worden->bouguer_rel_grav_fields == NULL || worden->free_air_corr    == NULL ||
 		worden->grav_anomaly_notcorr    == NULL || worden->lat_corr         == NULL ||
@@ -30,7 +32,8 @@ int alloc_worden807(struct worden807_t *worden, unsigned int n)
 		worden->regional_anomaly        == NULL || worden->residual_anomaly == NULL ||
 		worden->stations                == NULL || worden->std              == NULL ||
 		worden->temporal_vars           == NULL || worden->times            == NULL ||
-		worden->times_min               == NULL)
+		worden->times_min               == NULL || worden->elevations       == NULL ||
+		worden->altitudes               == NULL)
 		return -1;
 
 	return 0;
@@ -40,11 +43,13 @@ int alloc_worden807(struct worden807_t *worden, unsigned int n)
 
 void free_worden807(struct worden807_t *worden)
 {
+	free(worden->altitudes);
 	free(worden->attraction_deviation);
 	free(worden->avg_readings);
 	free(worden->bouguer_anomaly);
 	free(worden->bouguer_corr);
 	free(worden->bouguer_rel_grav_fields);
+	free(worden->elevations);
 	free(worden->free_air_corr);
 	free(worden->grav_anomaly_notcorr);
 	free(worden->lat_corr);
@@ -344,5 +349,41 @@ void store_lat_corr(struct worden807_t *worden)
 
 	for(unsigned int i = 0; i < num_lines; i++)
 		worden->lat_corr[i] = correct_latitude(lat, lng, worden->stations[i]);
+}
+
+
+
+void set_station_num_before_return_to_ref(struct worden807_t *worden, struct topo_t *topo)
+{
+	unsigned int num_lines = worden->num_lines;
+
+	for(unsigned int i = 0; i < num_lines-1; i++) {
+		double next_station = worden->stations[i+1];
+		
+		if(approx_eq(next_station, 0.0, 1e-1))
+			topo->station_num_before_return_to_ref = (int)i;
+	}
+}
+
+
+
+void transfer_topo_data_to_grav(struct topo_t *topo, struct worden807_t *worden)
+{
+	unsigned int num_lines = worden->num_lines;
+
+	for(unsigned int i = 0; i < num_lines; i++) {
+		double altitude = topo->altitudes[i];
+		double elevation = topo->elevation_corr[i];
+
+		worden->altitudes[i] = altitude;
+		worden->elevations[i] = elevation;
+	}
+}
+
+
+
+void store_free_air_corr(struct worden807_t *worden)
+{
+	
 }
 

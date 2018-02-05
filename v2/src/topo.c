@@ -10,14 +10,13 @@ int alloc_topo(struct topo_t *topo, unsigned int n)
 	topo->elevation_diff_quality = malloc(sizeof(topo->elevation_diff_quality) * n);
 	topo->err_dist_btwn_stations_m = malloc(sizeof(topo->err_dist_btwn_stations_m) * n);
 	topo->stations               = malloc(sizeof(topo->stations) * n);
-	topo->stations_numeric_order = malloc(sizeof(topo->stations_numeric_order) * n);
 	topo->zeros                  = malloc(sizeof(topo->zeros) * n);
 	topo->zeros_quality          = malloc(sizeof(topo->zeros_quality) * n);
 
 	if(topo->elevation_diff == NULL || topo->elevation_diff_quality == NULL ||
-	   topo->stations       == NULL || topo->stations_numeric_order == NULL ||
-	   topo->zeros          == NULL || topo->zeros_quality          == NULL ||
-	   topo->elevation_diff_corr == NULL || topo->elevation_cmp_ref == NULL ||
+	   topo->stations       == NULL || topo->zeros                  == NULL || 
+	   topo->zeros_quality  == NULL || topo->elevation_diff_corr == NULL    || 
+	   topo->elevation_cmp_ref == NULL || 
 	   topo->err_dist_btwn_stations_m == NULL || topo->altitudes    == NULL ||
 	   topo->elevation_corr == NULL)
 		return -1;
@@ -37,7 +36,6 @@ void free_topo(struct topo_t *topo)
 	free(topo->elevation_diff_quality);
 	free(topo->err_dist_btwn_stations_m);
 	free(topo->stations);
-	free(topo->stations_numeric_order);
 	free(topo->zeros);
 	free(topo->zeros_quality);
 }
@@ -50,25 +48,27 @@ void assign_idx_node_topo(struct list_t *list)
 
 	for(curr = list->head; curr != NULL; curr = curr->next) {
 		if(strstr(curr->data, STATION) != NULL)
-			curr->idx = IDX_STATION;
+			curr->idx = IDX_STATION_TOPO;
 		else if(strstr(curr->data, QUALITY) != NULL && strstr(curr->data, ZERO) != NULL)
-			curr->idx = IDX_ZERO_QUALITY;
+			curr->idx = IDX_ZERO_QUALITY_TOPO;
 		else if(strstr(curr->data, ZERO) != NULL)
-			curr->idx = IDX_ZERO;
+			curr->idx = IDX_ZERO_TOPO;
 		else if(strstr(curr->data, QUALITY) != NULL && strstr(curr->data, ELEVATION) != NULL)
-			curr->idx = IDX_ELEV_DIFF_QUALITY;
+			curr->idx = IDX_ELEV_DIFF_QUALITY_TOPO;
 		else if(strstr(curr->data, ELEVATION) != NULL)
-			curr->idx = IDX_ELEV_DIFF;
+			curr->idx = IDX_ELEV_DIFF_TOPO;
 		else if(strstr(curr->data, PURPOSE) != NULL)
-			curr->idx = IDX_PURPOSE;
+			curr->idx = IDX_PURPOSE_TOPO;
 		else if(strstr(curr->data, AREA) != NULL)
-			curr->idx = IDX_AREA;
+			curr->idx = IDX_AREA_TOPO;
 		else if(strstr(curr->data, POI) != NULL)
-			curr->idx = IDX_POI;
+			curr->idx = IDX_POI_TOPO;
 		else if(strstr(curr->data, ADDRESS) != NULL)
-			curr->idx = IDX_ADDRESS;
+			curr->idx = IDX_ADDRESS_TOPO;
 		else if(strstr(curr->data, DATE) != NULL)
-			curr->idx = IDX_DATE;
+			curr->idx = IDX_DATE_TOPO;
+		else if(strstr(curr->data, SEA) != NULL)
+			curr->idx = IDX_AVG_SEA_LVL_TOPO;
 	}
 }
 
@@ -122,34 +122,36 @@ void store_fields_topo_struct(struct list_t *fields,  struct list_t *headers, st
 	while(field != NULL) {
 		uint8_t hidx = header->idx;
 		
-		if(hidx == IDX_STATION)
+		if(hidx == IDX_STATION_TOPO)
 			topo->stations[idx] = atof(field->data);
-		else if(hidx == IDX_ZERO)
+		else if(hidx == IDX_ZERO_TOPO)
 			topo->zeros[idx] = atof(field->data);
-		else if(hidx == IDX_ZERO_QUALITY)
+		else if(hidx == IDX_ZERO_QUALITY_TOPO)
 			topo->zeros_quality[idx] = atof(field->data);
-		else if(hidx == IDX_ELEV_DIFF)
+		else if(hidx == IDX_ELEV_DIFF_TOPO)
 			topo->elevation_diff[idx] = atof(field->data);
-		else if(hidx == IDX_ELEV_DIFF_QUALITY)
+		else if(hidx == IDX_ELEV_DIFF_QUALITY_TOPO)
 			topo->elevation_diff_quality[idx] = atof(field->data);
-		else if(idx == 0 && hidx == IDX_PURPOSE) {
+		else if(idx == 0 && hidx == IDX_PURPOSE_TOPO) {
 			strlower(field->data, false);
 			topo->survey_purpose = strdup(field->data);
 		}
-		else if(idx == 0 && hidx == IDX_AREA) {
+		else if(idx == 0 && hidx == IDX_AREA_TOPO) {
 			strlower(field->data, false);
 			topo->survey_area = strdup(field->data);
 		}
-		else if(idx == 0 && hidx == IDX_POI) {
+		else if(idx == 0 && hidx == IDX_POI_TOPO) {
 			strlower(field->data, false);
 			topo->survey_poi = strdup(field->data);
 		}
-		else if(idx == 0 && hidx == IDX_ADDRESS) {
+		else if(idx == 0 && hidx == IDX_ADDRESS_TOPO) {
 			strlower(field->data, false);
 			topo->survey_address = strdup(field->data);
 		}
-		else if(idx == 0 && hidx == IDX_DATE)
+		else if(idx == 0 && hidx == IDX_DATE_TOPO)
 			topo->survey_date = strdup(field->data);
+		else if(idx == 0 && hidx == IDX_AVG_SEA_LVL_TOPO)
+			topo->avg_sea_lvl = atof(field->data);
 
 		header = header->next;
 		field = field->next;
@@ -224,9 +226,12 @@ void store_altitudes(struct topo_t *topo)
 	int station_num = topo->station_num_before_return_to_ref;
 	double elev_corr_before_return = topo->elevation_corr[station_num];
 
-	for(unsigned int i = 0; i < num_lines; i++)
-		topo->altitudes[i] = topo->elevation_corr[i] + elev_corr_before_return;
-	
+	for(unsigned int i = 0; i < num_lines; i++) {
+		double elev_corr = topo->elevation_corr[i];
+		double avg_sea_lvl = topo->avg_sea_lvl;
+
+		topo->altitudes[i] = avg_sea_lvl - elev_corr_before_return + elev_corr;
+	}
 }
 
 

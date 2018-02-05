@@ -21,22 +21,25 @@
 #define POI        "poi"
 #define ADDRESS    "address"
 #define DATE       "date"
+#define SEA	   "sea"
 
-#define IDX_STATION           0
-#define IDX_ZERO              1
-#define IDX_ZERO_QUALITY      2
-#define IDX_ELEV_DIFF         3
-#define IDX_ELEV_DIFF_QUALITY 4
-#define IDX_PURPOSE           5
-#define IDX_AREA              6
-#define IDX_POI               7
-#define IDX_ADDRESS           8
-#define IDX_DATE              9
+#define IDX_STATION_TOPO           0
+#define IDX_ZERO_TOPO              1
+#define IDX_ZERO_QUALITY_TOPO      2
+#define IDX_ELEV_DIFF_TOPO         3
+#define IDX_ELEV_DIFF_QUALITY_TOPO 4
+#define IDX_PURPOSE_TOPO           5
+#define IDX_AREA_TOPO              6
+#define IDX_POI_TOPO               7
+#define IDX_ADDRESS_TOPO           8
+#define IDX_DATE_TOPO              9
+#define IDX_AVG_SEA_LVL_TOPO       10
 
 #define HEADER_LINE_NUM       1
 
 struct topo_t {
 	double *altitudes;
+	double avg_sea_lvl;
 	double *elevation_corr;
 	double *elevation_cmp_ref;
 	double *elevation_diff;
@@ -46,7 +49,6 @@ struct topo_t {
 	unsigned int num_lines;
 	int     station_num_before_return_to_ref;
 	double *stations;
-	int    *stations_numeric_order;
 	char   *survey_address;
 	char   *survey_area;
 	char   *survey_date;

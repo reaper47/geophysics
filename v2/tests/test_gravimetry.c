@@ -3,11 +3,15 @@
 #include "test.h"
 
 #define GRAV_FILE "./test_data/grav.csv"
+#define TOPO_FILE "./test_data/topo1.csv"
 #define ROWS 13
+#define ROWS_TOPO 14
 #define TOTAL_READINGS 52 
 
 struct worden807_t worden807_expected;
 struct worden807_t worden807_actual;
+
+struct topo_t topo;
 
 void test_setup(void)
 {
@@ -80,9 +84,11 @@ void test_setup(void)
 
 
 
+
 void test_teardown(void)
 {	
 	free_worden807(&worden807_expected);
+	free_topo(&topo);
 }
 
 
@@ -163,6 +169,7 @@ MU_TEST(test_assert_assign_idx_node)
 			curr_expect->idx = IDX_LAT;
 		else if(strcmp(curr_expect->data, direction) == 0)
 			curr_expect->idx = IDX_DIR;
+
 	}
 	
 	const char delim = determine_delim(fp);
@@ -492,6 +499,104 @@ MU_TEST(test_assert_store_lat_corr)
 
 
 
+/*
+ * tests - determine_station_num_before_return_to_ref
+ *
+ */
+MU_TEST(test_assert_set_station_num_before_return_to_ref)
+{
+	load_topo_csv(&topo, TOPO_FILE);
+	
+	int station_num_expected = 11;
+	
+	set_station_num_before_return_to_ref(&worden807_actual, &topo);
+	int station_num_actual = topo.station_num_before_return_to_ref;
+
+	mu_assert_int_eq(station_num_expected, station_num_actual);
+}
+
+
+
+/*
+ * tests - transfer_topo_data_to_grav
+ *
+ */
+MU_TEST(test_assert_transfer_topo_data_to_grav)
+{	
+	store_elevation_diff_corr(&topo);
+	store_elevation_cmp_ref(&topo);
+
+	topo.elevation_cmp_ref[ROWS_TOPO-1] = 0.200;
+	topo.stations[ROWS_TOPO-1] = 500;
+	store_err_dist_btwn_stations(&topo);
+	topo.elevation_cmp_ref[ROWS_TOPO-1] = 6.041;
+	topo.stations[ROWS_TOPO-1] = 260.0;
+	topo.err_dist_btwn_stations_m[ROWS_TOPO-1] = -0.052;
+
+	store_elevation_corr(&topo);
+	store_altitudes(&topo);	
+	
+	double elev_expected[] = {
+		-0.0000000, 0.243, 0.022, 
+		2.247, 3.471, 3.817, 
+		3.955, 5.749, 5.965, 
+		5.882, 5.998, 5.916, 
+		5.949
+	};
+ 
+	double alts_expected[] = {
+		93.084, 93.327, 93.106, 
+		95.331, 96.555, 96.901, 
+		97.039, 98.833, 99.049, 
+		98.966, 99.082, 99.000, 
+		99.033
+
+	};
+
+	memcpy(worden807_expected.elevations, elev_expected, sizeof(elev_expected));
+	memcpy(worden807_expected.altitudes, alts_expected, sizeof(alts_expected));
+
+	transfer_topo_data_to_grav(&topo, &worden807_actual);
+
+	for(int i = 0; i < ROWS; i++) {
+		double ee = worden807_expected.elevations[i];
+		double ae = worden807_actual.elevations[i];
+
+		double ea = worden807_expected.altitudes[i];
+		double aa = worden807_actual.altitudes[i];
+
+		mu_assert_double_eq(ee, ae);
+		mu_assert_double_eq(ea, aa);
+	}
+}
+
+
+
+/*
+ * tests - store_free_air_corr
+ *
+ */
+MU_TEST(test_assert_store_free_air_corr)
+{
+	double expected[] = {
+
+	};
+
+	memcpy(worden807_expected.free_air_corr, expected, sizeof(expected));
+
+	store_free_air_corr(&worden807_actual);
+
+	const char *msg = "error when calculating free air correction";
+	for(int i = 0; i < ROWS; i++) {
+		double e = worden807_expected.free_air_corr[i];
+		double a = worden807_actual.free_air_corr[i];
+
+		mu_assert(approx_eq(e, a, EPSILON), msg);
+	}
+}
+
+
+
 MU_TEST_SUITE(test_suite)
 {
 	MU_SUITE_CONFIGURE(&test_setup, &test_teardown);
@@ -507,6 +612,8 @@ MU_TEST_SUITE(test_suite)
 	MU_RUN_TEST(test_assert_store_temporal_vars);
 	MU_RUN_TEST(test_assert_store_attraction_deviation);
 	MU_RUN_TEST(test_assert_store_lat_corr);
+	MU_RUN_TEST(test_assert_set_station_num_before_return_to_ref);
+	MU_RUN_TEST(test_assert_transfer_topo_data_to_grav);
 }
 
  

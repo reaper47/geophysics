@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "./topo.h"
 #include "./utils/calcs.h"
 #include "./utils/csv.h"
 #include "./utils/sll.h"
@@ -45,19 +46,23 @@
 
 /* Instrument Dial Constants */
 #define WORDEN807_LEFTX_C   48.8889
-#define WORDEN807_LEFTX_F  120.0
-#define WORDEN807_LOWERY     0.40514
+#define WORDEN807_LEFTX_F   120.0
+#define WORDEN807_LOWERY    0.40514
 #define WORDEN807_RIGHTX_C -17.7778
-#define WORDEN807_RIGHTX_F   0.0
-#define WORDEN807_UPPERY     0.40546
-#define INVALID_TEMP -999
+#define WORDEN807_RIGHTX_F  0.0
+#define WORDEN807_UPPERY    0.40546
+#define INVALID_TEMP       -999
+
+#define FREE_AIR_VARIATION  0.3086
 
 struct worden807_t {
+	double *altitudes;
 	double *attraction_deviation;
 	double *avg_readings;
 	double *bouguer_anomaly;
 	double *bouguer_corr;
 	double *bouguer_rel_grav_fields;
+	double *elevations;
 	double *free_air_corr;
 	double *grav_anomaly_notcorr;
 	double *lat_corr;
@@ -85,6 +90,7 @@ struct worden807_t {
 
 int  alloc_worden807(struct worden807_t *worden, unsigned int n);
 void assign_idx_node(struct list_t *list, struct worden807_t *worden);
+void set_station_num_before_return_to_ref(struct worden807_t *worden, struct topo_t *topo);
 double dial_const_worden807(struct worden807_t *worden);
 void free_worden807(struct worden807_t *worden);
 int  load_grav_csv(struct worden807_t *worden, const char *csv_file);
@@ -95,6 +101,8 @@ void store_rel_grav_fields(struct worden807_t *worden);
 void store_temporal_vars(struct worden807_t *worden);
 void store_attraction_deviation(struct worden807_t *worden);
 void store_lat_corr(struct worden807_t *worden);
+void transfer_topo_data_to_grav(struct topo_t *topo, struct worden807_t *worden807);
+void store_free_air_corr(struct worden807_t *worden);
 
 #endif /* gravimetry.h */
 

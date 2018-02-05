@@ -24,8 +24,8 @@ HDRSSLL = ./test.h ../src/utils/sll.h ../src/utils/strings.h
 SRCSSLL = ../src/utils/sll.c ./test_sll.c ../src/utils/strings.c
 OBJSSLL = $(SRCSSLL:.c=.o)
 
-HDRSGRAV = ./test.h ../src/utils/sll.h ../src/gravimetry.h ../src/utils/csv.h ../src/utils/strings.h ../src/utils/calcs.h
-SRCSGRAV = ../src/utils/sll.c ../src/gravimetry.c ../src/utils/csv.c ./test_gravimetry.c ../src/utils/strings.c ../src/utils/calcs.c
+HDRSGRAV = ./test.h ../src/utils/sll.h ../src/gravimetry.h ../src/utils/csv.h ../src/utils/strings.h ../src/utils/calcs.h ../src/topo.h
+SRCSGRAV = ../src/utils/sll.c ../src/gravimetry.c ../src/utils/csv.c ./test_gravimetry.c ../src/utils/strings.c ../src/utils/calcs.c ../src/topo.c
 OBJSGRAV = $(SRCSGRAV:.c=.o)
 
 HDRSSTR = ./test.h ../src/utils/strings.h
