@@ -255,9 +255,10 @@ void store_grav_anomaly_notcorr(struct worden807_t *worden)
 {
 	double ref_station_grav = worden->rel_grav_fields[0];
 	unsigned int num_lines = worden->num_lines;
+	double grav;
 
 	for(unsigned int i = 0; i < num_lines; i++) {
-		double grav = worden->rel_grav_fields[i];
+		grav = worden->rel_grav_fields[i];
 		worden->grav_anomaly_notcorr[i] = ref_station_grav - grav;
 	}	
 }
@@ -280,13 +281,13 @@ void store_temporal_vars(struct worden807_t *worden)
 {
 	unsigned int num_lines = worden->num_lines;
 	double epsilon = 1e-1;
+	double station, anomaly;
 	
 	for(unsigned int i = 0; i < num_lines; i++) {
-		double station = worden->stations[i];
-		double ref_station = 0.0;
+		station = worden->stations[i];
 
-		if(approx_eq(station, ref_station, epsilon)) {
-			double anomaly = worden->grav_anomaly_notcorr[i];
+		if(approx_eq(station, REF_STATION, epsilon)) {
+			anomaly = worden->grav_anomaly_notcorr[i];
 			worden->temporal_vars[i] = -anomaly;
 		} else {
 			worden->temporal_vars[i] = 0.0;
@@ -301,7 +302,6 @@ void store_attraction_deviation(struct worden807_t *worden)
 	unsigned int num_lines = worden->num_lines;
 
 	double epsilon = 1e-1;
-	double ref_station = 0.0;
 	int ref_station_count = 1;
 	int cpy_idx = 0;
 
@@ -309,9 +309,12 @@ void store_attraction_deviation(struct worden807_t *worden)
 	double end_value = 0.0;
 	int num_steps = 0;
 
+	double station;
+	_Bool is_approx_eq;
+
 	for(unsigned int i = 0; i < num_lines; i++) {
-		double station = worden->stations[i];
-		_Bool is_approx_eq = approx_eq(station, ref_station, epsilon);
+		station = worden->stations[i];
+		is_approx_eq = approx_eq(station, REF_STATION, epsilon);
 					
 		if(ref_station_count == 2 && is_approx_eq) {
 			end_value = worden->temporal_vars[i];
@@ -324,7 +327,6 @@ void store_attraction_deviation(struct worden807_t *worden)
 				cpy_idx++;	
 			}
 			free(results);
-
 
 			num_steps = 0;
 			ref_station_count--;
@@ -356,9 +358,10 @@ void store_lat_corr(struct worden807_t *worden)
 void set_station_num_before_return_to_ref(struct worden807_t *worden, struct topo_t *topo)
 {
 	unsigned int num_lines = worden->num_lines;
+	double next_station;
 
 	for(unsigned int i = 0; i < num_lines-1; i++) {
-		double next_station = worden->stations[i+1];
+		next_station = worden->stations[i+1];
 		
 		if(approx_eq(next_station, 0.0, 1e-1))
 			topo->station_num_before_return_to_ref = (int)i;
@@ -370,10 +373,17 @@ void set_station_num_before_return_to_ref(struct worden807_t *worden, struct top
 void transfer_topo_data_to_grav(struct topo_t *topo, struct worden807_t *worden)
 {
 	unsigned int num_lines = worden->num_lines;
+	double altitude, elevation;
 
 	for(unsigned int i = 0; i < num_lines; i++) {
-		double altitude = topo->altitudes[i];
-		double elevation = topo->elevation_corr[i];
+
+		if(approx_eq(worden->stations[i], REF_STATION, 1e-1)) {
+			altitude = topo->altitudes[0];
+			elevation = topo->elevation_corr[0];			
+		} else {
+			altitude = topo->altitudes[i];
+			elevation = topo->elevation_corr[i];
+		}
 
 		worden->altitudes[i] = altitude;
 		worden->elevations[i] = elevation;
@@ -384,6 +394,69 @@ void transfer_topo_data_to_grav(struct topo_t *topo, struct worden807_t *worden)
 
 void store_free_air_corr(struct worden807_t *worden)
 {
+	unsigned int num_lines = worden->num_lines;
+	double h;
+
+	for(unsigned int i = 0; i < num_lines; i++) {
+		h = worden->altitudes[i];
+		
+		worden->free_air_corr[i] = FREE_AIR_VARIATION * h;
+	}
+}
+
+
+
+void store_bouguer_corr(struct worden807_t *worden)
+{
+	unsigned int num_lines = worden->num_lines;
+
+	double h;
+	for(unsigned int i = 0; i < num_lines; i++) {
+		h = worden->altitudes[i];
+
+		worden->bouguer_corr[i] = -TWO_PI_G * DENSITY_G_CM3 * h; 
+	}
+}
+
+
+
+void store_bouguer_rel_grav_fields(struct worden807_t *worden)
+{
+	unsigned int num_lines = worden->num_lines;
+
+	double rel_grav_field;
+       	double temporal_var;
+        double lat_corr;
+        double free_air_corr;
+	double bouguer_corr;
+	double cumulative_corr;
+
+	for(unsigned int i = 0; i < num_lines; i++) {
+		rel_grav_field = worden->rel_grav_fields[i];
+		temporal_var = worden->temporal_vars[i];
+		lat_corr = worden->lat_corr[i];
+		free_air_corr = worden->free_air_corr[i];
+		bouguer_corr = worden->bouguer_corr[i];
+
+		cumulative_corr = lat_corr + free_air_corr + bouguer_corr;
+
+		worden->bouguer_rel_grav_fields[i] = rel_grav_field - temporal_var + cumulative_corr; 	
+	}	
+}
+
+
+
+void store_bouguer_anomaly(struct worden807_t *worden)
+{
+	unsigned int num_lines = worden->num_lines;
 	
+	double bouguer_rel_grav_ref = worden->bouguer_rel_grav_fields[0];
+	double curr_bouguer_rel_grav;
+
+	for(unsigned int i = 0; i < num_lines; i++) {
+		curr_bouguer_rel_grav = worden->bouguer_rel_grav_fields[i];
+
+		worden->bouguer_anomaly[i] = curr_bouguer_rel_grav - bouguer_rel_grav_ref;
+	}	
 }
 

@@ -537,11 +537,11 @@ MU_TEST(test_assert_transfer_topo_data_to_grav)
 	store_altitudes(&topo);	
 	
 	double elev_expected[] = {
-		-0.0000000, 0.243, 0.022, 
+		-0.00, 0.243, 0.022, 
 		2.247, 3.471, 3.817, 
 		3.955, 5.749, 5.965, 
 		5.882, 5.998, 5.916, 
-		5.949
+		0.000
 	};
  
 	double alts_expected[] = {
@@ -549,7 +549,7 @@ MU_TEST(test_assert_transfer_topo_data_to_grav)
 		95.331, 96.555, 96.901, 
 		97.039, 98.833, 99.049, 
 		98.966, 99.082, 99.000, 
-		99.033
+		93.084
 
 	};
 
@@ -579,7 +579,11 @@ MU_TEST(test_assert_transfer_topo_data_to_grav)
 MU_TEST(test_assert_store_free_air_corr)
 {
 	double expected[] = {
-
+		28.7257224, 28.8007122, 28.7325116,
+		29.4191466, 29.7968730, 29.9036486,
+		29.9462354, 30.4998638, 30.5665214,
+		30.5409076, 30.5767052, 30.5514000,
+		28.7257224
 	};
 
 	memcpy(worden807_expected.free_air_corr, expected, sizeof(expected));
@@ -590,6 +594,94 @@ MU_TEST(test_assert_store_free_air_corr)
 	for(int i = 0; i < ROWS; i++) {
 		double e = worden807_expected.free_air_corr[i];
 		double a = worden807_actual.free_air_corr[i];
+
+		mu_assert(approx_eq(e, a, EPSILON), msg);
+	}
+}
+
+
+
+/*
+ * tests - store_bouguer_corr
+ *
+ */
+MU_TEST(test_assert_store_bouguer_corr)
+{
+	double expected[] = {
+		-9.367229088, -9.391682664, -9.369442992, 
+		-9.593349192, -9.716522760, -9.751341432, 
+		-9.765228648, -9.945762456, -9.967498968, 
+		-9.959146512, -9.970819824, -9.962568000, 
+		-9.367229088
+	};
+
+	memcpy(worden807_expected.bouguer_corr, expected, sizeof(expected));
+
+	store_bouguer_corr(&worden807_actual);
+
+	const char *msg = "error when calculating Bouguer correction";
+	for(int i = 0; i < ROWS; i++) {
+		double e = worden807_expected.bouguer_corr[i];
+		double a = worden807_actual.bouguer_corr[i];
+
+		mu_assert(approx_eq(e, a, EPSILON), msg);
+	}
+}
+
+
+
+/*
+ * tests - store_bouguer_rel_grav_fields
+ *
+ */
+MU_TEST(test_assert_store_bouguer_rel_grav_fields)
+{
+	double expected[] = {
+		749.958709697000, 749.995815758957, 749.885757506414, 
+		749.919585411871, 749.968172864328, 750.138167387784, 
+		750.123036512241, 749.874694992198, 749.693383835655, 
+		749.662692329612, 749.673386455569, 749.723970377526, 
+		749.958709697000
+
+	};
+
+	memcpy(worden807_expected.bouguer_rel_grav_fields, expected, sizeof(expected));
+
+	store_bouguer_rel_grav_fields(&worden807_actual);
+
+	const char *msg = "error in calculating relative Bouguer gravitational fields";
+	for(int i = 0; i < ROWS; i++) {
+		double e = worden807_expected.bouguer_rel_grav_fields[i];
+		double a = worden807_actual.bouguer_rel_grav_fields[i];
+
+		mu_assert(approx_eq(e, a, EPSILON), msg);
+	}
+}
+
+
+
+/*
+ * tests - store_bouguer_anomaly
+ *
+ */
+MU_TEST(test_assert_store_bouguer_anomaly)
+{
+	double expected[] = {
+		 0.000000000000000, 0.037106061956934, -0.072952190586193, 
+		-0.039124323129333, 0.009463113327681, 0.179457640784488, 
+		 0.164326767241452, -0.084014802801803, -0.26532597644763, 
+		-0.29601748738789, -0.285323351431001, -0.234739427474215, 
+	         0.00000000000000
+	};
+
+	memcpy(worden807_expected.bouguer_anomaly, expected, sizeof(expected));
+
+	store_bouguer_anomaly(&worden807_actual);
+
+	const char *msg = "error in calculating Bouguer anomaly";
+	for(int i = 0; i < ROWS; i++) {
+		double e = worden807_expected.bouguer_anomaly[i];
+		double a = worden807_actual.bouguer_anomaly[i];
 
 		mu_assert(approx_eq(e, a, EPSILON), msg);
 	}
@@ -614,6 +706,10 @@ MU_TEST_SUITE(test_suite)
 	MU_RUN_TEST(test_assert_store_lat_corr);
 	MU_RUN_TEST(test_assert_set_station_num_before_return_to_ref);
 	MU_RUN_TEST(test_assert_transfer_topo_data_to_grav);
+	MU_RUN_TEST(test_assert_store_free_air_corr);
+	MU_RUN_TEST(test_assert_store_bouguer_corr);
+	MU_RUN_TEST(test_assert_store_bouguer_rel_grav_fields);
+	MU_RUN_TEST(test_assert_store_bouguer_anomaly);
 }
 
  

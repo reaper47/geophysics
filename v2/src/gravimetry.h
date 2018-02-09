@@ -53,7 +53,10 @@
 #define WORDEN807_UPPERY    0.40546
 #define INVALID_TEMP       -999
 
+#define REF_STATION         0.0
 #define FREE_AIR_VARIATION  0.3086
+#define DENSITY_G_CM3       2.4
+#define TWO_PI_G            0.04193
 
 struct worden807_t {
 	double *altitudes;
@@ -103,6 +106,9 @@ void store_attraction_deviation(struct worden807_t *worden);
 void store_lat_corr(struct worden807_t *worden);
 void transfer_topo_data_to_grav(struct topo_t *topo, struct worden807_t *worden807);
 void store_free_air_corr(struct worden807_t *worden);
+void store_bouguer_corr(struct worden807_t *worden);
+void store_bouguer_rel_grav_fields(struct worden807_t *worden);
+void store_bouguer_anomaly(struct worden807_t *worden);
 
 #endif /* gravimetry.h */
 
