@@ -137,7 +137,7 @@ double dial_const_worden807(struct worden807_t *worden)
 
 
 
-int load_grav_csv(struct worden807_t *worden, const char *csv_file)
+int load_grav_csv(struct worden807_t *worden, const char *csv_file, const char *topo_file)
 {
 	FILE *fp = fopen(csv_file, "rb");
 	if(fp == NULL) {
@@ -151,8 +151,10 @@ int load_grav_csv(struct worden807_t *worden, const char *csv_file)
 		printf("malloc worden807 failed\n");
 		return -1;
 	}
+
 	unsigned int header_line_number = 1;
 	worden->num_lines = num_lines - header_line_number;
+        worden->topo_file = (char*)topo_file;
 
 	const char delim = determine_delim(fp);
 	
@@ -408,55 +410,114 @@ void store_free_air_corr(struct worden807_t *worden)
 
 void store_bouguer_corr(struct worden807_t *worden)
 {
-	unsigned int num_lines = worden->num_lines;
+    unsigned int num_lines = worden->num_lines;
 
-	double h;
-	for(unsigned int i = 0; i < num_lines; i++) {
-		h = worden->altitudes[i];
+    double h;
+    for(unsigned int i = 0; i < num_lines; i++) {
+        h = worden->altitudes[i];
 
-		worden->bouguer_corr[i] = -TWO_PI_G * DENSITY_G_CM3 * h; 
-	}
+        worden->bouguer_corr[i] = -TWO_PI_G * DENSITY_G_CM3 * h;
+    }
 }
 
 
 
 void store_bouguer_rel_grav_fields(struct worden807_t *worden)
 {
-	unsigned int num_lines = worden->num_lines;
+    unsigned int num_lines = worden->num_lines;
 
-	double rel_grav_field;
-       	double temporal_var;
-        double lat_corr;
-        double free_air_corr;
-	double bouguer_corr;
-	double cumulative_corr;
+    double rel_grav_field;
+    double temporal_var;
+    double lat_corr;
+    double free_air_corr;
+    double bouguer_corr;
+    double cumulative_corr;
 
-	for(unsigned int i = 0; i < num_lines; i++) {
-		rel_grav_field = worden->rel_grav_fields[i];
-		temporal_var = worden->temporal_vars[i];
-		lat_corr = worden->lat_corr[i];
-		free_air_corr = worden->free_air_corr[i];
-		bouguer_corr = worden->bouguer_corr[i];
+    for(unsigned int i = 0; i < num_lines; i++) {
+        rel_grav_field = worden->rel_grav_fields[i];
+        temporal_var = worden->temporal_vars[i];
+        lat_corr = worden->lat_corr[i];
+        free_air_corr = worden->free_air_corr[i];
+        bouguer_corr = worden->bouguer_corr[i];
 
-		cumulative_corr = lat_corr + free_air_corr + bouguer_corr;
+        cumulative_corr = lat_corr + free_air_corr + bouguer_corr;
 
-		worden->bouguer_rel_grav_fields[i] = rel_grav_field - temporal_var + cumulative_corr; 	
-	}	
+        worden->bouguer_rel_grav_fields[i] = rel_grav_field - temporal_var + cumulative_corr; 	
+    }	
 }
 
 
 
 void store_bouguer_anomaly(struct worden807_t *worden)
 {
-	unsigned int num_lines = worden->num_lines;
+    unsigned int num_lines = worden->num_lines;
 	
-	double bouguer_rel_grav_ref = worden->bouguer_rel_grav_fields[0];
-	double curr_bouguer_rel_grav;
+    double bouguer_rel_grav_ref = worden->bouguer_rel_grav_fields[0];
+    double curr_bouguer_rel_grav;
 
-	for(unsigned int i = 0; i < num_lines; i++) {
-		curr_bouguer_rel_grav = worden->bouguer_rel_grav_fields[i];
+    for(unsigned int i = 0; i < num_lines; i++) {
+        curr_bouguer_rel_grav = worden->bouguer_rel_grav_fields[i];
 
-		worden->bouguer_anomaly[i] = curr_bouguer_rel_grav - bouguer_rel_grav_ref;
-	}	
+	worden->bouguer_anomaly[i] = curr_bouguer_rel_grav - bouguer_rel_grav_ref;
+    }	
+}
+
+
+
+void store_regional_anomaly(struct worden807_t *worden)
+{
+    unsigned int num_lines = worden->num_lines;
+
+    double max_station = max_arrf(worden->stations, (int)num_lines);
+    double endpoint = 0.30;
+
+    for(unsigned int i = 0; i < num_lines; i++) {
+        double progression = worden->stations[i] / max_station;
+
+        worden->regional_anomaly[i] = endpoint * progression;
+    }
+}
+
+
+
+void store_residual_anomaly(struct worden807_t *worden)
+{
+    unsigned int num_lines = worden->num_lines;
+
+    double bouguer, regional;
+    for(unsigned int i = 0; i < num_lines; i++) {
+        bouguer = worden->bouguer_anomaly[i];
+        regional = worden->regional_anomaly[i];
+
+        worden->residual_anomaly[i] = bouguer - regional;
+    }
+}
+
+
+
+void populate_calc_fields_worden807(struct worden807_t *worden)
+{
+    store_avg_readings_std(worden, 0);
+    store_avg_readings_std(worden, 1);
+    store_rel_grav_fields(worden);
+    store_grav_anomaly_notcorr(worden);
+    store_temporal_vars(worden);
+    store_attraction_deviation(worden);
+    store_lat_corr(worden);
+
+    struct topo_t topo;
+    if(load_topo_csv(&topo, worden->topo_file) != 0)
+        printf("failed opening %s\n", worden->topo_file);
+
+    populate_calc_fields(&topo);
+    transfer_topo_data_to_grav(&topo, worden);
+    free_topo(&topo);
+
+    store_free_air_corr(worden);
+    store_bouguer_corr(worden);
+    store_bouguer_rel_grav_fields(worden);
+    store_bouguer_anomaly(worden);
+    store_regional_anomaly(worden);
+    store_residual_anomaly(worden);
 }
 

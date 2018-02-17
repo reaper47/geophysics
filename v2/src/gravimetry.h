@@ -80,15 +80,16 @@ struct worden807_t {
 	double *residual_anomaly;
 	double *stations;
 	double *std;
-	char  *survey_address;
-	char  *survey_area;
-	char  *survey_date;
+	char   *survey_address;
+	char   *survey_area;
+	char   *survey_date;
 	double  survey_dir;
-	char  *survey_poi;
-	char  *survey_purpose;
+	char   *survey_poi;
+	char   *survey_purpose;
 	double *temporal_vars;
 	double *times;
 	double *times_min;
+        char   *topo_file;
 };
 
 int  alloc_worden807(struct worden807_t *worden, unsigned int n);
@@ -96,7 +97,7 @@ void assign_idx_node(struct list_t *list, struct worden807_t *worden);
 void set_station_num_before_return_to_ref(struct worden807_t *worden, struct topo_t *topo);
 double dial_const_worden807(struct worden807_t *worden);
 void free_worden807(struct worden807_t *worden);
-int  load_grav_csv(struct worden807_t *worden, const char *csv_file);
+int  load_grav_csv(struct worden807_t *worden, const char *csv_file, const char *topo_file);
 void store_avg_readings_std(struct worden807_t *worden, int is_std);
 void store_fields_struct(struct list_t *fields, struct list_t *headers, struct worden807_t *worden, int idx, int *ridx);
 void store_grav_anomaly_notcorr(struct worden807_t *worden);
@@ -109,6 +110,9 @@ void store_free_air_corr(struct worden807_t *worden);
 void store_bouguer_corr(struct worden807_t *worden);
 void store_bouguer_rel_grav_fields(struct worden807_t *worden);
 void store_bouguer_anomaly(struct worden807_t *worden);
+void store_regional_anomaly(struct worden807_t *worden);
+void store_residual_anomaly(struct worden807_t *worden);
+void populate_calc_fields_worden807(struct worden807_t *worden);
 
 #endif /* gravimetry.h */
 

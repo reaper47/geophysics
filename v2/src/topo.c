@@ -83,7 +83,7 @@ int load_topo_csv(struct topo_t *topo, const char *csv_file)
 		return 1;
 	}
 
-	unsigned int num_lines = num_lines_file(fp);	
+	unsigned int num_lines = num_lines_file(fp);
 	if(alloc_topo(topo, num_lines) != 0) {
 		printf("malloc topo failed\n");
 		return 2;
@@ -108,7 +108,7 @@ int load_topo_csv(struct topo_t *topo, const char *csv_file)
 	delete_list(lines);
 	delete_list(headers);
 	fclose(fp);
-
+    
 	return 0;
 }
 

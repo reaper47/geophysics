@@ -8,7 +8,8 @@ WARNINGS ?= -Wall -Wextra -Wshadow -Wpointer-arith -Wcast-align \
 CFLAGS := -std=c11 -O3 $(WARNINGS) 
 
 DEBUG := -g3
-#CFLAG += -g3
+#CFLAG += -ggdb
+#CFLAG += -g
 
 LIBS := -lm
 
