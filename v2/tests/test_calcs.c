@@ -1,4 +1,4 @@
-#include "../src/utils/calcs.h"
+#include "../include/calcs.h"
 #include "test.h"
 
 #define NUM_ELS 10
@@ -57,36 +57,36 @@ MU_TEST(test_check_setup)
 
 
 /*
- * tests - avg_arrf
+ * tests - AvgArr
  *
  */
-MU_TEST(test_assert_avg_arrf)
+MU_TEST(test_assert_avg_arr)
 {
-	double avg_actual = avg_arrf(vals, NUM_ELS);
+	double avg_actual = AvgArr(vals, NUM_ELS);
 
 	const char *msg = "avg_actual not as expected";
-	mu_assert(approx_eq(avg_actual, vals_avg_expected, EPSILON), msg);
+	mu_assert(ApproxEq(avg_actual, vals_avg_expected, EPSILON), msg);
 }
 
 
 
 /*
- * tests - std_arrf
+ * tests - StdArr
  * 
  */
-MU_TEST(test_assert_std_arrf)
+MU_TEST(test_assert_std_arr)
 {
-	double avg = avg_arrf(vals, NUM_ELS);
-	double std_actual = std_arrf(vals, avg, NUM_ELS);
+	double avg = AvgArr(vals, NUM_ELS);
+	double std_actual = StdArr(vals, avg, NUM_ELS);
 
 	const char *msg = "std_actual not as expected";
-	mu_assert(approx_eq(std_actual, vals_std_expected, EPSILON), msg);
+	mu_assert(ApproxEq(std_actual, vals_std_expected, EPSILON), msg);
 }
 
 
 
 /*
- * tests - interpolate_pts
+ * tests - InterpolatePts
  *
  */
 MU_TEST(test_assert_interpolate_pts)
@@ -103,14 +103,14 @@ MU_TEST(test_assert_interpolate_pts)
 		-0.010133433333294	
 	};
 
-	double *arr_actual = interpolate_pts(start_value, end_value, num_steps);
+	double *arr_actual = InterpolatePts(start_value, end_value, num_steps);
 
 	const char *msg = "interpolation between two points error";
 	for(int i = 0; i < num_steps; i++) {
 		double expected = arr_expected[i];
 		double actual = arr_actual[i];
 			
-		mu_assert(approx_eq(expected, actual, EPSILON), msg);
+		mu_assert(ApproxEq(expected, actual, EPSILON), msg);
 	}
 
 	free(arr_actual);
@@ -119,7 +119,7 @@ MU_TEST(test_assert_interpolate_pts)
 
 
 /*
- * tests - correct_latitude
+ * tests - CorrectLatitude
  *
  */
 MU_TEST(test_assert_correct_latitude)
@@ -129,20 +129,24 @@ MU_TEST(test_assert_correct_latitude)
 	double lat = 46.8;
 	double lng = 34.25;
 	double pos = 500.0;
-	double lat_corr_actual = correct_latitude(lat, lng, pos);
+	double lat_corr_actual = CorrectLatitude(lat, lng, pos);
 
 	const char *msg = "error when correcting the latitude";
-	bool is_approx_eq = approx_eq(lat_corr_expected, lat_corr_actual, EPSILON);
-	mu_assert(is_approx_eq, msg);
+	_Bool is_ApproxEq = ApproxEq(lat_corr_expected, lat_corr_actual, EPSILON);
+	mu_assert(is_ApproxEq, msg);
 }
 
 
 
-MU_TEST(test_assert_max_arrf)
+/*
+ * tests - MaxArr
+ *
+ */
+MU_TEST(test_assert_max_arr)
 {
 	double max_val_expected = 99.988707450519;
 
-	double max_val_actual = max_arrf(vals, NUM_ELS);
+	double max_val_actual = MaxArr(vals, NUM_ELS);
 
 	mu_assert_double_eq(max_val_expected, max_val_actual);
 }
@@ -154,11 +158,11 @@ MU_TEST_SUITE(test_suite)
 	MU_SUITE_CONFIGURE(&test_setup, &test_teardown);
 	
 	MU_RUN_TEST(test_check_setup);
-	MU_RUN_TEST(test_assert_avg_arrf);
+	MU_RUN_TEST(test_assert_avg_arr);
 	MU_RUN_TEST(test_assert_interpolate_pts);
-	MU_RUN_TEST(test_assert_std_arrf);
+	MU_RUN_TEST(test_assert_std_arr);
 	MU_RUN_TEST(test_assert_correct_latitude);
-	MU_RUN_TEST(test_assert_max_arrf);
+	MU_RUN_TEST(test_assert_max_arr);
 }
 
 

@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "gravimetry.h"
+#include "../include/gravimetry.h"
 
 int main(void)
 {

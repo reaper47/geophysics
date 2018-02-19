@@ -1,4 +1,4 @@
-#include "../src/utils/sll.h"
+#include "../include/sll.h"
 #include "test.h"
 
 #define NODE1_DATA "hello"
@@ -26,7 +26,6 @@ void test_setup(void)
 
 void test_teardown(void)
 {
-
 }
 
 
@@ -47,13 +46,13 @@ MU_TEST(test_check_setup)
 
 
 /*
- * tests - create_node
+ * tests - CreateNode
  *
  */
 MU_TEST(test_assert_create_node)
 {
 	const char *data_expected = node1_data;
-	struct node_t *node = create_node(data_expected);
+	struct node_t *node = CreateNode(data_expected);
 	
 	mu_assert_string_eq(data_expected, node->data);
 	mu_assert(node->next == NULL, "next should be null");
@@ -65,49 +64,49 @@ MU_TEST(test_assert_create_node)
 
 
 /*
- * tests - create_list
+ * tests - CreateList
  *
  */
 MU_TEST(test_assert_create_list)
 {
-	struct list_t *list = create_list();
+	struct list_t *list = CreateList();
 	
-	unsigned int cnt_expected = 0;
+	unsigned int count_expected = 0;
 	
 	mu_assert(list->head == NULL, "head should be null");
 	mu_assert(list->tail == NULL, "tail should be null");
-	mu_assert_uint_eq(cnt_expected, list->cnt);
+	mu_assert_uint_eq(count_expected, list->count);
 	
-	delete_list(list);
+	DeleteList(list);
 }
 
 
 
 /*
- * tests - add_head_list
+ * tests - AddHeadList
  *
  */
 MU_TEST(test_assert_add_head_list)
 {
-	struct list_t *list = create_list();
+	struct list_t *list = CreateList();
 	
-	unsigned int cnt_expected = 1;
+	unsigned int count_expected = 1;
 	const char *data_expected = node1_data;
 	
-	add_head_list(list, data_expected);
+	AddHeadList(list, data_expected);
 	
 	const char *data_actual = list->head->data;
 	mu_assert_string_eq(data_expected, data_actual);
-	mu_assert_uint_eq(cnt_expected, list->cnt);
+	mu_assert_uint_eq(count_expected, list->count);
 	
-	delete_list(list);
+	DeleteList(list);
 }
 
 
 
 MU_TEST(test_assert_add_head_list2)
 {
-	struct list_t *list = create_list();
+	struct list_t *list = CreateList();
 	
 	const char *line_actual = "hello,this,is,a,test";
 	const char *line_expected[] = { "hello", "this", "is", "a", "test" };	
@@ -117,7 +116,7 @@ MU_TEST(test_assert_add_head_list2)
 	tofree = str = strdup(line_actual);
 	
 	while((tok = strsep(&str, &delim)))
-		add_head_list(list, tok);
+		AddHeadList(list, tok);
 	free(tofree);	
 		
 	struct node_t *node = list->head;
@@ -128,126 +127,126 @@ MU_TEST(test_assert_add_head_list2)
 		i++;
 	}
 
-	delete_list(list);
+	DeleteList(list);
 }
 
 
 
 /*
- * tests - get_cnt_list
+ * tests - GetCountList
  *
  */
 MU_TEST(test_assert_get_cnt_list)
 {
-	struct list_t *list = create_list();
+	struct list_t *list = CreateList();
 	
-	add_head_list(list, node1_data);
-	add_head_list(list, node1_data);
-	add_head_list(list, node2_data);
+	AddHeadList(list, node1_data);
+	AddHeadList(list, node1_data);
+	AddHeadList(list, node2_data);
 	
-	unsigned int cnt_expected = 3;
-	unsigned int data_actual = get_cnt_list(list);
+	unsigned int count_expected = 3;
+	unsigned int data_actual = GetCountList(list);
 
-	mu_assert_uint_eq(cnt_expected, data_actual);
+	mu_assert_uint_eq(count_expected, data_actual);
 	
-	delete_list(list);
+	DeleteList(list);
 }
 
 
 
 /*
- * tests - remove_head_list
+ * tests - RemoveHeadList
  *
  */
 MU_TEST(test_assert_remove_head_list)
 {
-	struct list_t *list = create_list();
+	struct list_t *list = CreateList();
 	
-	add_head_list(list, node1_data);
-	add_head_list(list, node1_data);
-	unsigned int cnt_expected = 2;
+	AddHeadList(list, node1_data);
+	AddHeadList(list, node1_data);
+	unsigned int count_expected = 2;
 	
-	remove_head_list(list);
-	cnt_expected--;
+	RemoveHeadList(list);
+	count_expected--;
 	
 	const char *data_expected = node1_data;
 	const char *data_actual = list->head->data;
 	mu_assert_string_eq(data_expected, data_actual);
-	mu_assert_uint_eq(cnt_expected, list->cnt);
+	mu_assert_uint_eq(count_expected, list->count);
 
-	remove_head_list(list);
-	cnt_expected--;
+	RemoveHeadList(list);
+	count_expected--;
 	
 	mu_assert(list->head == 0, "head should be null");
-	mu_assert_uint_eq(0, list->cnt);
+	mu_assert_uint_eq(0, list->count);
 	
-	delete_list(list);
+	DeleteList(list);
 }
 
 
  
 /*
- * tests - add_tail_list
+ * tests - AddTailList
  *
  */
 MU_TEST(test_assert_add_tail_list)
 {
-	struct list_t *list = create_list();
+	struct list_t *list = CreateList();
 	
-	unsigned int cnt_expected = 1;
+	unsigned int count_expected = 1;
 	const char *data_expected = node1_data;
 	
-	add_tail_list(list, data_expected);
+	AddTailList(list, data_expected);
 	
 	const char *data_actual = list->tail->data;
 	mu_assert_string_eq(data_expected, data_actual);
-	mu_assert_uint_eq(cnt_expected, list->cnt);
+	mu_assert_uint_eq(count_expected, list->count);
 	
-	delete_list(list);
+	DeleteList(list);
 }
 
 
 
 /*
- * tests - remove_tail_list
+ * tests - RemoveTailList
  *
  */
 MU_TEST(test_assert_remove_tail_list)
 {
-	struct list_t *list = create_list();
+	struct list_t *list = CreateList();
 	
-	add_tail_list(list, node1_data);
-	remove_tail_list(list);
+	AddTailList(list, node1_data);
+	RemoveTailList(list);
 	
-	unsigned int cnt_expected = 0;
+	unsigned int count_expected = 0;
 	mu_assert(list->tail == 0, "tail should be null");
-	mu_assert_uint_eq(cnt_expected, list->cnt);
+	mu_assert_uint_eq(count_expected, list->count);
 	
-	delete_list(list);
+	DeleteList(list);
 }
 
 
 
 /*
- * tests - remove_list
+ * tests - RemoveList
  *
  */
 MU_TEST(test_assert_remove_list)
 {
-	struct list_t *list = create_list();
+	struct list_t *list = CreateList();
 	
-	struct node_t *node1 = create_node(node1_data);
-	struct node_t *node2 = create_node(node2_data);
-	unsigned int cnt_expected = 2;
+	struct node_t *node1 = CreateNode(node1_data);
+	struct node_t *node2 = CreateNode(node2_data);
+	unsigned int count_expected = 2;
 	
-	add_head_list(list, node1->data);
-	add_head_list(list, node2->data);
+	AddHeadList(list, node1->data);
+	AddHeadList(list, node2->data);
 	
 	free(node2->data);
-	remove_list(list, node2, node1);
+	RemoveList(list, node2, node1);
 	
-	cnt_expected--;
-	mu_assert_uint_eq(cnt_expected, list->cnt);
+	count_expected--;
+	mu_assert_uint_eq(count_expected, list->count);
 	
 	const char *data_expected = node1_data;
 	const char *data_actual = list->tail->data;
@@ -256,26 +255,26 @@ MU_TEST(test_assert_remove_list)
 	free(node1->data);
 	free(node1);
 	
-	delete_list(list);
+	DeleteList(list);
 }
 
 
 
 /*
- * tests - empty_list
+ * tests - EmptyList
  *
  */
 MU_TEST(test_assert_empty_list)
 {
-	struct list_t *list = create_list();
+	struct list_t *list = CreateList();
 	
-	add_tail_list(list, node1_data);
-	unsigned int cnt_expected = 0;
+	AddTailList(list, node1_data);
+	unsigned int count_expected = 0;
 
-	empty_list(list);
-	mu_assert_uint_eq(cnt_expected, list->cnt);
+	EmptyList(list);
+	mu_assert_uint_eq(count_expected, list->count);
 	
-	delete_list(list);
+	DeleteList(list);
 }
 
 
@@ -308,3 +307,4 @@ int main(void)
 	MU_REPORT();
 	return 0;
 }
+

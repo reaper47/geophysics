@@ -1,6 +1,6 @@
-#include "csv.h"
+#include "../../include/csv.h"
 
-char determine_delim(FILE *fp)
+char DetermineDelim(FILE *fp)
 {
 	rewind(fp);
 	
@@ -70,15 +70,15 @@ char determine_delim(FILE *fp)
 
 
 
-struct list_t *gather_lines(FILE *fp)
+struct list_t *GatherLines(FILE *fp)
 {
 	rewind(fp);
-	struct list_t *list = create_list();
+	struct list_t *list = CreateList();
 	
-	char *line = NULL;
-	size_t len = 0;
-	long read;
-	int header = 1;
+	char  *line   = NULL;
+	size_t len    = 0;
+	int    header = 1;
+	long   read;
 	
 	while((read = getline(&line, &len, fp)) != -1) {
 		if(header == 1) {
@@ -93,7 +93,7 @@ struct list_t *gather_lines(FILE *fp)
 			buffer[i] = line[i];
 		buffer[(int)n-1] = '\0';
 		
-		add_head_list(list, buffer);
+		AddHeadList(list, buffer);
 		free(buffer);
 	}
 	
@@ -106,7 +106,7 @@ struct list_t *gather_lines(FILE *fp)
 
 
 
-unsigned int num_lines_file(FILE *fp)
+unsigned int NumLinesFile(FILE *fp)
 {
 	rewind(fp);
 	
@@ -124,9 +124,9 @@ unsigned int num_lines_file(FILE *fp)
 
 
 
-struct list_t *parse_header(FILE *fp, const char delim)
+struct list_t *ParseHeader(FILE *fp, const char delim)
 {
-	struct list_t *list = create_list();
+	struct list_t *list = CreateList();
 	
 	char *line = NULL, *tok, *str, *tofree;
 	size_t len = 0;
@@ -134,10 +134,10 @@ struct list_t *parse_header(FILE *fp, const char delim)
 	
 	if(getline(&line, &len, fp) != 0) {
 		tofree = str = strdup(line);
-		strlower(str, true);
+		StrLower(str, 1);
 		
 		while((tok = strsep(&str, &delim_cpy)))
-			add_head_list(list, tok);
+			AddHeadList(list, tok);
 
 		free(tofree);
 	}
@@ -150,14 +150,14 @@ struct list_t *parse_header(FILE *fp, const char delim)
 
 
 
-struct list_t *parse_line(const char *str, const char delim)
+struct list_t *ParseLine(const char *str, const char delim)
 {
-	struct list_t *list = create_list();
+	struct list_t *list = CreateList();
 	
 	int have_quotes = -1;
 	int n = (int)strlen(str);
 	char *tok = malloc(128*sizeof(char));
-	int cnt = 0;
+	int count = 0;
 	
 	for(int i = 0; i < n; i++) {
 		char c = str[i];
@@ -168,16 +168,16 @@ struct list_t *parse_line(const char *str, const char delim)
 			have_quotes = -1;
 
 		if(c == delim && have_quotes == -1) {
-			tok[cnt] = '\0';
-			cnt = 0;
-			add_head_list(list, tok);
+			tok[count] = '\0';
+			count = 0;
+			AddHeadList(list, tok);
 		} else if(i == n-1) {
-			tok[cnt] = c;
-			tok[cnt+1] = '\0';
-			add_head_list(list, tok);
+			tok[count] = c;
+			tok[count+1] = '\0';
+			AddHeadList(list, tok);
 		} else {
-			tok[cnt] = c;
-			++cnt;
+			tok[count] = c;
+			++count;
 		}
 	}
 	

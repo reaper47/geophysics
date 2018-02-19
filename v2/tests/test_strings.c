@@ -1,23 +1,21 @@
-#include "../src/utils/strings.h"
+#include "../include/strings.h"
 #include "test.h"
 
 
 void test_setup(void)
 {
-
 }
 
 
 
 void test_teardown(void)
 {
-
 }
 
 
 
 /*
- * tests - rm_spaces
+ * tests - RmSpaces
  *
  */
 MU_TEST(test_assert_rm_spaces)
@@ -25,7 +23,7 @@ MU_TEST(test_assert_rm_spaces)
 	char str_expected[] = "abababab";
 	char str_tst[]      = " ab ab ab ab ";
 	
-	rm_spaces(str_tst);
+	RmSpaces(str_tst);
 	
 	mu_assert_string_eq(str_expected, str_tst);
 }
@@ -33,7 +31,7 @@ MU_TEST(test_assert_rm_spaces)
 
 
 /*
- * tests - strlower
+ * tests - StrLower
  *
  */
 MU_TEST(test_assert_strlower_not_csv)
@@ -43,7 +41,7 @@ MU_TEST(test_assert_strlower_not_csv)
 	char *str_actual, *tofree;
 	
 	tofree = str_actual = strdup(str_tst);
-	strlower(str_actual, false);
+	StrLower(str_actual, 0);
 	
 	mu_assert_string_eq(str_expected, str_actual);
 	free(tofree);
@@ -52,7 +50,7 @@ MU_TEST(test_assert_strlower_not_csv)
 
 
 /*
- * tests - strlower_csv
+ * tests - StrLower_csv
  *
  */
 MU_TEST(test_assert_strlower_csv)
@@ -62,7 +60,7 @@ MU_TEST(test_assert_strlower_csv)
 	char *str_actual, *tofree;
 	
 	tofree = str_actual = strdup(str_tst);
-	strlower(str_actual, true);
+	StrLower(str_actual, 1);
 	
 	mu_assert_string_eq(str_expected, str_actual);
 	free(tofree);
@@ -80,7 +78,7 @@ MU_TEST(test_assert_charptr_to_static)
 
 	int n = (int)strlen(s_expected);
 	char s_actual[n+1];
-	charptr_to_static((char*)s_expected, s_actual, n);
+	CharPtrToStatic((char*)s_expected, s_actual, n);
 
 	mu_assert_string_eq(s_expected, s_actual);
 }

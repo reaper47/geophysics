@@ -1,6 +1,6 @@
-#include "strings.h"
+#include "../../include/strings.h"
 
-void charptr_to_static(char *str, char *buff, int cnt)
+void CharPtrToStatic(char *str, char *buff, int cnt)
 {	
 	for(int i = 0; i < cnt; ++i)
 		buff[i] = str[i];
@@ -9,7 +9,7 @@ void charptr_to_static(char *str, char *buff, int cnt)
 
 
 
-void rm_spaces(char *src)
+void RmSpaces(char *src)
 {
 	// https://stackoverflow.com/questions/1726302/
 	
@@ -24,7 +24,7 @@ void rm_spaces(char *src)
 
 
 
-void strlower(char *src, bool is_csv)
+void StrLower(char *src, _Bool is_csv)
 {
 	int n = (int)strlen(src);
 	for(int i = 0; i < n; i++)

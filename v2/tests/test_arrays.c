@@ -1,4 +1,4 @@
-#include "../src/utils/arrays.h"
+#include "../include/arrays.h"
 #include "test.h"
 
 #define TST_ARR_ELS 10
@@ -24,13 +24,12 @@ void test_setup(void)
 
 void test_teardown(void)
 {
-
 }
 
   
 
 /*
- * tests - find_max_arr
+ * tests - FindMaxArr
  *
  */ 
 MU_TEST(test_check_tst_arr)
@@ -53,7 +52,7 @@ MU_TEST(test_assert_find_max_arr_tst_arr)
 {
 	int val_expected = 101;
 	
-	int val_actual = find_max_arr(tst_arr, TST_ARR_ELS);
+	int val_actual = FindMaxArr(tst_arr, TST_ARR_ELS);
 	
 	mu_assert_int_eq(val_expected, val_actual);
 }

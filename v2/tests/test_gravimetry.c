@@ -1,5 +1,5 @@
-#include "../src/gravimetry.h"
-#include "../src/utils/calcs.h"
+#include "../include/gravimetry.h"
+#include "../include/calcs.h"
 #include "test.h"
 
 #define GRAV_FILE "./test_data/grav.csv"
@@ -19,10 +19,10 @@ struct topo_t topo;
 
 void test_setup(void)
 {
-	if(alloc_worden807(&worden807_expected, ROWS) == -1)
+	if(AllocWorden807(&worden807_expected, ROWS) == -1)
 	    return;
 
-        if(alloc_worden807(&worden807_expected_populate, ROWS) == -1)
+        if(AllocWorden807(&worden807_expected_populate, ROWS) == -1)
             return;
 	
 	double stations[] = { 
@@ -72,7 +72,7 @@ void test_setup(void)
 	const char *addr = "\"555 plaines abraham, quebec, canada, g2j 5h6\"";
 	const char *date = "1997-12-09";
 	
-        /* worden807_expected */
+    /* worden807_expected */
 	memcpy(worden807_expected.stations, stations, sizeof(stations));
 	memcpy(worden807_expected.times, times, sizeof(times));
 	memcpy(worden807_expected.times_min, times_min, sizeof(times_min));
@@ -88,9 +88,9 @@ void test_setup(void)
 	worden807_expected.ref_station_lat = 46.8;
 	worden807_expected.survey_dir = 34.25;
 	worden807_expected.operation_temp_unit = 'F';
-        worden807_expected.topo_file = (char*)TOPO_FILE;
+    worden807_expected.topo_file = (char*)TOPO_FILE;
 
-        /* worden807_expected_populate */
+    /* worden807_expected_populate */
 	memcpy(worden807_expected_populate.stations, stations, sizeof(stations));
 	memcpy(worden807_expected_populate.times, times, sizeof(times));
 	memcpy(worden807_expected_populate.times_min, times_min, sizeof(times_min));
@@ -106,7 +106,7 @@ void test_setup(void)
 	worden807_expected_populate.ref_station_lat = 46.8;
 	worden807_expected_populate.survey_dir = 34.25;
 	worden807_expected_populate.operation_temp_unit = 'F';
-        worden807_expected_populate.topo_file = (char*)TOPO_FILE;
+    worden807_expected_populate.topo_file = (char*)TOPO_FILE;
 }
 
 
@@ -114,22 +114,21 @@ void test_setup(void)
 
 void test_teardown(void)
 {	
-	//free_worden807(&worden807_expected);
-        free_worden807(&worden807_expected_populate);
-	//free_topo(&topo);
+	FreeWorden807(&worden807_expected);
+    FreeWorden807(&worden807_expected_populate);
 }
 
 
 
 /*
- * tests - assign_idx_nod
+ * tests - AssignIdxNode
  *
  */ 
 MU_TEST(test_assert_assign_idx_node)
 {
 	FILE *fp = fopen(GRAV_FILE, "rb");
 	
-	struct list_t *headers_expected = create_list();
+	struct list_t *headers_expected = CreateList();
 
 	const char *station     = "station (m)";
 	const char *time        = "time";
@@ -147,21 +146,21 @@ MU_TEST(test_assert_assign_idx_node)
 	const char *latitude    = "reference station latitude";
 	const char *direction   = "gravimetric survey direction";
 	
-	add_head_list(headers_expected, station);
-	add_head_list(headers_expected, time);
-	add_head_list(headers_expected, time_min);
-	add_head_list(headers_expected, reading1);
-	add_head_list(headers_expected, reading2);
-	add_head_list(headers_expected, reading3);
-	add_head_list(headers_expected, reading4);
-	add_head_list(headers_expected, purpose);
-	add_head_list(headers_expected, area);
-	add_head_list(headers_expected, poi);
-	add_head_list(headers_expected, address);
-	add_head_list(headers_expected, date);
-	add_head_list(headers_expected, temperature);
-	add_head_list(headers_expected, latitude);
-	add_head_list(headers_expected, direction);
+	AddHeadList(headers_expected, station);
+	AddHeadList(headers_expected, time);
+	AddHeadList(headers_expected, time_min);
+	AddHeadList(headers_expected, reading1);
+	AddHeadList(headers_expected, reading2);
+	AddHeadList(headers_expected, reading3);
+	AddHeadList(headers_expected, reading4);
+	AddHeadList(headers_expected, purpose);
+	AddHeadList(headers_expected, area);
+	AddHeadList(headers_expected, poi);
+	AddHeadList(headers_expected, address);
+	AddHeadList(headers_expected, date);
+	AddHeadList(headers_expected, temperature);
+	AddHeadList(headers_expected, latitude);
+	AddHeadList(headers_expected, direction);
 	
 	uint8_t read_idx = 50;
 	struct node_t *curr_expect = headers_expected->head;
@@ -200,10 +199,10 @@ MU_TEST(test_assert_assign_idx_node)
 
 	}
 	
-	const char delim = determine_delim(fp);
-	struct list_t *headers_actual = parse_header(fp, delim);
-	assign_idx_node(headers_actual, &worden807_expected);
-        assign_idx_node(headers_actual, &worden807_expected_populate);
+	const char delim = DetermineDelim(fp);
+	struct list_t *headers_actual = ParseHeader(fp, delim);
+	AssignIdxNode(headers_actual, &worden807_expected);
+    AssignIdxNode(headers_actual, &worden807_expected_populate);
 	
 	curr_expect = headers_expected->head;
 	struct node_t *curr_actual = headers_actual->head;
@@ -217,8 +216,8 @@ MU_TEST(test_assert_assign_idx_node)
 		}
 	}
 	
-	delete_list(headers_expected);
-	delete_list(headers_actual);
+	DeleteList(headers_expected);
+	DeleteList(headers_actual);
 	
 	fclose(fp);
 }
@@ -227,17 +226,17 @@ MU_TEST(test_assert_assign_idx_node)
 
 
 /*
- * tests - load_grav_csv
+ * tests - LoadGravCsv
  *
  */ 
 MU_TEST(test_assert_load_grav_csv)
 {
 	int status_expected = 0;
 
-	int status_actual = load_grav_csv(&worden807_actual, GRAV_FILE, TOPO_FILE);
-        int status_actual_populate = load_grav_csv(&worden807_actual_populate, GRAV_FILE, TOPO_FILE);
+	int status_actual = LoadGravCsv(&worden807_actual, GRAV_FILE, TOPO_FILE);
+    int status_actual_populate = LoadGravCsv(&worden807_actual_populate, GRAV_FILE, TOPO_FILE);
 	mu_assert_int_eq(status_expected, status_actual);
-        mu_assert_int_eq(status_expected, status_actual_populate);
+    mu_assert_int_eq(status_expected, status_actual_populate);
 	
 	double expected, actual;
 	for(int i = 0; i < ROWS; i++) {
@@ -296,15 +295,15 @@ MU_TEST(test_assert_load_grav_csv)
 	unsigned int num_lines_actual = worden807_actual.num_lines;
 	mu_assert_int_eq((int)num_lines_expected, (int)num_lines_actual);
 
-        const char *topo_file_expected = TOPO_FILE;
-        const char *topo_file_actual = worden807_actual.topo_file;
-        mu_assert_string_eq(topo_file_expected, topo_file_actual);
+    const char *topo_file_expected = TOPO_FILE;
+    const char *topo_file_actual = worden807_actual.topo_file;
+    mu_assert_string_eq(topo_file_expected, topo_file_actual);
 }
 
 
 
 /*
- * tests - store_avg_readings
+ * tests - StoreAvgReadingsStd
  *
  */
 MU_TEST(test_assert_store_avg_readings)
@@ -319,14 +318,14 @@ MU_TEST(test_assert_store_avg_readings)
 	
 	memcpy(worden807_expected.avg_readings, expected, sizeof(expected));
 
-	store_avg_readings_std(&worden807_actual, 0);
+	StoreAvgReadingsStd(&worden807_actual, 0);
 
 	const char *msg = "unexpected average in average readings";
 	for(int i = 0; i < ROWS; i++) {
 		double e = worden807_expected.avg_readings[i];
 	       	double a = worden807_actual.avg_readings[i];
 
-		mu_assert(approx_eq(e, a, EPSILON), msg);
+		mu_assert(ApproxEq(e, a, EPSILON), msg);
 	}
 
 }
@@ -334,7 +333,7 @@ MU_TEST(test_assert_store_avg_readings)
 
 
 /*
- * tests - store_std
+ * tests - StoreAvgReadingsStd
  *
  */
 MU_TEST(test_assert_store_std)
@@ -349,30 +348,30 @@ MU_TEST(test_assert_store_std)
 
 	memcpy(worden807_expected.std, expected, sizeof(expected));
 	
-	store_avg_readings_std(&worden807_actual, 1);
+	StoreAvgReadingsStd(&worden807_actual, 1);
 
 	const char *msg = "unexpected std value";
 	for(int i = 0; i < ROWS; i++) {
 		double e = worden807_expected.std[i];
 		double a = worden807_actual.std[i];
 		
-		mu_assert(approx_eq(e, a, EPSILON), msg);
+		mu_assert(ApproxEq(e, a, EPSILON), msg);
 	}
 }
 
 
 
 /*
- * tests - dial_const_worden807
+ * tests - DialConstWorden807
  *
  */
 MU_TEST(test_assert_dial_const_worden807)
 {
 	double dial_expected = 0.4053373;
 
-	double dial_actual = dial_const_worden807(&worden807_actual);
+	double dial_actual = DialConstWorden807(&worden807_actual);
 
-	mu_assert(approx_eq(dial_expected, dial_actual, EPSILON), "dial const incorrect");
+	mu_assert(ApproxEq(dial_expected, dial_actual, EPSILON), "dial const incorrect");
 }
 
 
@@ -383,7 +382,7 @@ MU_TEST(test_assert_dial_const_worden807_invalid)
 
 	char tmp = worden807_actual.operation_temp_unit;
 	worden807_actual.operation_temp_unit = 'v';
-	double dial_actual = dial_const_worden807(&worden807_actual);
+	double dial_actual = DialConstWorden807(&worden807_actual);
 	worden807_actual.operation_temp_unit = tmp;
 
 	mu_assert_double_eq(dial_expected, dial_actual);
@@ -392,7 +391,7 @@ MU_TEST(test_assert_dial_const_worden807_invalid)
 
 
 /*
- * tests - store_relative_grav_field
+ * tests - StoreRelGravFields
  *
  */
 MU_TEST(test_assert_store_rel_grav_fields)
@@ -407,21 +406,21 @@ MU_TEST(test_assert_store_rel_grav_fields)
 
 	memcpy(worden807_expected.rel_grav_fields, grav_expected, sizeof(grav_expected));
 
-	store_rel_grav_fields(&worden807_actual);
+	StoreRelGravFields(&worden807_actual);
 
 	const char *msg = "error when calculating relative gravitational fields";
 	for(int i = 0; i < ROWS; i++) {
 		double e = worden807_expected.rel_grav_fields[i];
 		double a = worden807_actual.rel_grav_fields[i];
 		
-		mu_assert(approx_eq(e, a, EPSILON), msg);
+		mu_assert(ApproxEq(e, a, EPSILON), msg);
 	}
 }
 
 
 
 /*
- * tests - store_grav_anomaly_notcorr
+ * tests - StoreGravAnomalyUncorr
  *
  */
 MU_TEST(test_assert_store_grav_anomaly_notcorr)
@@ -434,22 +433,22 @@ MU_TEST(test_assert_store_grav_anomaly_notcorr)
 		-0.01013343249997	
 	};
 
-	memcpy(worden807_expected.grav_anomaly_notcorr, grav_expected, sizeof(grav_expected));
+	memcpy(worden807_expected.grav_anomaly_uncorr, grav_expected, sizeof(grav_expected));
 
-	store_grav_anomaly_notcorr(&worden807_actual);
+	StoreGravAnomalyUncorr(&worden807_actual);
 
 	const char *msg = "error when calculating uncorrected gravimetric anomalies"; 
 	for(int i = 0; i < ROWS; i++) {
-		double e = worden807_expected.grav_anomaly_notcorr[i];
-		double a = worden807_actual.grav_anomaly_notcorr[i];
-		mu_assert(approx_eq(e, a, EPSILON), msg);
+		double e = worden807_expected.grav_anomaly_uncorr[i];
+		double a = worden807_actual.grav_anomaly_uncorr[i];
+		mu_assert(ApproxEq(e, a, EPSILON), msg);
 	}
 }
 
 
 
 /*
- * tests - store_temporal_vars
+ * tests - StoreTemporalVars
  *
  */
 MU_TEST(test_assert_store_temporal_vars)
@@ -464,20 +463,20 @@ MU_TEST(test_assert_store_temporal_vars)
 
 	memcpy(worden807_expected.temporal_vars, expected, sizeof(expected));
 
-	store_temporal_vars(&worden807_actual);
+	StoreTemporalVars(&worden807_actual);
 
 	const char *msg = "error when calculating temporal variations of ref stations";
 	for(int i = 0; i < ROWS; i++) {
 		double e = worden807_expected.temporal_vars[i];
 		double a = worden807_actual.temporal_vars[i];
-		mu_assert(approx_eq(e, a, EPSILON), msg);
+		mu_assert(ApproxEq(e, a, EPSILON), msg);
 	}
 }
 
 
 
 /*
- * tests - store attraction_deviation
+ * tests - StoreAttractionDeviation
  *
  */
 MU_TEST(test_assert_store_attraction_deviation)
@@ -492,21 +491,21 @@ MU_TEST(test_assert_store_attraction_deviation)
 
 	memcpy(worden807_expected.attraction_deviation, expected, sizeof(expected));
 	
-	store_attraction_deviation(&worden807_actual);
+	StoreAttractionDeviation(&worden807_actual);
 
 	const char *msg = "attraction deviations do not match";
 	for(int i = 0; i < ROWS; i++) {
 		double e = worden807_expected.attraction_deviation[i];
 		double a = worden807_actual.attraction_deviation[i];
 		
-		mu_assert(approx_eq(e, a, EPSILON), msg);
+		mu_assert(ApproxEq(e, a, EPSILON), msg);
 	}
 }
 
 
 
 /*
- * tests - store_lat_corr
+ * tests - StoreLatCorr
  *
  */
 MU_TEST(test_assert_store_lat_corr)
@@ -521,30 +520,30 @@ MU_TEST(test_assert_store_lat_corr)
 
 	memcpy(worden807_expected.lat_corr, lat_corr_expected, sizeof(lat_corr_expected));
 
-	store_lat_corr(&worden807_actual);
+	StoreLatCorr(&worden807_actual);
 
 	const char *msg = "corrected latitudes do not match";
 	for(int i = 0; i < ROWS; i++) {
 		double e = worden807_expected.lat_corr[i];
 		double a = worden807_actual.lat_corr[i];
 		
-		mu_assert(approx_eq(e, a, EPSILON), msg);
+		mu_assert(ApproxEq(e, a, EPSILON), msg);
 	}
 }
 
 
 
 /*
- * tests - determine_station_num_before_return_to_ref
+ * tests - SetStationNumBeforeReturnToRef
  *
  */
 MU_TEST(test_assert_set_station_num_before_return_to_ref)
 {
-	load_topo_csv(&topo, TOPO_FILE);
+	LoadTopoCsv(&topo, TOPO_FILE);
 	
 	int station_num_expected = 11;
 	
-	set_station_num_before_return_to_ref(&worden807_actual, &topo);
+	SetStationNumBeforeReturnToRef(&worden807_actual, &topo);
 	int station_num_actual = topo.station_num_before_return_to_ref;
 
 	mu_assert_int_eq(station_num_expected, station_num_actual);
@@ -553,23 +552,23 @@ MU_TEST(test_assert_set_station_num_before_return_to_ref)
 
 
 /*
- * tests - transfer_topo_data_to_grav
+ * tests - TransferTopoDataToGrav
  *
  */
 MU_TEST(test_assert_transfer_topo_data_to_grav)
 {	
-	store_elevation_diff_corr(&topo);
-	store_elevation_cmp_ref(&topo);
+	StoreElevationDiffCorr(&topo);
+	StoreElevationCmpRef(&topo);
 
 	topo.elevation_cmp_ref[ROWS_TOPO-1] = 0.200;
 	topo.stations[ROWS_TOPO-1] = 500;
-	store_err_dist_btwn_stations(&topo);
+	StoreErrDistBtwnStations(&topo);
 	topo.elevation_cmp_ref[ROWS_TOPO-1] = 6.041;
 	topo.stations[ROWS_TOPO-1] = 260.0;
 	topo.err_dist_btwn_stations_m[ROWS_TOPO-1] = -0.052;
 
-	store_elevation_corr(&topo);
-	store_altitudes(&topo);	
+	StoreElevationCorr(&topo);
+	StoreAltitudes(&topo);	
 	
 	double elev_expected[] = {
 		-0.00, 0.243, 0.022, 
@@ -591,7 +590,7 @@ MU_TEST(test_assert_transfer_topo_data_to_grav)
 	memcpy(worden807_expected.elevations, elev_expected, sizeof(elev_expected));
 	memcpy(worden807_expected.altitudes, alts_expected, sizeof(alts_expected));
 
-	transfer_topo_data_to_grav(&topo, &worden807_actual);
+	TransferTopoDataToGrav(&topo, &worden807_actual);
 
 	for(int i = 0; i < ROWS; i++) {
 		double ee = worden807_expected.elevations[i];
@@ -608,7 +607,7 @@ MU_TEST(test_assert_transfer_topo_data_to_grav)
 
 
 /*
- * tests - store_free_air_corr
+ * tests - StoreFreeAirCorr
  *
  */
 MU_TEST(test_assert_store_free_air_corr)
@@ -623,21 +622,21 @@ MU_TEST(test_assert_store_free_air_corr)
 
 	memcpy(worden807_expected.free_air_corr, expected, sizeof(expected));
 
-	store_free_air_corr(&worden807_actual);
+	StoreFreeAirCorr(&worden807_actual);
 
 	const char *msg = "error when calculating free air correction";
 	for(int i = 0; i < ROWS; i++) {
 		double e = worden807_expected.free_air_corr[i];
 		double a = worden807_actual.free_air_corr[i];
 
-		mu_assert(approx_eq(e, a, EPSILON), msg);
+		mu_assert(ApproxEq(e, a, EPSILON), msg);
 	}
 }
 
 
 
 /*
- * tests - store_bouguer_corr
+ * tests - StoreBouguerCorr
  *
  */
 MU_TEST(test_assert_store_bouguer_corr)
@@ -652,27 +651,27 @@ MU_TEST(test_assert_store_bouguer_corr)
 
 	memcpy(worden807_expected.bouguer_corr, expected, sizeof(expected));
 
-	store_bouguer_corr(&worden807_actual);
+	StoreBouguerCorr(&worden807_actual);
 
 	const char *msg = "error when calculating Bouguer correction";
 	for(int i = 0; i < ROWS; i++) {
 		double e = worden807_expected.bouguer_corr[i];
 		double a = worden807_actual.bouguer_corr[i];
 
-		mu_assert(approx_eq(e, a, EPSILON), msg);
+		mu_assert(ApproxEq(e, a, EPSILON), msg);
 	}
 }
 
 
 
 /*
- * tests - store_bouguer_rel_grav_fields
+ * tests - StoreBouguerRelGravFields
  *
  */
 MU_TEST(test_assert_store_bouguer_rel_grav_fields)
 {
 	double expected[] = {
-        	749.958709697000, 749.995815758957, 749.885757506414, 
+        749.958709697000, 749.995815758957, 749.885757506414, 
 		749.919585411871, 749.968172864328, 750.138167387784, 
 		750.123036512241, 749.874694992198, 749.693383835655, 
 		749.662692329612, 749.673386455569, 749.723970377526, 
@@ -681,21 +680,21 @@ MU_TEST(test_assert_store_bouguer_rel_grav_fields)
 
 	memcpy(worden807_expected.bouguer_rel_grav_fields, expected, sizeof(expected));
 
-	store_bouguer_rel_grav_fields(&worden807_actual);
+	StoreBouguerRelGravFields(&worden807_actual);
 
 	const char *msg = "error in calculating relative Bouguer gravitational fields";
 	for(int i = 0; i < ROWS; i++) {
 		double e = worden807_expected.bouguer_rel_grav_fields[i];
 		double a = worden807_actual.bouguer_rel_grav_fields[i];
 
-		mu_assert(approx_eq(e, a, EPSILON), msg);
+		mu_assert(ApproxEq(e, a, EPSILON), msg);
 	}
 }
 
 
 
 /*
- * tests - store_bouguer_anomaly
+ * tests - StoreBouguerAnomaly
  *
  */
 MU_TEST(test_assert_store_bouguer_anomaly)
@@ -705,26 +704,26 @@ MU_TEST(test_assert_store_bouguer_anomaly)
 		-0.039124323129333, 0.009463113327681, 0.179457640784488, 
 		 0.164326767241452, -0.084014802801803, -0.26532597644763, 
 		-0.29601748738789, -0.285323351431001, -0.234739427474215, 
-	         0.00000000000000
+         0.00000000000000
 	};
 
 	memcpy(worden807_expected.bouguer_anomaly, expected, sizeof(expected));
 
-	store_bouguer_anomaly(&worden807_actual);
+	StoreBouguerAnomaly(&worden807_actual);
 
 	const char *msg = "error in calculating Bouguer anomaly";
 	for(int i = 0; i < ROWS; i++) {
 		double e = worden807_expected.bouguer_anomaly[i];
 		double a = worden807_actual.bouguer_anomaly[i];
 
-		mu_assert(approx_eq(e, a, EPSILON), msg);
+		mu_assert(ApproxEq(e, a, EPSILON), msg);
 	}
 }
 
 
 
 /*
- * tests - store_regional_anomaly
+ * tests - StoreRegionalAnomaly
  *
  */
 MU_TEST(test_assert_store_regional_anomaly)
@@ -739,21 +738,21 @@ MU_TEST(test_assert_store_regional_anomaly)
 
 	memcpy(worden807_expected.regional_anomaly, expected, sizeof(expected));
 
-	store_regional_anomaly(&worden807_actual);
+	StoreRegionalAnomaly(&worden807_actual);
 
 	const char *msg = "error in determining the regional anomaly";
 	for(int i = 0; i < ROWS; i++) {
 		double e = worden807_expected.regional_anomaly[i];
 		double a = worden807_actual.regional_anomaly[i];
 
-		mu_assert(approx_eq(e, a, EPSILON), msg);
+		mu_assert(ApproxEq(e, a, EPSILON), msg);
 	}
 }
 
 
 
 /*
- * tests - store_residual_anomaly
+ * tests - StoreResidualAnomaly
  *
  */
 MU_TEST(test_assert_store_residual_anomaly)
@@ -768,103 +767,103 @@ MU_TEST(test_assert_store_residual_anomaly)
 
 	memcpy(worden807_expected.residual_anomaly, expected, sizeof(expected));
 
-	store_residual_anomaly(&worden807_actual);
+	StoreResidualAnomaly(&worden807_actual);
 
 	const char *msg = "error in calculating the residual anomaly";
 	for(int i = 0; i < ROWS; i++) {
 		double e = worden807_expected.residual_anomaly[i];
 		double a = worden807_actual.residual_anomaly[i];
 
-		mu_assert(approx_eq(e, a, EPSILON), msg);
+		mu_assert(ApproxEq(e, a, EPSILON), msg);
 	}
 }
 
 
 
 /*
- * tests - populate_calc_fields_grav
+ * tests - PopulateCalcFieldsWorden807
  *
  */
 MU_TEST(test_assert_populate_calc_fields_worden807)
 {
     double expected_avg_readings[] = {
         1802.45, 1802.45, 1802.325, 
-	1801.3, 1800.825, 1801.1,
-	1801.025, 1799.525, 1799.0,
-	1799.0, 1799.0, 1799.2,
-	1802.475
+	    1801.3, 1800.825, 1801.1,
+	    1801.025, 1799.525, 1799.0,
+	    1799.0, 1799.0, 1799.2,
+	    1802.475
     };
 
     double expected_std[] = {
         0.229128784747770, 0.111803398874964, 0.043301270189281,
-	0.273861278752625, 0.163935963107496, 0.070710678118671,
-	0.043301270189183, 0.043301270189183, 0.122474487139140,
-	0.122474487139140, 0.070710678118591, 0.100000000000023,
-	0.129903810567624
+	    0.273861278752625, 0.163935963107496, 0.070710678118671,
+	    0.043301270189183, 0.043301270189183, 0.122474487139140,
+	    0.122474487139140, 0.070710678118591, 0.100000000000023,
+	    0.129903810567624
     };
 
     double expected_grav[] = {
-	730.6002163850, 730.6002163850, 730.5495492225,
-	730.1340784900, 729.9415432725, 730.0530110300, 
-	730.0226107325, 729.4146047825, 729.2018027000,
-	729.2018027000, 729.2018027000, 729.2828701600, 
-	730.6103498175
+	    730.6002163850, 730.6002163850, 730.5495492225,
+	    730.1340784900, 729.9415432725, 730.0530110300, 
+	    730.0226107325, 729.4146047825, 729.2018027000,
+	    729.2018027000, 729.2018027000, 729.2828701600, 
+	    730.6103498175
     };
 
     double expected_grav_uncorr[] = {
-	0.000000000000000, 0.000000000000000, 0.050667162499963,
-	0.466137895000088, 0.658673112499969, 0.547205355000074,
-	0.577605652499983, 1.185611602499990, 1.398413685000040,
-	1.398413685000040, 1.3984136850000400, 1.31734622500005000,
-	-0.01013343249997	
+	    0.000000000000000, 0.000000000000000, 0.050667162499963,
+	    0.466137895000088, 0.658673112499969, 0.547205355000074,
+	    0.577605652499983, 1.185611602499990, 1.398413685000040,
+	    1.398413685000040, 1.3984136850000400, 1.31734622500005000,
+	    -0.01013343249997	
     };
 
     double expected_tmp[] = {
-	0.0, 0.0, 0.0,
-	0.0, 0.0, 0.0,
-	0.0, 0.0, 0.0,
-	0.0, 0.0, 0.0,
-	0.010133433333294
+	    0.0, 0.0, 0.0,
+	    0.0, 0.0, 0.0,
+	    0.0, 0.0, 0.0,
+	    0.0, 0.0, 0.0,
+	    0.010133433333294
     };
 
     double expected_attract[] = { 
-	-0.000000000000000, -0.000844452777775, -0.001688905555549,
-	-0.002533358333324, -0.003377811111098, -0.004222263888873,
-	-0.005066716666647, -0.005911169444422, -0.006755622222196, 
-	-0.007600074999971, -0.008444527777745, -0.009288980555520,
-	-0.010133433333294	
+	    -0.000000000000000, -0.000844452777775, -0.001688905555549,
+	    -0.002533358333324, -0.003377811111098, -0.004222263888873,
+	    -0.005066716666647, -0.005911169444422, -0.006755622222196, 
+	    -0.007600074999971, -0.008444527777745, -0.009288980555520,
+	    -0.010133433333294	
     };
 
     double expected_lat[] = {
        	 0.0000000000000000, -0.013430162043108, -0.026860324086216,
-	-0.0402904861293240, -0.053720648172432, -0.067150810215541,
-	-0.0805809722586490, -0.094011134301757, -0.107441296344865,
-	-0.1208714583879730, -0.134301620431081, -0.147731782474189,
-	 0.0000000000000000
+	    -0.0402904861293240, -0.053720648172432, -0.067150810215541,
+	    -0.0805809722586490, -0.094011134301757, -0.107441296344865,
+	    -0.1208714583879730, -0.134301620431081, -0.147731782474189,
+	     0.0000000000000000
     };
 
     double expected_elev[] = {
-	-0.00, 0.243, 0.022, 
-	2.247, 3.471, 3.817, 
-	3.955, 5.749, 5.965, 
-	5.882, 5.998, 5.916, 
-	0.000
+	    -0.00, 0.243, 0.022, 
+	    2.247, 3.471, 3.817, 
+	    3.955, 5.749, 5.965, 
+	    5.882, 5.998, 5.916, 
+	    0.000
     };
  
     double expected_alts[] = {
-	93.084, 93.327, 93.106, 
-	95.331, 96.555, 96.901, 
-	97.039, 98.833, 99.049, 
-	98.966, 99.082, 99.000, 
-	93.084
+	    93.084, 93.327, 93.106, 
+	    95.331, 96.555, 96.901, 
+	    97.039, 98.833, 99.049, 
+	    98.966, 99.082, 99.000, 
+	    93.084
     };
 
     double expected_free[] = {
-	28.7257224, 28.8007122, 28.7325116,
-	29.4191466, 29.7968730, 29.9036486,
-	29.9462354, 30.4998638, 30.5665214,
-	30.5409076, 30.5767052, 30.5514000,
-	28.7257224
+	    28.7257224, 28.8007122, 28.7325116,
+	    29.4191466, 29.7968730, 29.9036486,
+	    29.9462354, 30.4998638, 30.5665214,
+	    30.5409076, 30.5767052, 30.5514000,
+	    28.7257224
     };
 
     double expected_bcorr[] = {
@@ -884,11 +883,11 @@ MU_TEST(test_assert_populate_calc_fields_worden807)
     };
     
     double expected_banom[] = {
-        0.000000, -0.010383, -0.167930, 
+         0.000000, -0.010383, -0.167930, 
         -0.181590, -0.180492, -0.057986, 
         -0.120605, -0.416436, -0.645236, 
         -0.723416, -0.760210, -0.757115, 
-        0.000000
+         0.000000
     };
 
     double expected_ranom[] = {
@@ -900,17 +899,17 @@ MU_TEST(test_assert_populate_calc_fields_worden807)
     };
 
     double expected_res[] = {
-        0.000000, -0.037655, -0.222475, 
+         0.000000, -0.037655, -0.222475, 
         -0.263409, -0.289583, -0.194349, 
         -0.284242, -0.607345, -0.863417, 
         -0.968870, -1.032938, -1.057115, 
-        0.000000
+         0.000000
     };
 
     memcpy(worden807_expected_populate.avg_readings, expected_avg_readings, sizeof(expected_avg_readings));
     memcpy(worden807_expected_populate.std, expected_std, sizeof(expected_std));
     memcpy(worden807_expected_populate.rel_grav_fields, expected_grav, sizeof(expected_grav));
-    memcpy(worden807_expected_populate.grav_anomaly_notcorr, expected_grav_uncorr, sizeof(expected_grav_uncorr));
+    memcpy(worden807_expected_populate.grav_anomaly_uncorr, expected_grav_uncorr, sizeof(expected_grav_uncorr));
     memcpy(worden807_expected_populate.temporal_vars, expected_tmp, sizeof(expected_tmp));
     memcpy(worden807_expected_populate.attraction_deviation, expected_attract, sizeof(expected_attract));
     memcpy(worden807_expected_populate.lat_corr, expected_lat, sizeof(expected_lat));
@@ -923,7 +922,7 @@ MU_TEST(test_assert_populate_calc_fields_worden807)
     memcpy(worden807_expected_populate.regional_anomaly, expected_ranom, sizeof(expected_ranom));
     memcpy(worden807_expected_populate.residual_anomaly, expected_res, sizeof(expected_res));
 
-    populate_calc_fields_worden807(&worden807_actual_populate);
+    PopulateCalcFieldsWorden807(&worden807_actual_populate);
 
     double e_avg, a_avg;
     double e_std, a_std;
@@ -956,55 +955,55 @@ MU_TEST(test_assert_populate_calc_fields_worden807)
     for(int i = 0; i < ROWS; i++) {
         e_avg = worden807_expected_populate.avg_readings[i];
         a_avg = worden807_actual_populate.avg_readings[i];
-        mu_assert(approx_eq(e_avg, a_avg, EPSILON), msg_avg);
+        mu_assert(ApproxEq(e_avg, a_avg, EPSILON), msg_avg);
 
         e_std = worden807_expected_populate.std[i];
         a_std = worden807_actual_populate.std[i];
-        mu_assert(approx_eq(e_std, a_std, EPSILON), msg_std);
+        mu_assert(ApproxEq(e_std, a_std, EPSILON), msg_std);
 
         e_rel = worden807_expected_populate.rel_grav_fields[i];
         a_rel = worden807_actual_populate.rel_grav_fields[i];
-        mu_assert(approx_eq(e_rel, a_rel, EPSILON), msg_rel);
+        mu_assert(ApproxEq(e_rel, a_rel, EPSILON), msg_rel);
 
-        e_grav_uncorr = worden807_expected_populate.grav_anomaly_notcorr[i];
-        a_grav_uncorr = worden807_actual_populate.grav_anomaly_notcorr[i];
-        mu_assert(approx_eq(e_grav_uncorr, a_grav_uncorr, EPSILON), msg_grav_uncorr);
+        e_grav_uncorr = worden807_expected_populate.grav_anomaly_uncorr[i];
+        a_grav_uncorr = worden807_actual_populate.grav_anomaly_uncorr[i];
+        mu_assert(ApproxEq(e_grav_uncorr, a_grav_uncorr, EPSILON), msg_grav_uncorr);
 
         e_tmp = worden807_expected_populate.temporal_vars[i];
         a_tmp = worden807_expected_populate.temporal_vars[i];
-        mu_assert(approx_eq(e_tmp, a_tmp, EPSILON), msg_tmp);
+        mu_assert(ApproxEq(e_tmp, a_tmp, EPSILON), msg_tmp);
 
         e_attract = worden807_expected_populate.attraction_deviation[i];
         a_attract = worden807_actual_populate.attraction_deviation[i];
-        mu_assert(approx_eq(e_attract, a_attract, EPSILON), msg_attract);
+        mu_assert(ApproxEq(e_attract, a_attract, EPSILON), msg_attract);
 
         e_lat = worden807_expected_populate.lat_corr[i];
         a_lat = worden807_actual_populate.lat_corr[i];
-        mu_assert(approx_eq(e_lat, a_lat, EPSILON), msg_lat);
+        mu_assert(ApproxEq(e_lat, a_lat, EPSILON), msg_lat);
 
         e_free = worden807_expected_populate.free_air_corr[i];
         a_free = worden807_expected_populate.free_air_corr[i];
-        mu_assert(approx_eq(e_free, a_free, EPSILON), msg_free);
+        mu_assert(ApproxEq(e_free, a_free, EPSILON), msg_free);
 
         e_bcorr = worden807_expected_populate.bouguer_corr[i];
         a_bcorr = worden807_actual_populate.bouguer_corr[i];
-        mu_assert(approx_eq(e_bcorr, a_bcorr, EPSILON), msg_bcorr);
+        mu_assert(ApproxEq(e_bcorr, a_bcorr, EPSILON), msg_bcorr);
 
         e_brel = worden807_expected_populate.bouguer_rel_grav_fields[i];
         a_brel = worden807_actual_populate.bouguer_rel_grav_fields[i];
-        mu_assert(approx_eq(e_brel, a_brel, EPSILON), msg_brel);
+        mu_assert(ApproxEq(e_brel, a_brel, EPSILON), msg_brel);
 
         e_banom = worden807_expected_populate.bouguer_anomaly[i];
         a_banom = worden807_actual_populate.bouguer_anomaly[i];
-        mu_assert(approx_eq(e_banom, a_banom, 1e-4), msg_banom);
+        mu_assert(ApproxEq(e_banom, a_banom, 1e-4), msg_banom);
 
         e_ranom = worden807_expected_populate.regional_anomaly[i];
         a_ranom = worden807_actual_populate.regional_anomaly[i];
-        mu_assert(approx_eq(e_ranom, a_ranom, 1e-4), msg_ranom);
+        mu_assert(ApproxEq(e_ranom, a_ranom, 1e-4), msg_ranom);
 
         e_res = worden807_expected_populate.residual_anomaly[i];
         a_res = worden807_actual_populate.residual_anomaly[i];
-        mu_assert(approx_eq(e_res, a_res, 1e-4), msg_res);
+        mu_assert(ApproxEq(e_res, a_res, 1e-4), msg_res);
     }
 }
 
@@ -1033,7 +1032,7 @@ MU_TEST_SUITE(test_suite)
 	MU_RUN_TEST(test_assert_store_bouguer_anomaly);
 	MU_RUN_TEST(test_assert_store_regional_anomaly);
 	MU_RUN_TEST(test_assert_store_residual_anomaly);
-        MU_RUN_TEST(test_assert_populate_calc_fields_worden807);
+    MU_RUN_TEST(test_assert_populate_calc_fields_worden807);
 }
 
  

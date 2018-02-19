@@ -13,31 +13,31 @@ DEBUG := -g3
 
 LIBS := -lm
 
-HDRSARR = ./test.h ../src/utils/arrays.h
+HDRSARR = ./test.h ../include/arrays.h
 SRCSARR = ../src/utils/arrays.c ./test_arrays.c
 OBJSARR = $(SRCSARR:.c=.o)
 
-HDRSCSV = ./test.h ../src/utils/csv.h ../src/utils/strings.h
+HDRSCSV = ./test.h ../include/csv.h ../include/strings.h
 SRCSCSV = ../src/utils/csv.c ../src/utils/sll.c ./test_csv.c ../src/utils/strings.c
 OBJSCSV = $(SRCSCSV:.c=.o)
 
-HDRSSLL = ./test.h ../src/utils/sll.h ../src/utils/strings.h
+HDRSSLL = ./test.h ../include/sll.h ../include/strings.h
 SRCSSLL = ../src/utils/sll.c ./test_sll.c ../src/utils/strings.c
 OBJSSLL = $(SRCSSLL:.c=.o)
 
-HDRSGRAV = ./test.h ../src/utils/sll.h ../src/gravimetry.h ../src/utils/csv.h ../src/utils/strings.h ../src/utils/calcs.h ../src/topo.h
+HDRSGRAV = ./test.h ../include/sll.h ../include/gravimetry.h ../include/csv.h ../include/strings.h ../include/calcs.h ../include/topo.h
 SRCSGRAV = ../src/utils/sll.c ../src/gravimetry.c ../src/utils/csv.c ./test_gravimetry.c ../src/utils/strings.c ../src/utils/calcs.c ../src/topo.c
 OBJSGRAV = $(SRCSGRAV:.c=.o)
 
-HDRSSTR = ./test.h ../src/utils/strings.h
+HDRSSTR = ./test.h ../include/strings.h
 SRCSSTR = ../src/utils/strings.c ./test_strings.c
 OBJSSTR = $(SRCSSTR:.c=.o)
 
-HDRSCALCS = ./test.h ../src/utils/calcs.h
+HDRSCALCS = ./test.h ../include/calcs.h
 SRCSCALCS = ../src/utils/calcs.c ./test_calcs.c
 OBJSCALCS = $(SRCSCALCS:.c=.o)
 	
-HDRSTOPO = ./test.h ../src/utils/sll.h ../src/topo.h ../src/utils/csv.h ../src/utils/strings.h ../src/utils/calcs.h
+HDRSTOPO = ./test.h ../include/sll.h ../include/topo.h ../include/csv.h ../include/strings.h ../include/calcs.h
 SRCSTOPO = ../src/topo.c ../src/utils/sll.c ../src/utils/csv.c ./test_topo.c ../src/utils/strings.c ../src/utils/calcs.c
 OBJSTOPO = $(SRCSTOPO:.c=.o)
 
