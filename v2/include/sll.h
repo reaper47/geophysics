@@ -42,20 +42,20 @@ struct list_t {
 	unsigned int   count;
 };
 
-unsigned int   GetCountList  (const struct list_t *list);
+unsigned int   get_count_list  (const struct list_t *list);
 
-struct node_t  *CreateNode   (const char *data);
-struct list_t  *CreateList   (void);
+struct node_t  *create_node   (const char *data);
+struct list_t  *create_list   (void);
 
-void    AddHeadList     (struct list_t *list, const char *data);
-void    RemoveHeadList  (struct list_t *list);
+void    add_head_list     (struct list_t *list, const char *data);
+void    remove_head_list  (struct list_t *list);
 
-void    AddTailList     (struct list_t *list, const char *data);
-void    RemoveTailList  (struct list_t *list);
+void    add_tail_list     (struct list_t *list, const char *data);
+void    rm_tail_list      (struct list_t *list);
 
-void    DeleteList      (struct list_t *list);
-void    EmptyList       (struct list_t *list);
-void    RemoveList      (struct list_t *list, struct node_t *node, struct node_t *prev);
+void    del_list      (struct list_t *list);
+void    empty_list       (struct list_t *list);
+void    rm_list      (struct list_t *list, struct node_t *node, struct node_t *prev);
 
 #endif /* SLL_H_ */
 

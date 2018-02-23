@@ -25,8 +25,8 @@ HDRSSLL = ./test.h ../include/sll.h ../include/strings.h
 SRCSSLL = ../src/utils/sll.c ./test_sll.c ../src/utils/strings.c
 OBJSSLL = $(SRCSSLL:.c=.o)
 
-HDRSGRAV = ./test.h ../include/sll.h ../include/gravimetry.h ../include/csv.h ../include/strings.h ../include/calcs.h ../include/topo.h
-SRCSGRAV = ../src/utils/sll.c ../src/gravimetry.c ../src/utils/csv.c ./test_gravimetry.c ../src/utils/strings.c ../src/utils/calcs.c ../src/topo.c
+HDRSGRAV = ./test.h ../include/sll.h ../include/gravimetry.h ../include/csv.h ../include/strings.h ../include/calcs.h ../include/topo.h ../include/arrays.h
+SRCSGRAV = ../src/utils/sll.c ../src/gravimetry.c ../src/utils/csv.c ./test_gravimetry.c ../src/utils/strings.c ../src/utils/calcs.c ../src/topo.c ../src/utils/arrays.c
 OBJSGRAV = $(SRCSGRAV:.c=.o)
 
 HDRSSTR = ./test.h ../include/strings.h
@@ -37,12 +37,12 @@ HDRSCALCS = ./test.h ../include/calcs.h
 SRCSCALCS = ../src/utils/calcs.c ./test_calcs.c
 OBJSCALCS = $(SRCSCALCS:.c=.o)
 	
-HDRSTOPO = ./test.h ../include/sll.h ../include/topo.h ../include/csv.h ../include/strings.h ../include/calcs.h
-SRCSTOPO = ../src/topo.c ../src/utils/sll.c ../src/utils/csv.c ./test_topo.c ../src/utils/strings.c ../src/utils/calcs.c
+HDRSTOPO = ./test.h ../include/sll.h ../include/topo.h ../include/csv.h ../include/strings.h ../include/arrays.h ../include/calcs.h
+SRCSTOPO = ../src/topo.c ../src/utils/sll.c ../src/utils/csv.c ./test_topo.c ../src/utils/strings.c ../src/utils/arrays.c ../src/utils/calcs.c
 OBJSTOPO = $(SRCSTOPO:.c=.o)
 
 all:
-	make test_array
+	make test_arrays
 	make test_csv
 	make test_sll
 	make test_grav
@@ -53,14 +53,14 @@ all:
 	make clean
 
 test:
-	./test_array
+	./test_arrays
 	./test_csv
 	./test_sll
 	./test_strings
 	./test_grav
 	./test_topo
 	
-test_array: $(OBJSARR) $(HDRSARR) Makefile
+test_arrays: $(OBJSARR) $(HDRSARR) Makefile
 	$(CC) $(CFLAGS) -o $@ $(OBJSARR) $(LIBS)
 	
 test_csv: $(OBJSCSV) $(HDRSCSV) Makefile
@@ -89,4 +89,4 @@ clean:
 .PHONY: purge
 purge:
 	rm -f core $(EXE) *.o
-	rm -rf ../src/*.o ../src/utils/*.o ./test_array ./test_csv ./test_csv ./test_sll ./test_grav ./test_strings ./test_calcs ./test_topo
+	rm -rf ../src/*.o ../src/utils/*.o ./test_arrays ./test_csv ./test_csv ./test_sll ./test_grav ./test_strings ./test_calcs ./test_topo

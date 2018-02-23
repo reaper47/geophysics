@@ -1,6 +1,6 @@
 #include "../include/gravimetry.h"
 
-int AllocWorden807(struct worden807_t *worden, unsigned int n)
+int alloc_worden807(struct worden807_t *worden, unsigned int n)
 {
 	worden->altitudes               = malloc(sizeof(worden->altitudes) * n);
 	worden->attraction_deviation    = malloc(sizeof(worden->attraction_deviation) * n);
@@ -41,7 +41,7 @@ int AllocWorden807(struct worden807_t *worden, unsigned int n)
 
 
 
-void FreeWorden807(struct worden807_t *worden)
+void free_worden807(struct worden807_t *worden)
 {
 	free(worden->altitudes);
 	free(worden->attraction_deviation);
@@ -66,7 +66,7 @@ void FreeWorden807(struct worden807_t *worden)
 
 
 
-void AssignIdxNode(struct list_t *list, struct worden807_t *worden)
+void assign_idx_node(struct list_t *list, struct worden807_t *worden)
 {
 	struct node_t *curr;
 	uint8_t read_idx = IDX_READING;
@@ -97,7 +97,7 @@ void AssignIdxNode(struct list_t *list, struct worden807_t *worden)
 
 			int n = (int)strlen(curr->data);
 			char s[n+1];
-			CharPtrToStatic(curr->data, s, n);
+			charptr_to_static(curr->data, s, n);
 
 			char *unit = NULL;
 			for(char *p = strtok(s, TEMP_BTWN); p != NULL; p = strtok(NULL, TEMP_BTWN))
@@ -114,7 +114,7 @@ void AssignIdxNode(struct list_t *list, struct worden807_t *worden)
 
 
 
-double DialConstWorden807(struct worden807_t *worden)
+double dial_const_worden807(struct worden807_t *worden)
 {
 	const double uppery = WORDEN807_UPPERY;
 	const double lowery = WORDEN807_LOWERY;
@@ -137,7 +137,7 @@ double DialConstWorden807(struct worden807_t *worden)
 
 
 
-int LoadGravCsv(struct worden807_t *worden, const char *csv_file, const char *topo_file)
+int load_grav_csv(struct worden807_t *worden, const char *csv_file, const char *topo_file)
 {
 	FILE *fp = fopen(csv_file, "rb");
 	if(fp == NULL) {
@@ -146,8 +146,8 @@ int LoadGravCsv(struct worden807_t *worden, const char *csv_file, const char *to
 		exit(EXIT_FAILURE);
 	}
 		
-	unsigned int num_lines = NumLinesFile(fp);
-	if(AllocWorden807(worden, num_lines) != 0) {
+	unsigned int num_lines = num_lines_file(fp);
+	if(alloc_worden807(worden, num_lines) != 0) {
 		printf("malloc worden807 failed\n");
 		return -1;
 	}
@@ -156,24 +156,24 @@ int LoadGravCsv(struct worden807_t *worden, const char *csv_file, const char *to
 	worden->num_lines = num_lines - header_line_number;
         worden->topo_file = (char*)topo_file;
 
-	const char delim = DetermineDelim(fp);
+	const char delim = determine_delim(fp);
 	
-	struct list_t *lines = GatherLines(fp);
-	struct list_t *headers = ParseHeader(fp, delim);
-	AssignIdxNode(headers, worden);
+	struct list_t *lines = gather_lines(fp);
+	struct list_t *headers = parse_header(fp, delim);
+	assign_idx_node(headers, worden);
 	
 	int arr_idx = 0;
 	int readings_idx = 0;
 	
 	for(struct node_t *node = lines->head; node != NULL; node = node->next) {
-		struct list_t *fields = ParseLine(node->data, delim);
-		StoreFieldsStruct(fields, headers, worden, arr_idx, &readings_idx);
+		struct list_t *fields = parse_line(node->data, delim);
+		store_fields_struct(fields, headers, worden, arr_idx, &readings_idx);
 		arr_idx++;
-		DeleteList(fields);
+		del_list(fields);
 	}
 	
-	DeleteList(lines);
-	DeleteList(headers);
+	del_list(lines);
+	del_list(headers);
 	fclose(fp);
 	
 	return 0;
@@ -181,7 +181,64 @@ int LoadGravCsv(struct worden807_t *worden, const char *csv_file, const char *to
 
 
 
-void StoreAvgReadingsStd(struct worden807_t *worden, int is_std)
+char *generate_grav_csv(struct worden807_t *worden, const char *out_dir)
+{
+    unsigned int num_lines = worden->num_lines;
+    char *path_csv = create_file_name(GRAV_PATH_LEN, GRAV_TEST_DIR, CSV);
+
+    FILE *csv_fp = fopen(path_csv, "w+");
+    if( !csv_fp ) {
+        printf("failed to open\n", path_csv);
+        return 1;
+    }
+
+    const char *csv_header_expected = 
+        "Station (m),Time (hh:mm),Time (mm),Reading 1,Reading 2,Reading 3,"
+        "Reading 4,Average reading (div),Standard deviation,"
+        "Relative gravitational field (mGal),Uncorrected gravimetric "
+        "anomaly (mGal),Temporal variations (mGal),Attraction/instrumental"
+        " deviation (mGal),Latitude correction (mGal),Elevation (m),Altitude"
+        " (m),Free air correction (mGal),Bouguer correction (mGal),Relative "
+        "Bouguer gravitational field (mGal),Bouguer anomaly (mGal),Regional "
+        "anomaly (mGal),Residual anomaly (mGal)";
+        
+    fprintf(csv_fp, "%s\n", csv_header_expected);
+    
+    int reading_idx = 0;
+    for(unsigned int i = 0; i < num_lines; i++) {
+        fprintf(csv_fp, "%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n", 
+                worden->stations[i], 
+                worden->times[i], 
+                worden->times_min[i],
+                worden->readings[reading_idx],
+                worden->readings[reading_idx+1],
+                worden->readings[reading_idx+2],
+                worden->readings[reading_idx+3],
+                worden->avg_readings[i], 
+                worden->std[i],
+                worden->rel_grav_fields[i],
+                worden->grav_anomaly_uncorr[i], 
+                worden->temporal_vars[i],
+                worden->attraction_deviation[i], 
+                worden->lat_corr[i],
+                worden->elevations[i], 
+                worden->altitudes[i], 
+                worden->free_air_corr[i], 
+                worden->bouguer_corr[i],
+                worden->bouguer_rel_grav_fields[i], 
+                worden->bouguer_anomaly[i],
+                worden->regional_anomaly[i], 
+                worden->residual_anomaly[i]);
+        reading_idx += 4;
+    }
+
+    fclose(csv_fp);
+    return path_csv;
+}
+
+
+
+void store_avg_readings_std(struct worden807_t *worden, int is_std)
 {
 	uint8_t num_readings = worden->num_readings;
 	unsigned int n = worden->num_lines * num_readings;
@@ -196,10 +253,10 @@ void StoreAvgReadingsStd(struct worden807_t *worden, int is_std)
 
 		if(c == num_readings) {
 			if(is_std == 0)
-				worden->avg_readings[pos] = AvgArr(readings, num_readings);
+				worden->avg_readings[pos] = avg_arr(readings, num_readings);
 			else {
 				double avg = worden->avg_readings[pos];
-				worden->std[pos] = StdArr(readings, avg, num_readings);
+				worden->std[pos] = std_arr(readings, avg, num_readings);
 			}
 
 			c = 0;
@@ -211,7 +268,7 @@ void StoreAvgReadingsStd(struct worden807_t *worden, int is_std)
 
 
 
-void StoreFieldsStruct(struct list_t *fields, struct list_t *headers, struct worden807_t *worden, int idx, int *ridx)
+void store_fields_struct(struct list_t *fields, struct list_t *headers, struct worden807_t *worden, int idx, int *ridx)
 {	
 	struct node_t *field  = fields->head;
 	struct node_t *header = headers->head;
@@ -253,7 +310,7 @@ void StoreFieldsStruct(struct list_t *fields, struct list_t *headers, struct wor
 
 
 
-void StoreGravAnomalyUncorr(struct worden807_t *worden)
+void store_grav_anomaly_uncorr(struct worden807_t *worden)
 {
 	double ref_station_grav = worden->rel_grav_fields[0];
 	unsigned int num_lines = worden->num_lines;
@@ -267,10 +324,10 @@ void StoreGravAnomalyUncorr(struct worden807_t *worden)
 
 
 
-void StoreRelGravFields(struct worden807_t *worden)
+void store_rel_grav_fields(struct worden807_t *worden)
 {
 	unsigned int num_lines = worden->num_lines;
-	double dial_const = DialConstWorden807(worden);
+	double dial_const = dial_const_worden807(worden);
 	
 	for(unsigned int i = 0; i < num_lines; i++)
 		worden->rel_grav_fields[i] = worden->avg_readings[i] * dial_const;
@@ -279,7 +336,7 @@ void StoreRelGravFields(struct worden807_t *worden)
 
 
 
-void StoreTemporalVars(struct worden807_t *worden)
+void store_temporal_vars(struct worden807_t *worden)
 {
 	unsigned int num_lines = worden->num_lines;
 	double epsilon = 1e-1;
@@ -288,7 +345,7 @@ void StoreTemporalVars(struct worden807_t *worden)
 	for(unsigned int i = 0; i < num_lines; i++) {
 		station = worden->stations[i];
 
-		if(ApproxEq(station, REF_STATION, epsilon)) {
+		if(approx_eq(station, REF_STATION, epsilon)) {
 			anomaly = worden->grav_anomaly_uncorr[i];
 			worden->temporal_vars[i] = -anomaly;
 		} else {
@@ -299,7 +356,7 @@ void StoreTemporalVars(struct worden807_t *worden)
 
 
 
-void StoreAttractionDeviation(struct worden807_t *worden)
+void store_attraction_deviation(struct worden807_t *worden)
 {
 	unsigned int num_lines = worden->num_lines;
 
@@ -316,13 +373,13 @@ void StoreAttractionDeviation(struct worden807_t *worden)
 
 	for(unsigned int i = 0; i < num_lines; i++) {
 		station = worden->stations[i];
-		is_approx_eq = ApproxEq(station, REF_STATION, epsilon);
+		is_approx_eq = approx_eq(station, REF_STATION, epsilon);
 					
 		if(ref_station_count == 2 && is_approx_eq) {
 			end_value = worden->temporal_vars[i];
 			num_steps++;
 			
-			double *results = InterpolatePts(start_value, end_value, num_steps);
+			double *results = interpolate_pts(start_value, end_value, num_steps);
 			
 			for(int k = 0; k < num_steps; k++) {
 				worden->attraction_deviation[cpy_idx] = results[k];
@@ -344,7 +401,7 @@ void StoreAttractionDeviation(struct worden807_t *worden)
 
 
 
-void StoreLatCorr(struct worden807_t *worden)
+void store_lat_corr(struct worden807_t *worden)
 {
 	unsigned int num_lines = worden->num_lines;
 
@@ -352,12 +409,12 @@ void StoreLatCorr(struct worden807_t *worden)
 	double lng = worden->survey_dir;
 
 	for(unsigned int i = 0; i < num_lines; i++)
-		worden->lat_corr[i] = CorrectLatitude(lat, lng, worden->stations[i]);
+		worden->lat_corr[i] = correct_latitude(lat, lng, worden->stations[i]);
 }
 
 
 
-void SetStationNumBeforeReturnToRef(struct worden807_t *worden, struct topo_t *topo)
+void set_station_num_before_return_to_ref(struct worden807_t *worden, struct topo_t *topo)
 {
 	unsigned int num_lines = worden->num_lines;
 	double next_station;
@@ -365,21 +422,21 @@ void SetStationNumBeforeReturnToRef(struct worden807_t *worden, struct topo_t *t
 	for(unsigned int i = 0; i < num_lines-1; i++) {
 		next_station = worden->stations[i+1];
 		
-		if(ApproxEq(next_station, 0.0, 1e-1))
+		if(approx_eq(next_station, 0.0, 1e-1))
 			topo->station_num_before_return_to_ref = (int)i;
 	}
 }
 
 
 
-void TransferTopoDataToGrav(struct topo_t *topo, struct worden807_t *worden)
+void transfer_topo_data_to_grav(struct topo_t *topo, struct worden807_t *worden)
 {
 	unsigned int num_lines = worden->num_lines;
 	double altitude, elevation;
 
 	for(unsigned int i = 0; i < num_lines; i++) {
 
-		if(ApproxEq(worden->stations[i], REF_STATION, 1e-1)) {
+		if(approx_eq(worden->stations[i], REF_STATION, 1e-1)) {
 			altitude = topo->altitudes[0];
 			elevation = topo->elevation_corr[0];			
 		} else {
@@ -394,7 +451,7 @@ void TransferTopoDataToGrav(struct topo_t *topo, struct worden807_t *worden)
 
 
 
-void StoreFreeAirCorr(struct worden807_t *worden)
+void store_free_air_corr(struct worden807_t *worden)
 {
 	unsigned int num_lines = worden->num_lines;
 	double h;
@@ -408,7 +465,7 @@ void StoreFreeAirCorr(struct worden807_t *worden)
 
 
 
-void StoreBouguerCorr(struct worden807_t *worden)
+void store_bouguer_corr(struct worden807_t *worden)
 {
     unsigned int num_lines = worden->num_lines;
 
@@ -422,7 +479,7 @@ void StoreBouguerCorr(struct worden807_t *worden)
 
 
 
-void StoreBouguerRelGravFields(struct worden807_t *worden)
+void store_bouguer_rel_grav_fields(struct worden807_t *worden)
 {
     unsigned int num_lines = worden->num_lines;
 
@@ -448,7 +505,7 @@ void StoreBouguerRelGravFields(struct worden807_t *worden)
 
 
 
-void StoreBouguerAnomaly(struct worden807_t *worden)
+void store_bouguer_anomaly(struct worden807_t *worden)
 {
     unsigned int num_lines = worden->num_lines;
 	
@@ -464,11 +521,11 @@ void StoreBouguerAnomaly(struct worden807_t *worden)
 
 
 
-void StoreRegionalAnomaly(struct worden807_t *worden)
+void store_regional_anomaly(struct worden807_t *worden)
 {
     unsigned int num_lines = worden->num_lines;
 
-    double max_station = MaxArr(worden->stations, (int)num_lines);
+    double max_station = max_arr(worden->stations, (int)num_lines);
     double endpoint = 0.30;
 
     for(unsigned int i = 0; i < num_lines; i++) {
@@ -480,7 +537,7 @@ void StoreRegionalAnomaly(struct worden807_t *worden)
 
 
 
-void StoreResidualAnomaly(struct worden807_t *worden)
+void store_residual_anomaly(struct worden807_t *worden)
 {
     unsigned int num_lines = worden->num_lines;
 
@@ -495,29 +552,29 @@ void StoreResidualAnomaly(struct worden807_t *worden)
 
 
 
-void PopulateCalcFieldsWorden807(struct worden807_t *worden)
+void populate_calc_fields_worden807(struct worden807_t *worden)
 {
-    StoreAvgReadingsStd(worden, 0);
-    StoreAvgReadingsStd(worden, 1);
-    StoreRelGravFields(worden);
-    StoreGravAnomalyUncorr(worden);
-    StoreTemporalVars(worden);
-    StoreAttractionDeviation(worden);
-    StoreLatCorr(worden);
+    store_avg_readings_std(worden, 0);
+    store_avg_readings_std(worden, 1);
+    store_rel_grav_fields(worden);
+    store_grav_anomaly_uncorr(worden);
+    store_temporal_vars(worden);
+    store_attraction_deviation(worden);
+    store_lat_corr(worden);
 
     struct topo_t topo;
-    if(LoadTopoCsv(&topo, worden->topo_file) != 0)
+    if(load_topo_csv(&topo, worden->topo_file) != 0)
         printf("failed opening %s\n", worden->topo_file);
 
-    PopulateCalcFields(&topo);
-    TransferTopoDataToGrav(&topo, worden);
-    FreeTopo(&topo);
+    populate_calc_fields(&topo);
+    transfer_topo_data_to_grav(&topo, worden);
+    free_topo(&topo);
 
-    StoreFreeAirCorr(worden);
-    StoreBouguerCorr(worden);
-    StoreBouguerRelGravFields(worden);
-    StoreBouguerAnomaly(worden);
-    StoreRegionalAnomaly(worden);
-    StoreResidualAnomaly(worden);
+    store_free_air_corr(worden);
+    store_bouguer_corr(worden);
+    store_bouguer_rel_grav_fields(worden);
+    store_bouguer_anomaly(worden);
+    store_regional_anomaly(worden);
+    store_residual_anomaly(worden);
 }
 

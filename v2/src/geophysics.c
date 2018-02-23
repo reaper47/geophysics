@@ -5,12 +5,12 @@
 int main(void)
 {
 	const char *grav_csv = "../data/uploads/grav2.csv";
-	const char *delim = ";";
-	
+	const char *topo_csv = "../data/uploads/topo.csv";
+
 	struct worden807_t worden;	
-	load_grav_csv(&worden, grav_csv, delim);
+	LoadGravCsv(&worden, grav_csv, topo_csv);
 	
-	free_worden807(&worden);
+	FreeWorden807(&worden);
 	return 0;
 }
 

@@ -37,6 +37,12 @@
  *                                  the gravimeter and the centre of 
  *                                  the Earth (mGal/m).
  *
+ * GRAV_BASE_DIR          char*     Base directory where generated
+ *                                  csv files are dumped.
+ *
+ * GRAV_PATH_LEN          int       Length of the path for the generated 
+ *                                  csv from the results.
+ *
  * IDX_ADDRESS            int       Index used to store the address
  *                                  column in a singly-linked-list.
  *
@@ -185,6 +191,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include "./topo.h"
 #include "./calcs.h"
 #include "./csv.h"
@@ -237,61 +244,66 @@
 #define DENSITY_G_CM3       2.4
 #define TWO_PI_G            0.04193
 
+#define GRAV_PATH_LEN       26
+#define GRAV_TEST_DIR       "./test_data/processed/"
+#define CSV                 ".csv"
+
 struct worden807_t {
-	double *altitudes;
-	double *attraction_deviation;
-	double *avg_readings;
-	double *bouguer_anomaly;
-	double *bouguer_corr;
-	double *bouguer_rel_grav_fields;
-	double *elevations;
-	double *free_air_corr;
-	double *grav_anomaly_uncorr;
-	double *lat_corr;
-	uint8_t num_readings;
-	unsigned int num_lines;
-	double  operation_temp;
-	char    operation_temp_unit;
-	double *readings;
-	double  ref_station_lat;
-	double *rel_grav_fields;
-	double *regional_anomaly;
-	double *residual_anomaly;
-	double *stations;
-	double *std;
-	char   *survey_address;
-	char   *survey_area;
-	char   *survey_date;
-	double  survey_dir;
-	char   *survey_poi;
-	char   *survey_purpose;
-	double *temporal_vars;
-	double *times;
-	double *times_min;
+    double *altitudes;
+    double *attraction_deviation;
+    double *avg_readings;
+    double *bouguer_anomaly;
+    double *bouguer_corr;
+    double *bouguer_rel_grav_fields;
+    double *elevations;
+    double *free_air_corr;
+    double *grav_anomaly_uncorr;
+    double *lat_corr;
+    uint8_t num_readings;
+    unsigned int num_lines;
+    double  operation_temp;
+    char    operation_temp_unit;
+    double *readings;
+    double  ref_station_lat;
+    double *rel_grav_fields;
+    double *regional_anomaly;
+    double *residual_anomaly;
+    double *stations;
+    double *std;
+    char   *survey_address;
+    char   *survey_area;
+    char   *survey_date;
+    double  survey_dir;
+    char   *survey_poi;
+    char   *survey_purpose;
+    double *temporal_vars;
+    double *times;
+    double *times_min;
     char   *topo_file;
 };
 
-int    AllocWorden807                   (struct worden807_t *worden, unsigned int n);
-void   AssignIdxNode                    (struct list_t *list, struct worden807_t *worden);
-void   SetStationNumBeforeReturnToRef   (struct worden807_t *worden, struct topo_t *topo);
-double DialConstWorden807               (struct worden807_t *worden);
-void   FreeWorden807                    (struct worden807_t *worden);
-int    LoadGravCsv                      (struct worden807_t *worden, const char *csv_file, const char *topo_file);
-void   StoreAvgReadingsStd              (struct worden807_t *worden, int is_std);
-void   StoreFieldsStruct                (struct list_t *fields, struct list_t *headers, struct worden807_t *worden, int idx, int *ridx);
-void   StoreGravAnomalyUncorr           (struct worden807_t *worden);
-void   StoreRelGravFields               (struct worden807_t *worden);
-void   StoreTemporalVars                (struct worden807_t *worden);
-void   StoreAttractionDeviation         (struct worden807_t *worden);
-void   StoreLatCorr                     (struct worden807_t *worden);
-void   TransferTopoDataToGrav           (struct topo_t *topo, struct worden807_t *worden807);
-void   StoreFreeAirCorr                 (struct worden807_t *worden);
-void   StoreBouguerCorr                 (struct worden807_t *worden);
-void   StoreBouguerRelGravFields        (struct worden807_t *worden);
-void   StoreBouguerAnomaly              (struct worden807_t *worden);
-void   StoreRegionalAnomaly             (struct worden807_t *worden);
-void   StoreResidualAnomaly             (struct worden807_t *worden);
-void   PopulateCalcFieldsWorden807      (struct worden807_t *worden);
+int    alloc_worden807                   (struct worden807_t *worden, unsigned int n);
+void   assign_idx_node                    (struct list_t *list, struct worden807_t *worden);
+double dial_const_worden807               (struct worden807_t *worden);
+void   free_worden807                    (struct worden807_t *worden);
+int    load_grav_csv                      (struct worden807_t *worden, const char *csv_file, const char *topo_file);
+void   populate_calc_fields_worden807      (struct worden807_t *worden);
+void   set_station_num_before_return_to_ref   (struct worden807_t *worden, struct topo_t *topo);
+void   store_avg_readings_std              (struct worden807_t *worden, int is_std);
+void   store_fields_struct                (struct list_t *fields, struct list_t *headers, struct worden807_t *worden, int idx, int *ridx);
+void   store_grav_anomaly_uncorr           (struct worden807_t *worden);
+void   store_rel_grav_fields               (struct worden807_t *worden);
+void   store_temporal_vars                (struct worden807_t *worden);
+void   store_attraction_deviation         (struct worden807_t *worden);
+void   store_lat_corr                     (struct worden807_t *worden);
+void   store_free_air_corr                 (struct worden807_t *worden);
+void   store_bouguer_corr                 (struct worden807_t *worden);
+void   store_bouguer_rel_grav_fields        (struct worden807_t *worden);
+void   store_bouguer_anomaly              (struct worden807_t *worden);
+void   store_regional_anomaly             (struct worden807_t *worden);
+void   store_residual_anomaly             (struct worden807_t *worden);
+void   transfer_topo_data_to_grav           (struct topo_t *topo, struct worden807_t *worden807);
+char  *generate_grav_csv                  (struct worden807_t *worden, const char *out_dir);
 
 #endif /* gravimetry.h */
 

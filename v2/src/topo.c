@@ -1,6 +1,6 @@
 #include "../include/topo.h"
 
-int AllocTopo(struct topo_t *topo, unsigned int n)
+int alloc_topo(struct topo_t *topo, unsigned int n)
 {
 	topo->altitudes	             = malloc(sizeof(topo->altitudes) * n);
 	topo->elevation_corr         = malloc(sizeof(topo->elevation_corr) * n);
@@ -25,7 +25,7 @@ int AllocTopo(struct topo_t *topo, unsigned int n)
 
 
 
-void FreeTopo(struct topo_t *topo)
+void free_topo(struct topo_t *topo)
 {
 	free(topo->altitudes);
 	free(topo->elevation_corr);
@@ -41,7 +41,7 @@ void FreeTopo(struct topo_t *topo)
 
 
 
-void AssignIdxNodeTopo(struct list_t *list)
+void assign_idx_node_topo(struct list_t *list)
 {
 	struct node_t *curr;
 
@@ -73,7 +73,7 @@ void AssignIdxNodeTopo(struct list_t *list)
 
 
 
-int LoadTopoCsv(struct topo_t *topo, const char *csv_file)
+int load_topo_csv(struct topo_t *topo, const char *csv_file)
 {
 	FILE *fp = fopen(csv_file, "r");
 	if(fp == NULL) {
@@ -82,30 +82,30 @@ int LoadTopoCsv(struct topo_t *topo, const char *csv_file)
 		return 1;
 	}
 
-	unsigned int num_lines = NumLinesFile(fp);
-	if(AllocTopo(topo, num_lines) != 0) {
+	unsigned int num_lines = num_lines_file(fp);
+	if(alloc_topo(topo, num_lines) != 0) {
 		printf("malloc topo failed\n");
 		return 2;
 	}
 
 	topo->num_lines = num_lines - HEADER_LINE_NUM;
 
-	const char delim = DetermineDelim(fp);
+	const char delim = determine_delim(fp);
 
-	struct list_t *lines = GatherLines(fp);
-	struct list_t *headers = ParseHeader(fp, delim);
-	AssignIdxNodeTopo(headers);
+	struct list_t *lines = gather_lines(fp);
+	struct list_t *headers = parse_header(fp, delim);
+	assign_idx_node_topo(headers);
 
 	int arr_idx = 0;
 	for(struct node_t *node = lines->head; node != NULL; node = node->next) {
-		struct list_t *fields = ParseLine(node->data, delim);
-		StoreFieldsTopoStruct(fields, headers, topo, arr_idx);
+		struct list_t *fields = parse_line(node->data, delim);
+		store_fields_topo_struct(fields, headers, topo, arr_idx);
 		arr_idx++;
-		DeleteList(fields);
+		del_list(fields);
 	}
 
-	DeleteList(lines);
-	DeleteList(headers);
+	del_list(lines);
+	del_list(headers);
 	fclose(fp);
     
 	return 0;
@@ -113,7 +113,7 @@ int LoadTopoCsv(struct topo_t *topo, const char *csv_file)
 
 
 
-void StoreFieldsTopoStruct(struct list_t *fields,  struct list_t *headers, struct topo_t *topo, int idx)
+void store_fields_topo_struct(struct list_t *fields,  struct list_t *headers, struct topo_t *topo, int idx)
 {
 	struct node_t *field = fields->head;
 	struct node_t *header = headers->head;
@@ -132,19 +132,19 @@ void StoreFieldsTopoStruct(struct list_t *fields,  struct list_t *headers, struc
 		else if(hidx == IDX_ELEV_DIFF_QUALITY_TOPO)
 			topo->elevation_diff_quality[idx] = atof(field->data);
 		else if(idx == 0 && hidx == IDX_PURPOSE_TOPO) {
-			StrLower(field->data, 0);
+			strlower(field->data, 0);
 			topo->survey_purpose = strdup(field->data);
 		}
 		else if(idx == 0 && hidx == IDX_AREA_TOPO) {
-			StrLower(field->data, 0);
+			strlower(field->data, 0);
 			topo->survey_area = strdup(field->data);
 		}
 		else if(idx == 0 && hidx == IDX_POI_TOPO) {
-			StrLower(field->data, 0);
+			strlower(field->data, 0);
 			topo->survey_poi = strdup(field->data);
 		}
 		else if(idx == 0 && hidx == IDX_ADDRESS_TOPO) {
-			StrLower(field->data, 0);
+			strlower(field->data, 0);
 			topo->survey_address = strdup(field->data);
 		}
 		else if(idx == 0 && hidx == IDX_DATE_TOPO)
@@ -159,7 +159,7 @@ void StoreFieldsTopoStruct(struct list_t *fields,  struct list_t *headers, struc
 
 
 
-void StoreElevationDiffCorr(struct topo_t *topo)
+void store_elevation_diff_corr(struct topo_t *topo)
 {
 	unsigned int num_lines = topo->num_lines;
 
@@ -174,7 +174,7 @@ void StoreElevationDiffCorr(struct topo_t *topo)
 
 
 
-void StoreElevationCmpRef(struct topo_t *topo)
+void store_elevation_cmp_ref(struct topo_t *topo)
 {
 	unsigned int num_lines = topo->num_lines;
 
@@ -189,11 +189,11 @@ void StoreElevationCmpRef(struct topo_t *topo)
 
 
 
-void StoreErrDistBtwnStations(struct topo_t *topo)
+void store_err_dist_btwn_stations(struct topo_t *topo)
 {
 	unsigned int num_lines = topo->num_lines;
 
-	double max_station = MaxArr(topo->stations, (int)num_lines);
+	double max_station = max_arr(topo->stations, (int)num_lines);
 	double last_elev_cmp_ref = topo->elevation_cmp_ref[num_lines-1];
 
 	for(unsigned int i = 0; i < num_lines; i++) {
@@ -204,7 +204,7 @@ void StoreErrDistBtwnStations(struct topo_t *topo)
 
 
 
-void StoreElevationCorr(struct topo_t *topo)
+void store_elevation_corr(struct topo_t *topo)
 {
 	unsigned int num_lines = topo->num_lines;
 
@@ -218,7 +218,7 @@ void StoreElevationCorr(struct topo_t *topo)
 
 
 
-void StoreAltitudes(struct topo_t *topo)
+void store_altitudes(struct topo_t *topo)
 {
 	unsigned int num_lines = topo->num_lines;
 
@@ -235,12 +235,12 @@ void StoreAltitudes(struct topo_t *topo)
 
 
 
-void PopulateCalcFields(struct topo_t *topo)
+void populate_calc_fields(struct topo_t *topo)
 {
-	StoreElevationDiffCorr(topo);
-	StoreElevationCmpRef(topo);
-	StoreErrDistBtwnStations(topo);
-	StoreElevationCorr(topo);
-	StoreAltitudes(topo);	
+	store_elevation_diff_corr(topo);
+	store_elevation_cmp_ref(topo);
+	store_err_dist_btwn_stations(topo);
+	store_elevation_corr(topo);
+	store_altitudes(topo);	
 }
 

@@ -1,16 +1,7 @@
 #include "../../include/calcs.h"
 
-double AvgArr(double *arr, int n)
-{
-	double sum = 0.0;
-	for(int i = 0; i < n; i++)
-		sum += arr[i];
-	return sum/n;
-}
 
-
-
-_Bool ApproxEq(double a, double b, double epsilon)
+_Bool approx_eq(double a, double b, double epsilon)
 {
 	double fabsa = fabs(a), fabsb = fabs(b);
 	
@@ -19,7 +10,7 @@ _Bool ApproxEq(double a, double b, double epsilon)
 
 
 
-double CorrectLatitude(double lat, double lng, double pos)
+double correct_latitude(double lat, double lng, double pos)
 {
 	double lat_rad = lat * M_PI / 180;
 	double lng_rad = lng * M_PI / 180;
@@ -30,7 +21,7 @@ double CorrectLatitude(double lat, double lng, double pos)
 
 
 
-double* InterpolatePts(double start_value, double end_value, int steps)
+double* interpolate_pts(double start_value, double end_value, int steps)
 {
 	double *results = malloc(sizeof(double) * (size_t)steps);
 		
@@ -44,27 +35,5 @@ double* InterpolatePts(double start_value, double end_value, int steps)
 	}
 	
 	return results;
-}
-
-
-
-double MaxArr(double *arr, int n)
-{
-	double max = arr[0];
-	for(int i = 0; i < n; i++) {
-		if(max < arr[i])
-			max = arr[i];
-	}
-	return max;
-}
-
-
-
-double StdArr(double *arr, double avg, int n)
-{
-	double sum = 0.0;
-	for(int i = 0; i < n; i++)
-		sum += (arr[i] - avg) * (arr[i] - avg);
-	return sqrt(sum/n);
 }
 

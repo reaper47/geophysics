@@ -1,4 +1,5 @@
 #include "../include/topo.h"
+#include "../include/arrays.h"
 #include "../include/calcs.h"
 #include "test.h"
 
@@ -11,7 +12,7 @@ struct topo_t topo_actual;
 
 void test_setup(void)
 {
-	if(AllocTopo(&topo_expected, ROWS) == -1)
+	if(alloc_topo(&topo_expected, ROWS) == -1)
 		return;
 
 	double stations[] = {
@@ -76,14 +77,14 @@ void test_setup(void)
 
 
 /*
- * tests - AssignIdxNodeTopo
+ * tests - assign_idx_node_topo
  *
  */
 MU_TEST(test_assert_assign_idx_node_topo)
 {
 	FILE *fp = fopen(TOPO_FILE, "rb");
 
-	struct list_t *headers_expected = CreateList();
+	struct list_t *headers_expected = create_list();
 
 	const char *station           = "station (m)";
 	const char *zero              = "zero (m)";
@@ -97,17 +98,17 @@ MU_TEST(test_assert_assign_idx_node_topo)
 	const char *date              = "date of survey";
 	const char *avg_sea_lvl       = "average sea level (m)";
 
-	AddHeadList(headers_expected, station);
-	AddHeadList(headers_expected, zero);
-	AddHeadList(headers_expected, zero_quality);
-	AddHeadList(headers_expected, elev_diff);
-	AddHeadList(headers_expected, elev_diff_quality);
-	AddHeadList(headers_expected, purpose);
-	AddHeadList(headers_expected, area);
-	AddHeadList(headers_expected, poi);
-	AddHeadList(headers_expected, address);
-	AddHeadList(headers_expected, date);
-	AddHeadList(headers_expected, avg_sea_lvl);
+	add_head_list(headers_expected, station);
+	add_head_list(headers_expected, zero);
+	add_head_list(headers_expected, zero_quality);
+	add_head_list(headers_expected, elev_diff);
+	add_head_list(headers_expected, elev_diff_quality);
+	add_head_list(headers_expected, purpose);
+	add_head_list(headers_expected, area);
+	add_head_list(headers_expected, poi);
+	add_head_list(headers_expected, address);
+	add_head_list(headers_expected, date);
+	add_head_list(headers_expected, avg_sea_lvl);
 
 	struct node_t *curr_expect = headers_expected->head;
 	for( ; curr_expect != NULL; curr_expect = curr_expect->next) {
@@ -135,9 +136,9 @@ MU_TEST(test_assert_assign_idx_node_topo)
 		       curr_expect->idx = IDX_AVG_SEA_LVL_TOPO;	
 	}
 
-	const char delim = DetermineDelim(fp);
-	struct list_t *headers_actual = ParseHeader(fp, delim);
-	AssignIdxNodeTopo(headers_actual);
+	const char delim = determine_delim(fp);
+	struct list_t *headers_actual = parse_header(fp, delim);
+	assign_idx_node_topo(headers_actual);
 
 	curr_expect = headers_expected->head;
 	struct node_t *curr_actual = headers_actual->head;
@@ -151,8 +152,8 @@ MU_TEST(test_assert_assign_idx_node_topo)
 		}
 	}
 
-	DeleteList(headers_expected);
-	DeleteList(headers_actual);
+	del_list(headers_expected);
+	del_list(headers_actual);
 
 	fclose(fp);
 }
@@ -161,20 +162,20 @@ MU_TEST(test_assert_assign_idx_node_topo)
 
 void test_teardown(void)
 {
-	FreeTopo(&topo_expected);
+	free_topo(&topo_expected);
 }
 
 
 
 /*
- * tests - LoadTopoCsv
+ * tests - load_topo_csv
  *
  */
 MU_TEST(test_assert_load_topo_csv)
 {
 	int status_expected = 0;
 
-	int status_actual = LoadTopoCsv(&topo_actual, TOPO_FILE);
+	int status_actual = load_topo_csv(&topo_actual, TOPO_FILE);
 	mu_assert_int_eq(status_expected, status_actual);
 
 	double e, a;
@@ -232,7 +233,7 @@ MU_TEST(test_assert_load_topo_csv)
 
 
 /*
- * tests - StoreElevationDiffCorr
+ * tests - store_elevation_diff_corr
  *
  */
 MU_TEST(test_assert_store_elevation_diff_corr)
@@ -246,21 +247,21 @@ MU_TEST(test_assert_store_elevation_diff_corr)
 
 	memcpy(topo_expected.elevation_diff_corr, expected, sizeof(expected));
 
-	StoreElevationDiffCorr(&topo_actual);
+	store_elevation_diff_corr(&topo_actual);
 
 	const char *msg = "error in elevation difference correction";
 	for(int i = 0; i < ROWS; i++) {
 		double e = topo_expected.elevation_diff_corr[i];
 		double a = topo_actual.elevation_diff_corr[i];
 		
-		mu_assert(ApproxEq(e, a, EPSILON), msg);
+		mu_assert(approx_eq(e, a, EPSILON), msg);
 	}
 }
 
 
 
 /*
- * tests - StoreElevationCmpRef
+ * tests - store_elevation_cmp_ref
  *
  */
 MU_TEST(test_assert_store_elevation_cmp_ref)
@@ -274,21 +275,21 @@ MU_TEST(test_assert_store_elevation_cmp_ref)
 
 	memcpy(topo_expected.elevation_cmp_ref, expected, sizeof(expected));
 
-	StoreElevationCmpRef(&topo_actual);
+	store_elevation_cmp_ref(&topo_actual);
 
 	const char *msg = "error when calculating elevations compared to the reference station";
 	for(int i = 0; i < ROWS; i++) {
 		double e = topo_expected.elevation_cmp_ref[i];
 		double a = topo_actual.elevation_cmp_ref[i];
 
-		mu_assert(ApproxEq(e, a, EPSILON), msg);
+		mu_assert(approx_eq(e, a, EPSILON), msg);
 	}
 }
 
 
 
 /*
- * tests - StoreErrDistBtwnStations
+ * tests - store_err_dist_btwn_stations
  *
  */
 MU_TEST(test_assert_store_err_dist_btwn_stations_m)
@@ -307,7 +308,7 @@ MU_TEST(test_assert_store_err_dist_btwn_stations_m)
 
 	memcpy(topo_expected.err_dist_btwn_stations_m, expected, sizeof(expected));
 
-	StoreErrDistBtwnStations(&topo_actual);
+	store_err_dist_btwn_stations(&topo_actual);
 
 	topo_actual.elevation_cmp_ref[ROWS-1] = 6.041;
 	topo_actual.stations[ROWS-1] = 260.0;
@@ -318,14 +319,14 @@ MU_TEST(test_assert_store_err_dist_btwn_stations_m)
 		double e = topo_expected.err_dist_btwn_stations_m[i];
 		double a = topo_actual.err_dist_btwn_stations_m[i];
 
-		mu_assert(ApproxEq(e, a, EPSILON), msg);
+		mu_assert(approx_eq(e, a, EPSILON), msg);
 	}
 }
 
 
 
 /*
- * tests - StoreElevationCorr
+ * tests - store_elevation_corr
  *
  */
 MU_TEST(test_assert_store_elevation_corr)
@@ -340,21 +341,21 @@ MU_TEST(test_assert_store_elevation_corr)
 
 	memcpy(topo_expected.elevation_corr, expected, sizeof(expected));
 
-	StoreElevationCorr(&topo_actual);
+	store_elevation_corr(&topo_actual);
 
 	const char *msg = "error when correcting the elevation";
 	for(int i = 0; i < ROWS; i++) {
 		double e = topo_expected.elevation_corr[i];
 		double a = topo_actual.elevation_corr[i];
 
-		mu_assert(ApproxEq(e, a, EPSILON), msg);
+		mu_assert(approx_eq(e, a, EPSILON), msg);
 	}
 }
 
 
 
 /*
- * tests - StoreAltitudes
+ * tests - store_altitudes
  *
  */
 MU_TEST(test_assert_store_altitudes)
@@ -372,14 +373,14 @@ MU_TEST(test_assert_store_altitudes)
 
 	memcpy(topo_expected.altitudes, expected, sizeof(expected));
 
-	StoreAltitudes(&topo_actual);
+	store_altitudes(&topo_actual);
 
 	const char *msg = "error when determining altitude";
 	for(int i = 0; i < ROWS; i++) {
 		double e = topo_expected.altitudes[i];
 		double a = topo_actual.altitudes[i];
 
-		mu_assert(ApproxEq(e, a, EPSILON), msg);
+		mu_assert(approx_eq(e, a, EPSILON), msg);
 	}
 }
 

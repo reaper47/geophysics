@@ -6,6 +6,9 @@
 #define TST_CSV3 "./test_data/grav.csv"
 #define TST_CSV4 "./test_data/test1.csv"
 
+#define F_LEN    26
+#define FULL_LEN 42
+
 static FILE *csv_f1, *csv_f2, *csv_f3, *csv_f4;
 static unsigned int num_lines1_expected = 0;
 
@@ -32,7 +35,7 @@ void test_teardown(void)
 
 
 /*
- * tests - NumLinesFile
+ * tests - num_lines_file
  *
  */
 MU_TEST(test_check_numlines1)
@@ -46,7 +49,7 @@ MU_TEST(test_check_numlines1)
 
 MU_TEST(test_assert_num_lines_file_csv_f1)
 {
-	unsigned int num_lines1_actual = NumLinesFile(csv_f1);
+	unsigned int num_lines1_actual = num_lines_file(csv_f1);
 	
 	mu_assert_uint_eq(num_lines1_expected, num_lines1_actual);
 }
@@ -54,7 +57,7 @@ MU_TEST(test_assert_num_lines_file_csv_f1)
 
  
 /*
- * tests - DetermineDelim
+ * tests - determine_delim
  *
  */ 
 MU_TEST(test_assert_determine_delim)
@@ -62,8 +65,8 @@ MU_TEST(test_assert_determine_delim)
 	char csvf1_delim_expected = ';';
 	char csvf2_delim_expected = ',';
 	
-	char csvf1_delim_actual = DetermineDelim(csv_f1);
-	char csvf2_delim_actual = DetermineDelim(csv_f2);
+	char csvf1_delim_actual = determine_delim(csv_f1);
+	char csvf2_delim_actual = determine_delim(csv_f2);
 	
 	mu_assert_int_eq(csvf1_delim_expected, csvf1_delim_actual);
 	mu_assert_int_eq(csvf2_delim_expected, csvf2_delim_actual);
@@ -72,7 +75,7 @@ MU_TEST(test_assert_determine_delim)
 
 
 /*
- * tests - ParseHeader
+ * tests - parse_header
  *
  */
 MU_TEST(test_assert_parse_header)
@@ -91,8 +94,8 @@ MU_TEST(test_assert_parse_header)
 		"propane (,000) u.s. barrel"
 	};
 	
-	const char delim_f1 = DetermineDelim(csv_f1);
-	struct list_t *list_headers = ParseHeader(csv_f1, delim_f1);
+	const char delim_f1 = determine_delim(csv_f1);
+	struct list_t *list_headers = parse_header(csv_f1, delim_f1);
 	
 	struct node_t *curr;
 	int i = 0;
@@ -100,7 +103,7 @@ MU_TEST(test_assert_parse_header)
 	for(curr = list_headers->head; curr != NULL; curr = curr->next, i++)
 		mu_assert_string_eq(headers_expected[i], curr->data);
 
-	DeleteList(list_headers);
+	del_list(list_headers);
 }
 
 
@@ -128,8 +131,8 @@ MU_TEST(test_assert_parse_header_grav)
 		"comments"
 	};
 	
-	const char delim_f3 = DetermineDelim(csv_f3);
-	struct list_t *list_headers = ParseHeader(csv_f3, delim_f3);
+	const char delim_f3 = determine_delim(csv_f3);
+	struct list_t *list_headers = parse_header(csv_f3, delim_f3);
 
 	struct node_t *curr = list_headers->head;
 	int i = 0;
@@ -137,13 +140,13 @@ MU_TEST(test_assert_parse_header_grav)
 	for( ; curr != NULL; curr = curr->next, i++)
 		mu_assert_string_eq(headers_expected[i], curr->data);
 
-	DeleteList(list_headers);
+	del_list(list_headers);
 }
 
 
 
 /*
- * tests - ParseLine
+ * tests - parse_line
  *
  */ 
 MU_TEST(test_assert_parse_line)
@@ -169,19 +172,19 @@ MU_TEST(test_assert_parse_line)
 	};
 	
 	const char delim = ',';
-	struct list_t *fields = ParseLine(str, delim);
+	struct list_t *fields = parse_line(str, delim);
 	struct node_t *node = fields->head;
 
 	for(int i = 0 ; node != NULL; node = node->next, i++)
 		mu_assert_string_eq(fields_expected[i], node->data);
 	
-	DeleteList(fields);
+	del_list(fields);
 }
 
 
 
 /*
- * tests - GatherLines
+ * tests - gather_lines
  *
  */ 
 MU_TEST(test_assert_gather_lines)
@@ -194,13 +197,33 @@ MU_TEST(test_assert_gather_lines)
 		"air, moon roof, loaded\";4799.00"
 	};
 	
-	struct list_t *lines_actual = GatherLines(csv_f4);
+	struct list_t *lines_actual = gather_lines(csv_f4);
 	
 	struct node_t *node = lines_actual->head;
 	for(int i = 0; node != NULL; node = node->next, i++) 
 		mu_assert_string_eq(lines_expected[i], node->data);
 
-	DeleteList(lines_actual);
+	del_list(lines_actual);
+}
+
+
+
+/*
+ * tests - create_file_name
+ *
+ */
+MU_TEST(test_assert_create_file_name)
+{
+    const char *ext_expected = ".csv";
+    
+    const char *out_dir = "./test_data/";    
+    char *f_name_actual = create_file_name(F_LEN, out_dir, ext_expected);
+
+    mu_assert_int_eq(FULL_LEN, (int)strlen(f_name_actual));
+    mu_assert_int_eq(ext_expected[0], f_name_actual[FULL_LEN-4]);
+    mu_assert_int_eq(ext_expected[1], f_name_actual[FULL_LEN-3]);
+    mu_assert_int_eq(ext_expected[2], f_name_actual[FULL_LEN-2]);
+    mu_assert_int_eq(ext_expected[3], f_name_actual[FULL_LEN-1]);
 }
 
 
@@ -216,6 +239,7 @@ MU_TEST_SUITE(test_suite)
 	MU_RUN_TEST(test_assert_parse_line);
 	MU_RUN_TEST(test_assert_parse_header_grav);
 	MU_RUN_TEST(test_assert_gather_lines);
+        MU_RUN_TEST(test_assert_create_file_name);
 }
 
 

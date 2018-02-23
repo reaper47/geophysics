@@ -1,22 +1,22 @@
 #include "../include/arrays.h"
 #include "test.h"
 
-#define TST_ARR_ELS 10
+#define NUM_ELS 10
 
-static int tst_arr[TST_ARR_ELS];
+double test_arr[NUM_ELS];
 
 void test_setup(void)
 {
-	tst_arr[0] = -2;
-	tst_arr[1] = 78;
-	tst_arr[2] = -78;
-	tst_arr[3] = 43;
-	tst_arr[4] = 44;
-	tst_arr[5] = -2;
-	tst_arr[6] = -100;
-	tst_arr[7] = 101;
-	tst_arr[8] = 3;
-	tst_arr[9] = -1;
+	test_arr[0] = -2.0;
+	test_arr[1] = 78.0;
+	test_arr[2] = -78.0;
+	test_arr[3] = 43.0;
+	test_arr[4] = 44.0;
+	test_arr[5] = -2.0;
+	test_arr[6] = -100.0;
+	test_arr[7] = 101.0;
+	test_arr[8] = 3.0;
+	test_arr[9] = -1.0;
 	
 }
 
@@ -24,38 +24,72 @@ void test_setup(void)
 
 void test_teardown(void)
 {
+
 }
 
   
 
+MU_TEST(test_check_test_arr)
+{
+	mu_check(test_arr[0] == -2.0);
+	mu_check(test_arr[1] == 78.0);
+	mu_check(test_arr[2] == -78.0);
+	mu_check(test_arr[3] == 43.0);
+	mu_check(test_arr[4] == 44.0);
+	mu_check(test_arr[5] == -2.0);
+	mu_check(test_arr[6] == -100.0);
+	mu_check(test_arr[7] == 101.0);
+	mu_check(test_arr[8] == 3.0);
+	mu_check(test_arr[9] == -1.0);
+}
+
+
+
 /*
- * tests - FindMaxArr
+ * tests - avg_arr
  *
- */ 
-MU_TEST(test_check_tst_arr)
+ */
+MU_TEST(test_assert_avg_arr)
 {
-	mu_check(tst_arr[0] == -2);
-	mu_check(tst_arr[1] == 78);
-	mu_check(tst_arr[2] == -78);
-	mu_check(tst_arr[3] == 43);
-	mu_check(tst_arr[4] == 44);
-	mu_check(tst_arr[5] == -2);
-	mu_check(tst_arr[6] == -100);
-	mu_check(tst_arr[7] == 101);
-	mu_check(tst_arr[8] == 3);
-	mu_check(tst_arr[9] == -1);
+    double avg_expected = 8.6;
+
+	double avg_actual = avg_arr(test_arr, NUM_ELS);
+
+	mu_assert_double_eq(avg_expected, avg_actual);
 }
 
 
 
-MU_TEST(test_assert_find_max_arr_tst_arr)
+/*
+ * tests - max_arr
+ *
+ */
+MU_TEST(test_assert_max_arr)
 {
-	int val_expected = 101;
-	
-	int val_actual = FindMaxArr(tst_arr, TST_ARR_ELS);
-	
-	mu_assert_int_eq(val_expected, val_actual);
+	double max_val_expected = 101.0;
+
+	double max_val_actual = max_arr(test_arr, NUM_ELS);
+
+	mu_assert_double_eq(max_val_expected, max_val_actual);
 }
+
+
+
+
+/*
+ * tests - std_arr
+ * 
+ */
+MU_TEST(test_assert_std_arr)
+{
+	double avg = avg_arr(test_arr, NUM_ELS);
+	double std_expected = 59.5251207474626;
+	
+	double std_actual = std_arr(test_arr, avg, NUM_ELS);
+
+	mu_assert_double_eq(std_expected, std_actual);
+}
+
 
 
 
@@ -63,10 +97,10 @@ MU_TEST_SUITE(test_suite)
 {
 	MU_SUITE_CONFIGURE(&test_setup, &test_teardown);
 	
-	MU_RUN_TEST(test_check_tst_arr);
-	MU_RUN_TEST(test_assert_find_max_arr_tst_arr);
-	
-	
+	MU_RUN_TEST(test_check_test_arr);
+	MU_RUN_TEST(test_assert_avg_arr);
+	MU_RUN_TEST(test_assert_max_arr);
+	MU_RUN_TEST(test_assert_std_arr);
 }
 
 
@@ -77,3 +111,4 @@ int main(void)
 	MU_REPORT();
 	return 0;
 }
+
