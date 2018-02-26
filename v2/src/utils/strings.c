@@ -27,12 +27,12 @@ char *concat(const char *s1, const char *s2)
 }
 
 
-#include <stdio.h>
+
 char *rand_str_seq(size_t size)
 {
     char *s = malloc(size + 1);
     
-    if(s) {
+    if(s != NULL) {
         time_t t;
         srand((unsigned) time(&t));
 

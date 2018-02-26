@@ -5,13 +5,12 @@ WARNINGS ?= -Wall -Wextra -Wshadow -Wpointer-arith -Wcast-align \
             -Wredundant-decls -Wnested-externs -Winline -Wno-long-long \
             -Wuninitialized -Wconversion -Wstrict-prototypes -Werror
 			
-CFLAGS := -std=c11 -O3 $(WARNINGS) 
+CFLAGS := -std=c11 -O0 $(WARNINGS) 
 
-DEBUG := -g3
+DEBUG := -g3 -fsanitize=address
 #CFLAG += -ggdb
-#CFLAG += -g
 
-LIBS := -lm
+LIBS := -lm -ljansson
 
 HDRSARR = ./test.h ../include/arrays.h
 SRCSARR = ../src/utils/arrays.c ./test_arrays.c
@@ -61,25 +60,25 @@ test:
 	./test_topo
 	
 test_arrays: $(OBJSARR) $(HDRSARR) Makefile
-	$(CC) $(CFLAGS) -o $@ $(OBJSARR) $(LIBS)
+	$(CC) $(CFLAGS) -o $@ $(OBJSARR) $(LIBS) $(DEBUG)
 	
 test_csv: $(OBJSCSV) $(HDRSCSV) Makefile
-	$(CC) $(CFLAGS) -o $@ $(OBJSCSV) $(LIBS)
+	$(CC) $(CFLAGS) -o $@ $(OBJSCSV) $(LIBS) $(DEBUG)
 	
 test_sll: $(OBJSSLL) $(HDRSSLL) Makefile
-	$(CC) $(CFLAGS) -o $@ $(OBJSSLL) $(LIBS)
+	$(CC) $(CFLAGS) -o $@ $(OBJSSLL) $(LIBS) $(DEBUG)
 	
 test_grav: $(OBJSGRAV) $(HDRSGRAV) Makefile
-	$(CC) $(CFLAGS) -o $@ $(OBJSGRAV) $(LIBS)
+	$(CC) $(CFLAGS) -o $@ $(OBJSGRAV) $(LIBS) $(DEBUG)
 	
 test_strings: $(OBJSSTR) $(HDRSSTR) Makefile
-	$(CC) $(CFLAGS) -o $@ $(OBJSSTR) $(LIBS)
+	$(CC) $(CFLAGS) -o $@ $(OBJSSTR) $(LIBS) $(DEBUG)
 
 test_calcs: $(OBJSCALCS) $(HDRSCALCS) Makefile
-	$(CC) $(CFLAGS) -o $@ $(OBJSCALCS) $(LIBS)
+	$(CC) $(CFLAGS) -o $@ $(OBJSCALCS) $(LIBS) $(DEBUG)
 
 test_topo: $(OBJSTOPO) $(HDRSTOPO) Makefile
-	$(CC) $(CFLAGS) -o $@ $(OBJSTOPO) $(LIBS)
+	$(CC) $(CFLAGS) -o $@ $(OBJSTOPO) $(LIBS) $(DEBUG)
 	
 .PHONY: clean
 clean:
@@ -89,4 +88,5 @@ clean:
 .PHONY: purge
 purge:
 	rm -f core $(EXE) *.o
-	rm -rf ../src/*.o ../src/utils/*.o ./test_arrays ./test_csv ./test_csv ./test_sll ./test_grav ./test_strings ./test_calcs ./test_topo
+	rm -rf ./test_data/processed/*.csv ../include/*.o ../src/*.o ../src/utils/*.o ./test_arrays ./test_csv ./test_csv ./test_sll ./test_grav ./test_strings ./test_calcs ./test_topo
+	

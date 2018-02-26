@@ -1,18 +1,18 @@
 #include "../../include/csv.h"
 
-
-
 char *create_file_name(size_t n, const char *out_dir, const char *ext)
 {
     char *path;
     char *path_csv;
 
     do {
-        const char *file_name = rand_str_seq(n);
+        char *file_name = rand_str_seq(n);
         path = concat(out_dir, file_name);
         path_csv = concat(path, ext);
+        free(file_name);
     } while( access(path_csv, F_OK) != -1);
 
+    free(path);
     return path_csv;
 }
 

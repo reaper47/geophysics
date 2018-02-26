@@ -162,7 +162,7 @@ MU_TEST(test_assert_assign_idx_node_topo)
 
 void test_teardown(void)
 {
-	free_topo(&topo_expected);
+	free_topo(&topo_expected, 0);
 }
 
 

@@ -9,6 +9,12 @@
 #define ROWS_TOPO      14
 #define TOTAL_READINGS 52 
 
+#define ARBITRARY_NUM  -99999.0
+#define SPACE          " "
+
+void test_json_field(json_t *root, const char *which, const char *msg, double *expected, double epsilon);
+void test_json_field_str_real(json_t *root, const char *which, const char *expected, double real, int mode);
+
 struct worden807_t worden807_expected;
 struct worden807_t worden807_actual;
 
@@ -19,93 +25,93 @@ struct topo_t topo;
 
 void test_setup(void)
 {
-	if(alloc_worden807(&worden807_expected, ROWS) == -1)
-	    return;
-
-        if(alloc_worden807(&worden807_expected_populate, ROWS) == -1)
-            return;
+    if(alloc_worden807(&worden807_expected, ROWS) == -1)
+        return;
+	    
+    if(alloc_worden807(&worden807_expected_populate, ROWS) == -1) {
+        return;
+    }
+   	
+    double stations[] = { 
+	0.0, 20.0, 40.0, 
+	60.0, 80.0, 100.0,
+	120.0, 140.0, 160.0, 
+	180.0, 200.0, 220.0, 
+	0.0
+    };
 	
-	double stations[] = { 
-		0.0, 20.0, 40.0, 
-		60.0, 80.0, 100.0,
-		120.0, 140.0, 160.0, 
-		180.0, 200.0, 220.0, 
-		0.0
-	};
-	
-	double times[] = { 
-		0.580555556, 0.588194444, 0.597222222,
-		0.604166667, 0.611111111, 0.622916667,
-		0.630555556, 0.636111111, 0.642361111,
-		0.647222222, 0.650694444, 0.654861111,
-		0.663888889
-	};
-	
-	double times_min[] = {
-		0.0, 11.0, 24.0,
-		34.0, 44.0, 61.0,
-		72.0, 80.0, 89.0,
-		96.0, 101.0, 107.0,
-		120.0
-	};
-	
-	double readings[] = {
-		1802.8, 1802.5, 1802.3, 1802.2,
-		1802.3, 1802.5, 1802.6, 1802.4,
-		1802.4, 1802.3, 1802.3, 1802.3,
-		1801.0, 1801.4, 1801.7, 1801.1,
-		1800.7, 1801.1, 1800.7, 1800.8,
-		1801.1, 1801.0, 1801.2, 1801.1,
-		1801.0,	1801.1,	1801.0,	1801.0,
-		1799.5,	1799.6,	1799.5,	1799.5,
-		1798.8,	1799.0,	1799.1,	1799.1,
-		1798.8,	1799.1,	1799.0,	1799.1,
-		1798.9,	1799.0,	1799.1,	1799.0,
-		1799.3,	1799.1,	1799.1,	1799.3,
-		1802.6,	1802.4,	1802.6,	1802.3
-
-	};
-	
-	const char *purpose = "LABORATOIRE 1 - LEVE GRAVIMETRIQUE";
-	const char *area = "LES PLAINES D’ABRAHAM - QUEBEC";
-	const char *poi = "RESERVOIR D'EAU MUNICIPAL DE LA VILLE DE QUEBEC";
-	const char *addr = "\"555 plaines abraham, quebec, canada, g2j 5h6\"";
-	const char *date = "1997-12-09";
-	
+    double times[] = { 
+        0.580555556, 0.588194444, 0.597222222,
+        0.604166667, 0.611111111, 0.622916667,
+        0.630555556, 0.636111111, 0.642361111,
+        0.647222222, 0.650694444, 0.654861111,
+        0.663888889
+    };
+    
+    double times_min[] = {
+        0.0, 11.0, 24.0,
+        34.0, 44.0, 61.0,
+        72.0, 80.0, 89.0,
+        96.0, 101.0, 107.0,
+        120.0
+    };
+    
+    double readings[] = {
+        1802.8, 1802.5, 1802.3, 1802.2,
+        1802.3, 1802.5, 1802.6, 1802.4,
+        1802.4, 1802.3, 1802.3, 1802.3,
+        1801.0, 1801.4, 1801.7, 1801.1,
+        1800.7, 1801.1, 1800.7, 1800.8,
+        1801.1, 1801.0, 1801.2, 1801.1,
+        1801.0, 1801.1, 1801.0, 1801.0,
+        1799.5, 1799.6, 1799.5, 1799.5,
+        1798.8, 1799.0, 1799.1, 1799.1,
+        1798.8, 1799.1, 1799.0, 1799.1,
+        1798.9, 1799.0, 1799.1, 1799.0,
+        1799.3, 1799.1, 1799.1, 1799.3,
+        1802.6, 1802.4, 1802.6, 1802.3
+    };
+    
+    const char *purpose = "LABORATOIRE 1 - LEVE GRAVIMETRIQUE";
+    const char *area = "LES PLAINES D’ABRAHAM - QUEBEC";
+    const char *poi = "RESERVOIR D'EAU MUNICIPAL DE LA VILLE DE QUEBEC";
+    const char *addr = "\"555 plaines abraham, quebec, canada, g2j 5h6\"";
+    const char *date = "1997-12-09";
+    
     /* worden807_expected */
-	memcpy(worden807_expected.stations, stations, sizeof(stations));
-	memcpy(worden807_expected.times, times, sizeof(times));
-	memcpy(worden807_expected.times_min, times_min, sizeof(times_min));
-	memcpy(worden807_expected.readings, readings, sizeof(readings));
+    memcpy(worden807_expected.stations, stations, sizeof(stations));
+    memcpy(worden807_expected.times, times, sizeof(times));
+    memcpy(worden807_expected.times_min, times_min, sizeof(times_min));
+    memcpy(worden807_expected.readings, readings, sizeof(readings));
 
-	worden807_expected.num_readings = 4;	
-	worden807_expected.survey_purpose = (char*)purpose;
-	worden807_expected.survey_area = (char*)area;
-	worden807_expected.survey_poi = (char*)poi;
-	worden807_expected.survey_address = (char*)addr;
-	worden807_expected.survey_date = (char*)date;
-	worden807_expected.operation_temp = 74.0;
-	worden807_expected.ref_station_lat = 46.8;
-	worden807_expected.survey_dir = 34.25;
-	worden807_expected.operation_temp_unit = 'F';
+    worden807_expected.num_readings = 4;	
+    worden807_expected.survey_purpose = (char*)purpose;
+    worden807_expected.survey_area = (char*)area;
+    worden807_expected.survey_poi = (char*)poi;
+    worden807_expected.survey_address = (char*)addr;
+    worden807_expected.survey_date = (char*)date;
+    worden807_expected.operation_temp = 74.0;
+    worden807_expected.ref_station_lat = 46.8;
+    worden807_expected.survey_dir = 34.25;
+    worden807_expected.operation_temp_unit = 'F';
     worden807_expected.topo_file = (char*)TOPO_FILE;
 
     /* worden807_expected_populate */
-	memcpy(worden807_expected_populate.stations, stations, sizeof(stations));
-	memcpy(worden807_expected_populate.times, times, sizeof(times));
-	memcpy(worden807_expected_populate.times_min, times_min, sizeof(times_min));
-	memcpy(worden807_expected_populate.readings, readings, sizeof(readings));
+    memcpy(worden807_expected_populate.stations, stations, sizeof(stations));
+    memcpy(worden807_expected_populate.times, times, sizeof(times));
+    memcpy(worden807_expected_populate.times_min, times_min, sizeof(times_min));
+    memcpy(worden807_expected_populate.readings, readings, sizeof(readings));
 
-	worden807_expected_populate.num_readings = 4;	
-	worden807_expected_populate.survey_purpose = (char*)purpose;
-	worden807_expected_populate.survey_area = (char*)area;
-	worden807_expected_populate.survey_poi = (char*)poi;
-	worden807_expected_populate.survey_address = (char*)addr;
-	worden807_expected_populate.survey_date = (char*)date;
-	worden807_expected_populate.operation_temp = 74.0;
-	worden807_expected_populate.ref_station_lat = 46.8;
-	worden807_expected_populate.survey_dir = 34.25;
-	worden807_expected_populate.operation_temp_unit = 'F';
+    worden807_expected_populate.num_readings = 4;	
+    worden807_expected_populate.survey_purpose = (char*)purpose;
+    worden807_expected_populate.survey_area = (char*)area;
+    worden807_expected_populate.survey_poi = (char*)poi;
+    worden807_expected_populate.survey_address = (char*)addr;
+    worden807_expected_populate.survey_date = (char*)date;
+    worden807_expected_populate.operation_temp = 74.0;
+    worden807_expected_populate.ref_station_lat = 46.8;
+    worden807_expected_populate.survey_dir = 34.25;
+    worden807_expected_populate.operation_temp_unit = 'F';
     worden807_expected_populate.topo_file = (char*)TOPO_FILE;
 }
 
@@ -114,7 +120,7 @@ void test_setup(void)
 
 void test_teardown(void)
 {	
-	free_worden807(&worden807_expected);
+    free_worden807(&worden807_expected);
     free_worden807(&worden807_expected_populate);
 }
 
@@ -788,82 +794,82 @@ MU_TEST(test_assert_populate_calc_fields_worden807)
 {
     double expected_avg_readings[] = {
         1802.45, 1802.45, 1802.325, 
-	    1801.3, 1800.825, 1801.1,
-	    1801.025, 1799.525, 1799.0,
-	    1799.0, 1799.0, 1799.2,
-	    1802.475
+	1801.3, 1800.825, 1801.1,
+	1801.025, 1799.525, 1799.0,
+	1799.0, 1799.0, 1799.2,
+	1802.475
     };
 
     double expected_std[] = {
         0.229128784747770, 0.111803398874964, 0.043301270189281,
-	    0.273861278752625, 0.163935963107496, 0.070710678118671,
-	    0.043301270189183, 0.043301270189183, 0.122474487139140,
-	    0.122474487139140, 0.070710678118591, 0.100000000000023,
-	    0.129903810567624
+	0.273861278752625, 0.163935963107496, 0.070710678118671,
+	0.043301270189183, 0.043301270189183, 0.122474487139140,
+	0.122474487139140, 0.070710678118591, 0.100000000000023,
+	0.129903810567624
     };
 
     double expected_grav[] = {
-	    730.6002163850, 730.6002163850, 730.5495492225,
-	    730.1340784900, 729.9415432725, 730.0530110300, 
-	    730.0226107325, 729.4146047825, 729.2018027000,
-	    729.2018027000, 729.2018027000, 729.2828701600, 
-	    730.6103498175
+	730.6002163850, 730.6002163850, 730.5495492225,
+	730.1340784900, 729.9415432725, 730.0530110300, 
+	730.0226107325, 729.4146047825, 729.2018027000,
+	729.2018027000, 729.2018027000, 729.2828701600, 
+	730.6103498175
     };
 
     double expected_grav_uncorr[] = {
-	    0.000000000000000, 0.000000000000000, 0.050667162499963,
-	    0.466137895000088, 0.658673112499969, 0.547205355000074,
-	    0.577605652499983, 1.185611602499990, 1.398413685000040,
-	    1.398413685000040, 1.3984136850000400, 1.31734622500005000,
-	    -0.01013343249997	
+	0.000000000000000, 0.000000000000000, 0.050667162499963,
+	0.466137895000088, 0.658673112499969, 0.547205355000074,
+	0.577605652499983, 1.185611602499990, 1.398413685000040,
+	1.398413685000040, 1.3984136850000400, 1.31734622500005000,
+	-0.01013343249997	
     };
 
     double expected_tmp[] = {
-	    0.0, 0.0, 0.0,
-	    0.0, 0.0, 0.0,
-	    0.0, 0.0, 0.0,
-	    0.0, 0.0, 0.0,
-	    0.010133433333294
+	0.0, 0.0, 0.0,
+	0.0, 0.0, 0.0,
+	0.0, 0.0, 0.0,
+	0.0, 0.0, 0.0,
+	0.010133433333294
     };
 
     double expected_attract[] = { 
-	    -0.000000000000000, -0.000844452777775, -0.001688905555549,
-	    -0.002533358333324, -0.003377811111098, -0.004222263888873,
-	    -0.005066716666647, -0.005911169444422, -0.006755622222196, 
-	    -0.007600074999971, -0.008444527777745, -0.009288980555520,
-	    -0.010133433333294	
+        -0.000000000000000, -0.000844452777775, -0.001688905555549,
+        -0.002533358333324, -0.003377811111098, -0.004222263888873,
+        -0.005066716666647, -0.005911169444422, -0.006755622222196, 
+        -0.007600074999971, -0.008444527777745, -0.009288980555520,
+        -0.010133433333294	
     };
 
     double expected_lat[] = {
        	 0.0000000000000000, -0.013430162043108, -0.026860324086216,
-	    -0.0402904861293240, -0.053720648172432, -0.067150810215541,
-	    -0.0805809722586490, -0.094011134301757, -0.107441296344865,
-	    -0.1208714583879730, -0.134301620431081, -0.147731782474189,
-	     0.0000000000000000
+        -0.0402904861293240, -0.053720648172432, -0.067150810215541,
+        -0.0805809722586490, -0.094011134301757, -0.107441296344865,
+        -0.1208714583879730, -0.134301620431081, -0.147731782474189,
+         0.0000000000000000
     };
 
     double expected_elev[] = {
-	    -0.00, 0.243, 0.022, 
-	    2.247, 3.471, 3.817, 
-	    3.955, 5.749, 5.965, 
-	    5.882, 5.998, 5.916, 
-	    0.000
+        -0.00, 0.243, 0.022, 
+        2.247, 3.471, 3.817, 
+        3.955, 5.749, 5.965, 
+        5.882, 5.998, 5.916, 
+        0.000
     };
  
     double expected_alts[] = {
-	    93.084, 93.327, 93.106, 
-	    95.331, 96.555, 96.901, 
-	    97.039, 98.833, 99.049, 
-	    98.966, 99.082, 99.000, 
-	    93.084
+        93.084, 93.327, 93.106, 
+        95.331, 96.555, 96.901, 
+        97.039, 98.833, 99.049, 
+        98.966, 99.082, 99.000, 
+        93.084
     };
 
     double expected_free[] = {
-	    28.7257224, 28.8007122, 28.7325116,
-	    29.4191466, 29.7968730, 29.9036486,
-	    29.9462354, 30.4998638, 30.5665214,
-	    30.5409076, 30.5767052, 30.5514000,
-	    28.7257224
+        28.7257224, 28.8007122, 28.7325116,
+        29.4191466, 29.7968730, 29.9036486,
+        29.9462354, 30.4998638, 30.5665214,
+        30.5409076, 30.5767052, 30.5514000,
+        28.7257224
     };
 
     double expected_bcorr[] = {
@@ -921,6 +927,7 @@ MU_TEST(test_assert_populate_calc_fields_worden807)
     memcpy(worden807_expected_populate.bouguer_anomaly, expected_banom, sizeof(expected_banom));
     memcpy(worden807_expected_populate.regional_anomaly, expected_ranom, sizeof(expected_ranom));
     memcpy(worden807_expected_populate.residual_anomaly, expected_res, sizeof(expected_res));
+    set_station_num_before_return_to_ref(&worden807_actual_populate, &topo);
 
     populate_calc_fields_worden807(&worden807_actual_populate);
 
@@ -1010,10 +1017,10 @@ MU_TEST(test_assert_populate_calc_fields_worden807)
 
 
 /*
- * tests - GenerateCSV
+ * tests - generate_grav_csv
  *
  */
-MU_TEST(test_assert_GenerateCSV)
+MU_TEST(test_assert_generate_grav_csv)
 {
     const char *csv_header_expected = 
         "Station (m),Time (hh:mm),Time (mm),Reading 1,Reading 2,Reading 3,"
@@ -1217,10 +1224,206 @@ MU_TEST(test_assert_GenerateCSV)
 
 
 
+
+/*
+ * tests - genereate_grav_json
+ *
+ */
+void test_json_field(json_t *root, const char *which, const char *msg, double *expected, double epsilon)
+{
+    size_t num_data;
+    
+    json_t *field = NULL;
+    json_unpack(root, "{s:o}", which, &field);
+
+    if(field && json_is_array(field))
+        num_data = json_array_size(field);
+        
+    for(size_t i = 0; i < num_data; i++) {
+        double e = expected[i];
+        double a = json_real_value(json_array_get(field, i));
+
+        mu_assert(approx_eq(e, a, epsilon), msg);
+    }
+}
+
+void test_json_field_str_real(json_t *root, const char *which, const char *expected, double real, int mode)
+{
+    json_t *field = NULL;
+    json_unpack(root, "{s:o}", which, &field);
+
+    if(mode)
+        mu_assert_string_eq(expected, json_string_value(field));
+    else
+        mu_assert_double_eq(real, json_real_value(field));
+}
+    
+MU_TEST(test_assert_generate_grav_json_all)
+{ 
+    const double ep3 = 1e-3;
+    const double ep4 = 1e-4;
+
+    double stations_expected[] = { 
+        0.0, 20.0, 40.0, 60.0, 80.0, 100.0, 120.0,
+        140.0, 160.0, 180.0, 200.0, 220.0, 0.0
+    };
+   
+    double times_expected[] = { 
+        0.580556, 0.588194, 0.597222, 0.604167, 0.611111,
+        0.622917, 0.630556, 0.636111, 0.642361, 0.647222,
+        0.650694, 0.654861, 0.663889
+    };
+    
+    double times_min_expected[] = {
+        0.000000, 11.000000, 24.000000, 34.000000,
+        44.000000, 61.000000, 72.000000, 80.000000, 89.000000,
+        96.000000, 101.000000, 107.000000, 120.000000
+    };
+    
+    double readings_avg_expected[] = {
+        1802.450000, 1802.450000, 1802.325000,
+        1801.300000, 1800.825000, 1801.100000, 1801.025000, 1799.525000,
+        1799.000000, 1799.000000, 1799.000000, 1799.200000, 1802.475000
+    };
+    
+    double std_expected[] = {
+        0.229129, 0.111803, 0.043301, 0.273861, 0.163936, 0.070711,
+        0.043301, 0.043301, 0.122474, 0.122474, 0.070711, 0.100000,
+        0.129904
+    };
+    
+    double rel_grav_fields_expected[] = {
+        730.600276, 730.600276, 730.549609, 730.134139,
+        729.941603, 730.053071, 730.022671, 729.414665, 729.201863,
+        729.201863, 729.201863, 729.282930, 730.610410
+    };
+
+    double grav_anom_uncorr_expected[] = {
+        0.000000, 0.000000, 0.050667, 0.466138,
+        0.658673, 0.547205, 0.577606, 1.185612, 1.398414, 1.398414,
+        1.398414, 1.317346, -0.010133
+    };
+    
+    double temp_vars_expected[] = {
+        -0.000000, 0.000000, 0.000000, 0.000000, 0.000000,
+         0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000,
+         0.000000, 0.010133
+    };
+
+    double attraction_dev_expected[] = { 
+        -0.000000, -0.000844, -0.001689, -0.002533,
+        -0.003378, -0.004222, -0.005067, -0.005911, -0.006756,
+        -0.007600, -0.008445, -0.009289, -0.010133
+    };
+    
+    double lat_corr_expected[] = {
+        -0.000000, -0.013430, -0.026860, -0.040290,
+        -0.053721, -0.067151, -0.080581, -0.094011, -0.107441,
+        -0.120871, -0.134302, -0.147732, -0.000000
+    };
+    
+    double elev_expected[] = {
+        0.000000, 0.243000, 0.022000, 2.247000, 3.471000,
+        3.817000, 3.955000, 5.749000, 5.965000, 5.882000, 5.998000,
+        5.916000, 0.000000
+    };
+    
+    double alts_expected[] = {
+        93.084000, 93.327000, 93.106000, 95.331000, 96.555000,
+        96.901000, 97.039000, 98.833000, 99.049000, 98.966000, 99.082000,
+        99.000000, 93.084000
+    };
+    
+    double free_air_corr_expected[] = {
+        28.725722, 28.800712, 28.732512, 29.419147,
+        29.796873, 29.903649, 29.946235, 30.499864, 30.566521,
+        30.540908, 30.576705, 30.551400, 28.725722
+    };
+   
+    double bouguer_rel_expected[] = {
+        749.958770, 749.995876, 749.885818, 749.919645,
+        749.968233, 750.138227, 750.123097, 749.874755, 749.693444,
+        749.662752, 749.673446, 749.724030, 749.958770
+    };
+    
+    double bouguer_corr_expected[] = {
+        -9.367229, -9.391683, -9.369443, -9.593349,
+        -9.716523, -9.751341, -9.765229, -9.945762, -9.967499,
+        -9.959147, -9.970820, -9.962568, -9.367229
+    };
+    
+    double bouguer_anom_expected[] = {
+        0.000000, 0.037106, -0.072952, -0.039124,
+        0.009463, 0.179458, 0.164327, -0.084015, -0.265326, -0.296017,
+        -0.285323, -0.234739, 0.000000
+    };
+    
+    double regional_anom_expected[] = {
+        0.000000, 0.027273, 0.054545, 0.081818, 0.109091,
+        0.136364, 0.163636, 0.190909, 0.218182, 0.245455, 0.272727,
+        0.300000, 0.000000
+    };
+    
+    double residual_anom_expected[] = {
+        0.000000, 0.009833, -0.127498, -0.120943,
+        -0.099628, 0.043094, 0.000690, -0.274924, -0.483508, -0.541472,
+        -0.558051, -0.534739, 0.000000
+    };
+
+    const char *purpose_expected = "LABORATOIRE 1 - LEVE GRAVIMETRIQUE";
+    const char *area_expected = "LES PLAINES D’ABRAHAM - QUEBEC";
+    const char *poi_expected = "RESERVOIR D'EAU MUNICIPAL DE LA VILLE DE QUEBEC";
+    const char *addr_expected = "\"555 plaines abraham, quebec, canada, g2j 5h6\"";
+    const char *date_expected = "1997-12-09";
+    const double op_temp_expected = 74.0;
+    const double ref_lat_expected = 46.8;
+    const double dir_expected = 34.25;
+    const char *unit_expected = "F";
+
+    char *json_actual = generate_grav_json(&worden807_actual);
+    json_error_t err;
+    json_t *root = json_loads(json_actual, 0, &err);
+
+    test_json_field(root, "stations", "error in json stations", stations_expected, EPSILON);
+    test_json_field(root, "times", "error in json times", times_expected, 1e-6);
+    test_json_field(root, "times_min", "error in json times_min", times_min_expected, EPSILON);
+    test_json_field(root, "readings_avg", "error in json average readings", readings_avg_expected, EPSILON);
+    test_json_field(root, "std", "error in json std", std_expected, ep4);
+    test_json_field(root, "rel_grav_fields", "error in json rel_grav_fields", rel_grav_fields_expected, EPSILON);
+    test_json_field(root, "grav_anom_uncorr", "error in json grav_anom_uncorr", grav_anom_uncorr_expected, ep4);
+    test_json_field(root, "temp_vars", "error in json temp_vars", temp_vars_expected, ep4);
+    test_json_field(root, "attract_dev", "error in json attract_dev", attraction_dev_expected, ep3);
+    test_json_field(root, "lat_corr", "error in json lat_corr", lat_corr_expected, ep4);
+    test_json_field(root, "elev", "error in json elev", elev_expected, EPSILON);
+    test_json_field(root, "alts", "error in json alts", alts_expected, EPSILON);
+    test_json_field(root, "free_air_corr", "error in json free_air_corr", free_air_corr_expected, EPSILON);
+    test_json_field(root, "bouguer_corr", "error in json bouguer_corr", bouguer_corr_expected, EPSILON);
+    test_json_field(root, "bouguer_rel", "error in json bouguer_rel", bouguer_rel_expected, ep4);
+    test_json_field(root, "bouguer_anom", "error in json bouguer_anom", bouguer_anom_expected, ep4);
+    test_json_field(root, "regional_anom", "error in json regional_anom", regional_anom_expected, ep4);
+    test_json_field(root, "residual_anom", "error in json residual_anom", residual_anom_expected, ep3);
+    
+    test_json_field_str_real(root, "survey_purpose", purpose_expected, ARBITRARY_NUM, 1);
+    test_json_field_str_real(root, "survey_area", area_expected, ARBITRARY_NUM, 1);
+    test_json_field_str_real(root, "survey_poi", poi_expected, ARBITRARY_NUM, 1);
+    test_json_field_str_real(root, "survey_addr", addr_expected, ARBITRARY_NUM, 1);
+    test_json_field_str_real(root, "survey_date", date_expected, ARBITRARY_NUM, 1);
+    test_json_field_str_real(root, "op_temp_unit", unit_expected, ARBITRARY_NUM, 1);
+
+    test_json_field_str_real(root, "op_temp", SPACE, op_temp_expected, 0);
+    test_json_field_str_real(root, "ref_lat", SPACE, ref_lat_expected, 0);
+    test_json_field_str_real(root, "survey_dir", SPACE, dir_expected, 0);
+
+    json_decref(root);
+    free(json_actual);
+}
+
+
+
 MU_TEST_SUITE(test_suite)
 {
     MU_SUITE_CONFIGURE(&test_setup, &test_teardown);
-	
+	    
     MU_RUN_TEST(test_assert_assign_idx_node);
     MU_RUN_TEST(test_assert_load_grav_csv);
     MU_RUN_TEST(test_assert_store_avg_readings);
@@ -1241,7 +1444,8 @@ MU_TEST_SUITE(test_suite)
     MU_RUN_TEST(test_assert_store_regional_anomaly);
     MU_RUN_TEST(test_assert_store_residual_anomaly);
     MU_RUN_TEST(test_assert_populate_calc_fields_worden807);
-    MU_RUN_TEST(test_assert_GenerateCSV);
+    MU_RUN_TEST(test_assert_generate_grav_csv);
+    MU_RUN_TEST(test_assert_generate_grav_json_all);
 }
 
  

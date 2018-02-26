@@ -170,17 +170,17 @@ struct topo_t {
 	double *zeros_quality;
 };
 
-int    alloc_topo                (struct topo_t *topo, unsigned int n);
-void   assign_idx_node_topo        (struct list_t *list);
-void   free_topo                 (struct topo_t *topo);
-int    load_topo_csv              (struct topo_t *topo, const char *csv_file);
-void   store_fields_topo_struct    (struct list_t *fields, struct list_t *headers, struct topo_t *topo, int idx);
-void   store_elevation_diff_corr   (struct topo_t *topo);
-void   store_elevation_cmp_ref     (struct topo_t *topo);
+int    alloc_topo                   (struct topo_t *topo, unsigned int n);
+void   assign_idx_node_topo         (struct list_t *list);
+void   free_topo                    (struct topo_t *topo, _Bool free_chars);
+int    load_topo_csv                (struct topo_t *topo, const char *csv_file);
+void   store_fields_topo_struct     (struct list_t *fields, struct list_t *headers, struct topo_t *topo, int idx);
+void   store_elevation_diff_corr    (struct topo_t *topo);
+void   store_elevation_cmp_ref      (struct topo_t *topo);
 void   store_err_dist_btwn_stations (struct topo_t *topo);
-void   store_elevation_corr       (struct topo_t *topo);
-void   store_altitudes           (struct topo_t *topo);
-void   populate_calc_fields       (struct topo_t *topo);
+void   store_elevation_corr         (struct topo_t *topo);
+void   store_altitudes              (struct topo_t *topo);
+void   populate_calc_fields         (struct topo_t *topo);
 
 #endif /* topo.h */
 

@@ -138,10 +138,10 @@ MU_TEST_SUITE(test_suite)
 {
 	MU_SUITE_CONFIGURE(&test_setup, &test_teardown);
 	
-	MU_RUN_TEST(test_assert_rm_spaces);
-	MU_RUN_TEST(test_assert_strlower_not_csv);
-	MU_RUN_TEST(test_assert_strlower_csv);
-	MU_RUN_TEST(test_assert_charptr_to_static);
+    MU_RUN_TEST(test_assert_rm_spaces);
+    MU_RUN_TEST(test_assert_strlower_not_csv);
+    MU_RUN_TEST(test_assert_strlower_csv);
+    MU_RUN_TEST(test_assert_charptr_to_static);
     MU_RUN_TEST(test_assert_rand_str_seq);
     MU_RUN_TEST(test_assert_concat_nonempty_strings);
     MU_RUN_TEST(test_assert_concat_empty_string);

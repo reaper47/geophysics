@@ -25,7 +25,7 @@ int alloc_topo(struct topo_t *topo, unsigned int n)
 
 
 
-void free_topo(struct topo_t *topo)
+void free_topo(struct topo_t *topo, _Bool free_chars)
 {
 	free(topo->altitudes);
 	free(topo->elevation_corr);
@@ -37,6 +37,14 @@ void free_topo(struct topo_t *topo)
 	free(topo->stations);
 	free(topo->zeros);
 	free(topo->zeros_quality);
+	
+	if(free_chars) {
+	    free(topo->survey_purpose);
+        free(topo->survey_area);
+        free(topo->survey_poi);
+        free(topo->survey_address);
+        free(topo->survey_date);
+    }
 }
 
 

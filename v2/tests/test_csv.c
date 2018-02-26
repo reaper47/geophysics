@@ -215,8 +215,8 @@ MU_TEST(test_assert_gather_lines)
 MU_TEST(test_assert_create_file_name)
 {
     const char *ext_expected = ".csv";
+    const char *out_dir = "./test_data/";
     
-    const char *out_dir = "./test_data/";    
     char *f_name_actual = create_file_name(F_LEN, out_dir, ext_expected);
 
     mu_assert_int_eq(FULL_LEN, (int)strlen(f_name_actual));
@@ -224,6 +224,8 @@ MU_TEST(test_assert_create_file_name)
     mu_assert_int_eq(ext_expected[1], f_name_actual[FULL_LEN-3]);
     mu_assert_int_eq(ext_expected[2], f_name_actual[FULL_LEN-2]);
     mu_assert_int_eq(ext_expected[3], f_name_actual[FULL_LEN-1]);
+    
+    free(f_name_actual);
 }
 
 
@@ -239,7 +241,7 @@ MU_TEST_SUITE(test_suite)
 	MU_RUN_TEST(test_assert_parse_line);
 	MU_RUN_TEST(test_assert_parse_header_grav);
 	MU_RUN_TEST(test_assert_gather_lines);
-        MU_RUN_TEST(test_assert_create_file_name);
+    MU_RUN_TEST(test_assert_create_file_name);
 }
 
 

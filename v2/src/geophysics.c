@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "../include/gravimetry.h"
 
-int main(void)
+int main(int argc, char **argv)
 {
 	const char *grav_csv = "../data/uploads/grav2.csv";
 	const char *topo_csv = "../data/uploads/topo.csv";
