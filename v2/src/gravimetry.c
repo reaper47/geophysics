@@ -560,7 +560,7 @@ void store_free_air_corr(struct worden807_t *worden)
 
     for(unsigned int i = 0; i < num_lines; i++) {
 	    h = worden->altitudes[i];
-
+	    
 	    worden->free_air_corr[i] = FREE_AIR_VARIATION * h;
     }
 }
@@ -663,13 +663,14 @@ int populate_calc_fields_worden807(struct worden807_t *worden)
     store_temporal_vars(worden);
     store_attraction_deviation(worden);
     store_lat_corr(worden);
-
+    
     struct topo_t topo;
     if(load_topo_csv(&topo, worden->topo_file) != 0) {
         printf("failed opening %s\n", worden->topo_file);
         return -1;
     }
 
+    set_station_num_before_return_to_ref(worden, &topo);
     populate_calc_fields(&topo);
     transfer_topo_data_to_grav(&topo, worden);
     free_topo(&topo, 1);

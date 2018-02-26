@@ -5,7 +5,7 @@ WARNINGS ?= -Wall -Wextra -Wshadow -Wpointer-arith -Wcast-align \
             -Wredundant-decls -Wnested-externs -Winline -Wno-long-long \
             -Wuninitialized -Wconversion -Wstrict-prototypes -Werror
 			
-CFLAGS := -std=c11 -O0 $(WARNINGS) 
+CFLAGS := -std=c11 -O3 $(WARNINGS) 
 
 DEBUG := -g3 -fsanitize=address
 #CFLAG += -ggdb

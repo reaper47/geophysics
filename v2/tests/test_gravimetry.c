@@ -794,42 +794,42 @@ MU_TEST(test_assert_populate_calc_fields_worden807)
 {
     double expected_avg_readings[] = {
         1802.45, 1802.45, 1802.325, 
-	1801.3, 1800.825, 1801.1,
-	1801.025, 1799.525, 1799.0,
-	1799.0, 1799.0, 1799.2,
-	1802.475
+	    1801.3, 1800.825, 1801.1,
+	    1801.025, 1799.525, 1799.0,
+	    1799.0, 1799.0, 1799.2,
+	    1802.475
     };
 
     double expected_std[] = {
         0.229128784747770, 0.111803398874964, 0.043301270189281,
-	0.273861278752625, 0.163935963107496, 0.070710678118671,
-	0.043301270189183, 0.043301270189183, 0.122474487139140,
-	0.122474487139140, 0.070710678118591, 0.100000000000023,
-	0.129903810567624
+	    0.273861278752625, 0.163935963107496, 0.070710678118671,
+	    0.043301270189183, 0.043301270189183, 0.122474487139140,
+	    0.122474487139140, 0.070710678118591, 0.100000000000023,
+	    0.129903810567624
     };
 
     double expected_grav[] = {
-	730.6002163850, 730.6002163850, 730.5495492225,
-	730.1340784900, 729.9415432725, 730.0530110300, 
-	730.0226107325, 729.4146047825, 729.2018027000,
-	729.2018027000, 729.2018027000, 729.2828701600, 
-	730.6103498175
+	    730.6002163850, 730.6002163850, 730.5495492225,
+	    730.1340784900, 729.9415432725, 730.0530110300, 
+	    730.0226107325, 729.4146047825, 729.2018027000,
+	    729.2018027000, 729.2018027000, 729.2828701600, 
+	    730.6103498175
     };
 
     double expected_grav_uncorr[] = {
-	0.000000000000000, 0.000000000000000, 0.050667162499963,
-	0.466137895000088, 0.658673112499969, 0.547205355000074,
-	0.577605652499983, 1.185611602499990, 1.398413685000040,
-	1.398413685000040, 1.3984136850000400, 1.31734622500005000,
-	-0.01013343249997	
+	    0.000000000000000, 0.000000000000000, 0.050667162499963,
+	    0.466137895000088, 0.658673112499969, 0.547205355000074,
+	    0.577605652499983, 1.185611602499990, 1.398413685000040,
+	    1.398413685000040, 1.3984136850000400, 1.31734622500005000,
+	    -0.01013343249997	
     };
 
     double expected_tmp[] = {
-	0.0, 0.0, 0.0,
-	0.0, 0.0, 0.0,
-	0.0, 0.0, 0.0,
-	0.0, 0.0, 0.0,
-	0.010133433333294
+	    0.0, 0.0, 0.0,
+	    0.0, 0.0, 0.0,
+	    0.0, 0.0, 0.0,
+	    0.0, 0.0, 0.0,
+	    0.010133433333294
     };
 
     double expected_attract[] = { 
@@ -848,22 +848,6 @@ MU_TEST(test_assert_populate_calc_fields_worden807)
          0.0000000000000000
     };
 
-    double expected_elev[] = {
-        -0.00, 0.243, 0.022, 
-        2.247, 3.471, 3.817, 
-        3.955, 5.749, 5.965, 
-        5.882, 5.998, 5.916, 
-        0.000
-    };
- 
-    double expected_alts[] = {
-        93.084, 93.327, 93.106, 
-        95.331, 96.555, 96.901, 
-        97.039, 98.833, 99.049, 
-        98.966, 99.082, 99.000, 
-        93.084
-    };
-
     double expected_free[] = {
         28.7257224, 28.8007122, 28.7325116,
         29.4191466, 29.7968730, 29.9036486,
@@ -873,19 +857,19 @@ MU_TEST(test_assert_populate_calc_fields_worden807)
     };
 
     double expected_bcorr[] = {
-        -9.962568, -9.964043, -9.918824, 
-        -10.119751, -10.219946, -10.231786, 
-        -10.222694, -10.380249, -10.379006, 
-        -10.347675, -10.336369, -10.305139, 
-        -9.962568
+        -9.619997, -9.621472, -9.576253, 
+        -9.777181, -9.877375, -9.889215, 
+        -9.880123, -10.037678, -10.036436, 
+        -10.005104, -9.993799, -9.962568, 
+        -9.619997
     };
 
     double expected_brel[] = {
-        751.189108, 751.178726, 751.021179, 
-        751.007518, 751.008617, 751.131123, 
-        751.068503, 750.772673, 750.543873, 
-        750.465693, 750.428898, 750.431993, 
-        751.189108
+        750.481145, 750.470763, 750.313216, 
+        750.299555, 750.300654, 750.423160, 
+        750.360540, 750.064710, 749.835910, 
+        749.757730, 749.720935, 749.724030, 
+        750.481145
     };
     
     double expected_banom[] = {
@@ -918,16 +902,13 @@ MU_TEST(test_assert_populate_calc_fields_worden807)
     memcpy(worden807_expected_populate.grav_anomaly_uncorr, expected_grav_uncorr, sizeof(expected_grav_uncorr));
     memcpy(worden807_expected_populate.temporal_vars, expected_tmp, sizeof(expected_tmp));
     memcpy(worden807_expected_populate.attraction_deviation, expected_attract, sizeof(expected_attract));
-    memcpy(worden807_expected_populate.lat_corr, expected_lat, sizeof(expected_lat));
-    memcpy(worden807_actual_populate.elevations, expected_elev, sizeof(expected_elev));
-    memcpy(worden807_actual_populate.altitudes, expected_alts, sizeof(expected_alts));
+    memcpy(worden807_expected_populate.lat_corr, expected_lat, sizeof(expected_lat));    
     memcpy(worden807_expected_populate.free_air_corr, expected_free, sizeof(expected_free));
     memcpy(worden807_expected_populate.bouguer_corr, expected_bcorr, sizeof(expected_bcorr));
     memcpy(worden807_expected_populate.bouguer_rel_grav_fields, expected_brel, sizeof(expected_brel));
     memcpy(worden807_expected_populate.bouguer_anomaly, expected_banom, sizeof(expected_banom));
     memcpy(worden807_expected_populate.regional_anomaly, expected_ranom, sizeof(expected_ranom));
     memcpy(worden807_expected_populate.residual_anomaly, expected_res, sizeof(expected_res));
-    set_station_num_before_return_to_ref(&worden807_actual_populate, &topo);
 
     populate_calc_fields_worden807(&worden807_actual_populate);
 
@@ -987,7 +968,7 @@ MU_TEST(test_assert_populate_calc_fields_worden807)
         e_lat = worden807_expected_populate.lat_corr[i];
         a_lat = worden807_actual_populate.lat_corr[i];
         mu_assert(approx_eq(e_lat, a_lat, EPSILON), msg_lat);
-
+                
         e_free = worden807_expected_populate.free_air_corr[i];
         a_free = worden807_expected_populate.free_air_corr[i];
         mu_assert(approx_eq(e_free, a_free, EPSILON), msg_free);
@@ -1231,7 +1212,7 @@ MU_TEST(test_assert_generate_grav_csv)
  */
 void test_json_field(json_t *root, const char *which, const char *msg, double *expected, double epsilon)
 {
-    size_t num_data;
+    size_t num_data = 0;
     
     json_t *field = NULL;
     json_unpack(root, "{s:o}", which, &field);

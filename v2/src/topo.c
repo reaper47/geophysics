@@ -236,7 +236,7 @@ void store_altitudes(struct topo_t *topo)
 	for(unsigned int i = 0; i < num_lines; i++) {
 		double elev_corr = topo->elevation_corr[i];
 		double avg_sea_lvl = topo->avg_sea_lvl;
-
+           
 		topo->altitudes[i] = avg_sea_lvl - elev_corr_before_return + elev_corr;
 	}
 }
@@ -249,6 +249,6 @@ void populate_calc_fields(struct topo_t *topo)
 	store_elevation_cmp_ref(topo);
 	store_err_dist_btwn_stations(topo);
 	store_elevation_corr(topo);
-	store_altitudes(topo);	
+	store_altitudes(topo);
 }
 
