@@ -107,6 +107,27 @@ MU_TEST(test_assert_correct_latitude)
 
 
 
+/*
+ * tests - line_intercept
+ *
+ */
+MU_TEST(test_assert_intercept_of_slope)
+{
+	double intercept_expected = 0.1276822;
+
+	struct point_t p1 = { 270.0, 0.182402 };
+	struct point_t p2 = { 120.0, 0.010133 };
+	double slope = 0.00114846;
+
+	double intercept_actual = line_intercept(p1, p2, slope);
+
+	mu_assert_double_eq(intercept_expected, intercept_actual);
+}
+
+
+
+
+
 MU_TEST_SUITE(test_suite)
 {
 	MU_SUITE_CONFIGURE(&test_setup, &test_teardown);
@@ -114,6 +135,7 @@ MU_TEST_SUITE(test_suite)
 	MU_RUN_TEST(test_check_setup);
 	MU_RUN_TEST(test_assert_interpolate_pts);
 	MU_RUN_TEST(test_assert_correct_latitude);
+	MU_RUN_TEST(test_assert_intercept_of_slope);
 }
 
 

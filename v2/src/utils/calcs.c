@@ -21,6 +21,16 @@ double correct_latitude(double lat, double lng, double pos)
 
 
 
+double line_intercept(struct point_t p1, struct point_t p2, double slope)
+{	
+	double avg_x = (p2.x + p1.x) / 2.0;
+	double avg_y = (p2.y + p1.y) / 2.0;
+
+	return fabs(slope) * avg_x - avg_y;
+}
+
+
+
 double* interpolate_pts(double start_value, double end_value, int steps)
 {
 	double *results = malloc(sizeof(double) * (size_t)steps);

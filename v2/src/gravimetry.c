@@ -188,7 +188,6 @@ char *generate_grav_csv(struct worden807_t *worden, const char *out_dir)
     FILE *csv_fp = fopen(path_csv, "w+");
     if( !csv_fp ) {
         printf("failed to open %s\n", path_csv);
-        
         const char *err = "-1";
         return (char*)err;
     }
@@ -466,8 +465,10 @@ void store_attraction_deviation(struct worden807_t *worden)
     int ref_station_count = 1;
     int cpy_idx = 0;
 
+    unsigned int start_idx = 0;
     double start_value = 0.0;
     double end_value = 0.0;
+    
     int num_steps = 0;
 
     double station;
@@ -476,13 +477,13 @@ void store_attraction_deviation(struct worden807_t *worden)
     for(unsigned int i = 0; i < num_lines; i++) {
         station = worden->stations[i];
         is_approx_eq = approx_eq(station, REF_STATION, epsilon);
-                                    
+                              
         if(ref_station_count == 2 && is_approx_eq) {
             end_value = worden->temporal_vars[i];
             num_steps++;
                     
             double *results = interpolate_pts(start_value, end_value, num_steps);
-                    
+                
             for(int k = 0; k < num_steps; k++) {
                 worden->attraction_deviation[cpy_idx] = results[k];
                 cpy_idx++;	
@@ -490,7 +491,30 @@ void store_attraction_deviation(struct worden807_t *worden)
             free(results);
 
             num_steps = 0;
-            ref_station_count--;
+            start_idx = i;
+            ref_station_count++;
+        } else if(ref_station_count > 2 && is_approx_eq) {
+            struct point_t pt1 = { 
+                worden->times_min[start_idx], 
+                worden->temporal_vars[start_idx]
+            };
+            
+            struct point_t pt2 = {
+                worden->times_min[i], 
+                worden->temporal_vars[i]
+            };
+            
+            double slope = -(pt2.y - pt1.y) / (pt2.x - pt1.x);
+            double intercept = line_intercept(pt1, pt2, slope);
+            
+            for(unsigned int k = start_idx+1; k <= i; k++) {
+                double y = slope * worden->times_min[k] + intercept;
+                worden->attraction_deviation[cpy_idx] = y;
+                cpy_idx++;	
+            }
+            
+            start_idx = i;
+            ref_station_count++;
         } else if(is_approx_eq) {
             start_value = worden->temporal_vars[i];
             num_steps++;
@@ -511,7 +535,7 @@ void store_lat_corr(struct worden807_t *worden)
     double lng = worden->survey_dir;
 
     for(unsigned int i = 0; i < num_lines; i++)
-	worden->lat_corr[i] = correct_latitude(lat, lng, worden->stations[i]);
+	    worden->lat_corr[i] = correct_latitude(lat, lng, worden->stations[i]);
 }
 
 
@@ -524,8 +548,10 @@ void set_station_num_before_return_to_ref(struct worden807_t *worden, struct top
     for(unsigned int i = 0; i < num_lines-1; i++) {
 	    next_station = worden->stations[i+1];
 		
-        if(approx_eq(next_station, 0.0, 1e-1))
+        if(approx_eq(next_station, 0.0, 1e-1)) {
 	        topo->station_num_before_return_to_ref = (int)i;
+	        return;
+	    }
     }
 }
 
@@ -535,19 +561,21 @@ void transfer_topo_data_to_grav(struct topo_t *topo, struct worden807_t *worden)
 {
     unsigned int num_lines = worden->num_lines;
     double altitude, elevation;
+    int idx = 1;
 
     for(unsigned int i = 0; i < num_lines; i++) {
 
     	if(approx_eq(worden->stations[i], REF_STATION, 1e-1)) {
             altitude = topo->altitudes[0];
-	        elevation = topo->elevation_corr[0];			
+	        elevation = topo->elevation_corr[0];		
     	} else {
-	        altitude = topo->altitudes[i];
-	        elevation = topo->elevation_corr[i];
+	        altitude = topo->altitudes[idx];
+	        elevation = topo->elevation_corr[idx];
+	        idx++;
 	    }
-
-    	worden->altitudes[i] = altitude;
-	    worden->elevations[i] = elevation;
+        
+        worden->elevations[i] = elevation;
+    	worden->altitudes[i] = altitude; 
     }
 }
 
