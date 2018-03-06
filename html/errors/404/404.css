@@ -1,0 +1,103 @@
+body {
+  background-color: #222f3e;
+  color: #FFF;
+  font-family: Roboto, Verdana, sans-serif;
+  font-weight: 300;
+}
+
+svg {
+  left: 50%;
+  margin-left: -25rem;
+  margin-top: -18rem;
+  position: absolute;
+  top: 50%;
+}
+
+.msg-box-404 {
+  left: 50%;
+  margin-left: 3rem;
+  margin-top: -11rem;
+  position: absolute;
+  top: 50%;
+}
+
+.msg-box-404 h1 {
+  font-size: 3.8rem;
+  line-height: 46px;
+  margin-bottom: 2.5rem;
+}
+
+.btns-con .action-link-wrap {
+  margin-top: 3rem;
+}
+
+.btns-con .action-link-wrap a {
+  background: #20bf6b;
+  border-radius: 1rem;
+  color: #FFF;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-right: 0.8rem;
+  padding: 1rem 2rem;
+  text-decoration: none;
+  transition: all 0.3s linear;
+}
+
+:focus { 
+  outline: none;
+}
+
+::-moz-focus-inner {
+  border: 0;
+}
+
+.btns-con .action-link-wrap a:hover {
+  background: #ee5253;
+  color: #FFF;
+}
+
+#Polygon-1, #Polygon-2, #Polygon-3, #Polygon-4, #Polygon-5 {
+  animation: float 1s infinite ease-in-out alternate;
+}
+
+#Polygon-2 {
+  animation-delay: .2s;
+}
+
+#Polygon-3 {
+  animation-delay: .4s;
+}
+
+#Polygon-4 {
+  animation-delay: .6s;
+}
+
+#Polygon-5 {
+  animation-delay: .8s;
+}
+
+@keyframes float {
+  100% {
+    transform: translateY(20px);
+  }
+}
+
+@media(max-width: 450px) {
+  svg {
+    left: 50%;
+    margin-left: -190px;
+    margin-top: -250px;
+    position: absolute;
+    top: 50%;
+  }
+  
+  .msg-box-404 {
+    left: 50%;
+    margin-left: -100px;
+    margin-top: -190px;
+    text-align: center;
+    top: 50%;
+  }
+}
+
