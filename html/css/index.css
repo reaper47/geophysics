@@ -68,6 +68,17 @@ header:first-child svg {
 }
 
 /*******************
+ *   HOME BUTTON   *
+ *******************/
+.right svg {
+  float: right;
+}
+
+.right svg path:hover {
+  fill: #e056fd;
+}
+
+/*******************
  *     NAVBAR      *
  *******************/
 #drawer-toggle {
@@ -182,7 +193,6 @@ main.home-container {
   display: grid;
   justify-content: center;
   width: 30rem;
-  
 }
 
 div.polaroid {
@@ -193,6 +203,13 @@ div.polaroid {
 div.home-item img:hover {
   cursor: pointer;
   opacity: 0.6;
+}
+
+/*******************
+ *     MODULES     *
+ *******************/
+.hidden {
+    display: none;
 }
 
 /*******************
@@ -232,5 +249,13 @@ path {
 }
 .bottom {
   stroke-dasharray: 20px 100px;
+}
+
+
+/*******************
+ *    GRAVIMETRY   *
+ *******************/
+.module {
+  text-align: center;
 }
 

@@ -23,46 +23,82 @@
         <path class="bottom" d="M10,26 L30,26 C50,26 50,46 30,26 L10,10"></path>
       </svg>
     </div>
-    <div class="center"><h1>Welcome to Geophysica!</h1></div>
-    <div class="right"></div>
+    <div class="center"><h1 id="header-title">Welcome to Geophysica!</h1></div>
+    <div class="right">
+      <a id="icon_home" href="#home">
+        <svg width="100%" viewbox="-30 -6 90 30">
+          <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        </svg>
+      </a>
+    </div>
   </header>
   
   <nav>
     <ul>
-      <li><a href="#a">Home</a></li>
-      <li><a href="#c">Gravimetry</a></li>
-      <li><a href="#d">Seismology</a></li>
-      <li><a href="#e">Electric</a></li>
-      <li><a href="#f">Magnetism</a></li>
-      <li><a href="#g">Electromagnetism</a></li>
-      <li><a href="#hi">About</a></li>
+      <li><a href="#home">Home</a></li>
+      <li><a href="#gravimetry">Gravimetry</a></li>
+      <li><a href="#seismology">Seismology</a></li>
+      <li><a href="#electricity">Electric</a></li>
+      <li><a href="#magnetism">Magnetism</a></li>
+      <li><a href="#electro">Electromagnetism</a></li>
+      <li><a href="#about">About</a></li>
     </ul>
   </nav>
   
-  <main class="home-container">  
-    <div class="home-item home-item1">
-      <img src="img/home/gravimetry.jpg" alt="Astronaut suspended in microgravity above Earth.">
+  <main id="main-home" class="home-container">
+    <div class="home-item home-item1 visible">
+      <a href="#gravimetry">
+        <img src="img/home/gravimetry.jpg" alt="Astronaut suspended in microgravity above Earth.">
+      </a>
       <div class="polaroid"><p>Gravimetry</p></div>
     </div>
-    <div class="home-item home-item2">
-      <img src="img/home/seismic.jpg" alt="Damaged building from an earthquake.">
+    <div class="home-item home-item2 visible">
+      <a href="#seismology">
+        <img src="img/home/seismic.jpg" alt="Damaged building from an earthquake.">
+      </a>
       <div class="polaroid"><p>Seismology</p></div>
     </div>
-    <div class="home-item home-item3">
-      <img src="img/home/electric.jpg" alt="A Powerful thunderstorm."> 
+    <div class="home-item home-item3 visible">
+      <a href="#electricity">
+        <img src="img/home/electric.jpg" alt="A Powerful thunderstorm."> 
+      </a>
       <div class="polaroid"><p>Electricity</p></div>
     </div>
     <div class="home-item home-item4">
-      <img src="img/home/magnetism.jpg" alt="Magnetic attraction."> 
+      <a href="#magnetism">
+        <img src="img/home/magnetism.jpg" alt="Magnetic attraction."> 
+      </a>
       <div class="polaroid"><p>Magnetism</p></div>
     </div>
     <div class="home-item home-item5">
-      <img src="img/home/electro.jpg" alt="Electromagnetism.">
+      <a href="#electro">
+        <img src="img/home/electro.jpg" alt="Electromagnetism.">
+      </a>
       <div class="polaroid"><p>Electromagnetism</p></div>
     </div>
   </main>
-      
-   <script src="js/index.js"></script> 
+  
+  <main id="main-gravimetry" class="module hidden">
+    <p>Welcome to the gravimetry module</p>
+  </main>
+  
+  <main id="main-seismology" class="module hidden">
+    <p>Welcome to the seismology module</p>
+  </main>
+  
+  <main id="main-electricity" class="module hidden">
+    <p>Welcome to the electricity module</p>
+  </main>
+  
+  <main id="main-magnetism" class="module hidden">
+    <p>Welcome to the magnetism module</p>
+  </main>
+  
+  <main id="main-electro" class="module hidden">
+    <p>Welcome to the electro module</p>
+  </main>
+        
+  <script src="js/index.js"></script> 
 </body>
 </html>
 
