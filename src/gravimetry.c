@@ -1,45 +1,33 @@
 #include "gravimetry.h"
 
-int alloc_worden807(struct worden807_t *worden, unsigned int n)
+struct worden807_t init_worden807(size_t n)
 {
-    worden->altitudes               = malloc(sizeof(worden->altitudes) * n);
-    worden->attraction_deviation    = malloc(sizeof(worden->attraction_deviation) * n);
-    worden->avg_readings            = malloc(sizeof(worden->avg_readings) * n);
-    worden->bouguer_anomaly         = malloc(sizeof(worden->bouguer_anomaly) * n);
-    worden->bouguer_corr            = malloc(sizeof(worden->bouguer_corr) * n);
-    worden->bouguer_rel_grav_fields = malloc(sizeof(worden->bouguer_rel_grav_fields) * n);
-    worden->elevations              = malloc(sizeof(worden->elevations) * n);
-    worden->free_air_corr           = malloc(sizeof(worden->free_air_corr) * n);
-    worden->grav_anomaly_uncorr     = malloc(sizeof(worden->grav_anomaly_uncorr) * n);
-    worden->lat_corr                = malloc(sizeof(worden->lat_corr) * n);
-    worden->readings                = malloc(sizeof(worden->readings) * n * NUM_READINGS);
-    worden->rel_grav_fields         = malloc(sizeof(worden->rel_grav_fields) * n);
-    worden->regional_anomaly        = malloc(sizeof(worden->regional_anomaly) * n);
-    worden->residual_anomaly        = malloc(sizeof(worden->residual_anomaly) * n);
-    worden->stations                = malloc(sizeof(worden->stations) * n);
-    worden->std                     = malloc(sizeof(worden->std) * n);
-    worden->temporal_vars           = malloc(sizeof(worden->temporal_vars) * n);
-    worden->times                   = malloc(sizeof(worden->times) * n);
-    worden->times_min               = malloc(sizeof(worden->times_min) * n);
-    worden->num_readings = 0;
-    worden->operation_temp_unit = DEFAULT_TEMP_UNIT;
+    struct worden807_t worden = {
+        .altitudes               = malloc(n),
+        .attraction_deviation    = malloc(n),
+        .avg_readings            = malloc(n),
+        .bouguer_anomaly         = malloc(n),
+        .bouguer_corr            = malloc(n),
+        .bouguer_rel_grav_fields = malloc(n),
+        .elevations              = malloc(n),
+        .free_air_corr           = malloc(n),
+        .grav_anomaly_uncorr     = malloc(n),
+        .lat_corr                = malloc(n),
+        .readings                = malloc(n * NUM_READINGS),
+        .rel_grav_fields         = malloc(n),
+        .regional_anomaly        = malloc(n),
+        .residual_anomaly        = malloc(n),
+        .stations                = malloc(n),
+        .std                     = malloc(n),
+        .temporal_vars           = malloc(n),
+        .times                   = malloc(n),
+        .times_min               = malloc(n),
+        .num_readings            = 0,
+        .operation_temp_unit     = DEFAULT_TEMP_UNIT
+    };
     
-    if(worden->attraction_deviation     == NULL || worden->avg_readings     == NULL ||
-        worden->bouguer_anomaly         == NULL || worden->bouguer_corr     == NULL ||
-        worden->bouguer_rel_grav_fields == NULL || worden->free_air_corr    == NULL ||
-        worden->grav_anomaly_uncorr     == NULL || worden->lat_corr         == NULL ||
-        worden->readings                == NULL || worden->rel_grav_fields  == NULL ||
-        worden->regional_anomaly        == NULL || worden->residual_anomaly == NULL ||
-        worden->stations                == NULL || worden->std              == NULL ||
-        worden->temporal_vars           == NULL || worden->times            == NULL ||
-	    worden->times_min               == NULL || worden->elevations       == NULL ||
-	    worden->altitudes               == NULL)
-	    return -1;
-
-    return 0;
+    return worden;
 }
-
-
 
 void free_worden807(struct worden807_t *worden)
 {
@@ -135,7 +123,7 @@ double dial_const_worden807(struct worden807_t *worden)
 
 
 
-int load_grav_csv(struct worden807_t *worden, const char *csv_file, const char *topo_file)
+struct worden807_t load_grav_csv(const char *csv_file, const char *topo_file)
 {
     FILE *fp = fopen(csv_file, "rb");
     if(fp == NULL) {
@@ -145,27 +133,24 @@ int load_grav_csv(struct worden807_t *worden, const char *csv_file, const char *
     }
             
     unsigned int num_lines = num_lines_file(fp);
-    if(alloc_worden807(worden, num_lines) != 0) {
-        printf("malloc worden807 failed\n");
-        return -1;
-    }
+    struct worden807_t worden = init_worden807(sizeof(double) * num_lines);
 
     unsigned int header_line_number = 1;
-    worden->num_lines = num_lines - header_line_number;
-    worden->topo_file = (char*)topo_file;
+    worden.num_lines = num_lines - header_line_number;
+    worden.topo_file = (char*)topo_file;
 
     const char delim = determine_delim(fp);
     
     struct list_t *lines = gather_lines(fp);
     struct list_t *headers = parse_header(fp, delim);
-    assign_idx_node(headers, worden);
+    assign_idx_node(headers, &worden);
     
     int arr_idx = 0;
     int readings_idx = 0;
     
     for(struct node_t *node = lines->head; node != NULL; node = node->next) {
         struct list_t *fields = parse_line(node->data, delim);
-        store_fields_struct(fields, headers, worden, arr_idx, &readings_idx);
+        store_fields_struct(fields, headers, &worden, arr_idx, &readings_idx);
         arr_idx++;
         del_list(fields);
     }
@@ -174,7 +159,7 @@ int load_grav_csv(struct worden807_t *worden, const char *csv_file, const char *
     del_list(headers);
     fclose(fp);
     
-    return 0;
+    return worden;
 }
 
 

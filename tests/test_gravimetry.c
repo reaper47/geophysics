@@ -12,6 +12,8 @@
 #define ARBITRARY_NUM  -99999.0
 #define SPACE          " "
 
+#define N_INIT         (sizeof(double) * ROWS)
+
 void test_json_field(json_t *root, const char *which, const char *msg, double *expected, double epsilon);
 void test_json_field_str_real(json_t *root, const char *which, const char *expected, double real, int mode);
 
@@ -23,15 +25,12 @@ struct worden807_t worden807_actual_populate;
 
 struct topo_t topo;
 
+
 void test_setup(void)
 {
-    if(alloc_worden807(&worden807_expected, ROWS) == -1)
-        return;
-	    
-    if(alloc_worden807(&worden807_expected_populate, ROWS) == -1) {
-        return;
-    }
-   	
+    worden807_expected = init_worden807(N_INIT);
+    worden807_expected_populate = init_worden807(N_INIT);
+    
     double stations[] = { 
 	0.0, 20.0, 40.0, 
 	60.0, 80.0, 100.0,
@@ -114,7 +113,6 @@ void test_setup(void)
     worden807_expected_populate.operation_temp_unit = 'F';
     worden807_expected_populate.topo_file = (char*)TOPO_FILE;
 }
-
 
 
 
@@ -230,20 +228,15 @@ MU_TEST(test_assert_assign_idx_node)
 
 
 
-
 /*
  * tests - load_grav_csv
  *
  */ 
 MU_TEST(test_assert_load_grav_csv)
 {
-    int status_expected = 0;
+    worden807_actual = load_grav_csv(GRAV_FILE, TOPO_FILE);
+    worden807_actual_populate = load_grav_csv(GRAV_FILE, TOPO_FILE);
 
-    int status_actual = load_grav_csv(&worden807_actual, GRAV_FILE, TOPO_FILE);
-    int status_actual_populate = load_grav_csv(&worden807_actual_populate, GRAV_FILE, TOPO_FILE);
-    mu_assert_int_eq(status_expected, status_actual);
-    mu_assert_int_eq(status_expected, status_actual_populate);
-	
 	double expected, actual;
 	for(int i = 0; i < ROWS; i++) {
 		expected = worden807_expected.stations[i];

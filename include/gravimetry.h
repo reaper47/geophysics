@@ -283,11 +283,9 @@ struct worden807_t {
     char   *topo_file;
 };
 
-int    alloc_worden807                      (struct worden807_t *worden, unsigned int n);
 void   assign_idx_node                      (struct list_t *list, struct worden807_t *worden);
 double dial_const_worden807                 (struct worden807_t *worden);
 void   free_worden807                       (struct worden807_t *worden);
-int    load_grav_csv                        (struct worden807_t *worden, const char *csv_file, const char *topo_file);
 int    populate_calc_fields_worden807       (struct worden807_t *worden);
 void   set_station_num_before_return_to_ref (struct worden807_t *worden, struct topo_t *topo);
 void   store_avg_readings_std               (struct worden807_t *worden, int is_std);
@@ -306,6 +304,8 @@ void   store_residual_anomaly               (struct worden807_t *worden);
 void   transfer_topo_data_to_grav           (struct topo_t *topo, struct worden807_t *worden807);
 char  *generate_grav_csv                    (struct worden807_t *worden, const char *out_dir);
 char  *generate_grav_json                   (struct worden807_t *worden);
+struct worden807_t init_worden807           (size_t n);
+struct worden807_t load_grav_csv            (const char *csv_file, const char *topo_file);
 
 #endif /* gravimetry.h */
 

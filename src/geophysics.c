@@ -15,11 +15,7 @@ int main(int argc, char **argv)
     const char *grav_path = argv[1];
     const char *topo_path = argv[2];
     
-    struct worden807_t worden;
-    if(load_grav_csv(&worden, grav_path, topo_path) < 0) {
-        printf("error loading worden807\n");
-        return 2;
-    }
+    struct worden807_t worden = load_grav_csv(grav_path, topo_path);
     populate_calc_fields_worden807(&worden);
     
     char *csv_path = generate_grav_csv(&worden, "./data/processed/");
