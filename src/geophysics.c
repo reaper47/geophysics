@@ -7,8 +7,8 @@
 int main(int argc, char **argv)
 {
     if(argc < 3) {
-        printf("usage   -> path_to_geophysics grav_file topo_file\n");
-        printf("example -> ./bin/geophysics ./data/uploads/grav.csv ./data/uploads/topo.csv\n");
+        printf("usage: geophysics path_to_geophysics grav_file topo_file\n");
+        printf("example: ./bin/geophysics ./data/uploads/grav.csv ./data/uploads/topo.csv\n");
         return 1;                     
     }
     

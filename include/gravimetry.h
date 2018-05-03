@@ -246,7 +246,7 @@
 #define TWO_PI_G            0.04193
 
 #define GRAV_PATH_LEN       26
-#define GRAV_TEST_DIR       "./test_data/processed/"
+#define GRAV_TEST_DIR       "./test_data/"
 #define CSV                 ".csv"
 
 struct worden807_t {

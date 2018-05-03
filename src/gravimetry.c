@@ -101,7 +101,6 @@ void assign_idx_node(struct list_t *list, struct worden807_t *worden)
 
             char *p = strtok(s, TEMP_BTWN);
             p = strtok(NULL, TEMP_BTWN);
-            
             worden->operation_temp_unit = (char)tolower(p[0]);
         }
         else if(strstr(curr->data, DIR) != NULL)

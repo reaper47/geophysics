@@ -148,13 +148,12 @@ struct list_t *parse_header(FILE *fp, const char delim)
 	
 	char *line = NULL, *tok, *str, *tofree;
 	size_t len = 0;
-	const char delim_cpy = delim;
-	
+
 	if(getline(&line, &len, fp) != 0) {
 		tofree = str = strdup(line);
 		strlower(str, 1);
 		
-		while((tok = strsep(&str, &delim_cpy)))
+		while((tok = strsep(&str, (char*)&delim)))
 			add_head_list(list, tok);
 
 		free(tofree);
