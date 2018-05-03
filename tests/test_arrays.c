@@ -1,4 +1,4 @@
-#include "../include/arrays.h"
+#include "arrays.h"
 #include "test.h"
 
 #define NUM_ELS 10

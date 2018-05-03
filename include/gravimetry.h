@@ -193,10 +193,10 @@
 #include <string.h>
 #include <unistd.h>
 #include <jansson.h>
-#include "./topo.h"
-#include "./calcs.h"
-#include "./csv.h"
-#include "./sll.h"
+#include "topo.h"
+#include "calcs.h"
+#include "csv.h"
+#include "sll.h"
 
 #define STATION  "station"
 #define TIME     "time"

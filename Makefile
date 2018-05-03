@@ -21,8 +21,8 @@ WARNINGS ?= -Wall -Wextra -Wshadow -Wpointer-arith -Wcast-align \
             -Wuninitialized -Wconversion -Wstrict-prototypes -Werror
 CFLAGS := -std=c11 -O3 $(WARNINGS)
 LIB         := -lm -ljansson
-INC         := -I$(INCDIR) -I/usr/local/include
-INCDEP      := -I$(INCDIR)
+INC         := -I$(INCDIR) -I/usr/local/include -I ./include
+INCDEP      := -I$(INCDIR) -I ./include
 
 #-------------------------------------------------------------------------------
 # Build the program

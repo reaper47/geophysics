@@ -1,4 +1,4 @@
-#include "../include/calcs.h"
+#include "calcs.h"
 #include "test.h"
 
 #define NUM_ELS 10

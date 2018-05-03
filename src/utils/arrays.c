@@ -1,4 +1,4 @@
-#include "../../include/arrays.h"
+#include "arrays.h"
 
 double avg_arr(double *arr, int n)
 {

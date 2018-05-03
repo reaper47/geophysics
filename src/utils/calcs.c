@@ -1,4 +1,4 @@
-#include "../../include/calcs.h"
+#include "calcs.h"
 
 
 _Bool approx_eq(double a, double b, double epsilon)

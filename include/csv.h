@@ -37,7 +37,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include "./sll.h"
+#include "sll.h"
 
 #define NUM_LINES_PROCESS   10
 #define LF                  '\n'

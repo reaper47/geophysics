@@ -1,4 +1,4 @@
-#include "../include/sll.h"
+#include "sll.h"
 #include "test.h"
 
 #define NODE1_DATA "hello"

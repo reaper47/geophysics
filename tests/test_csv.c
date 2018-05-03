@@ -1,4 +1,4 @@
-#include "../include/csv.h"
+#include "csv.h"
 #include "test.h"
 
 #define TST_CSV1 "./test_data/gas-production.csv"

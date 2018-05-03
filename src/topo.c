@@ -1,4 +1,4 @@
-#include "../include/topo.h"
+#include "topo.h"
 
 int alloc_topo(struct topo_t *topo, unsigned int n)
 {

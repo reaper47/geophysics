@@ -1,4 +1,4 @@
-#include "../include/strings.h"
+#include "strings.h"
 #include "test.h"
 
 
@@ -104,36 +104,6 @@ MU_TEST(test_assert_rand_str_seq)
 
 
 
-/*
- * tests - concat
- *
- */
-MU_TEST(test_assert_concat_nonempty_strings)
-{
-    const char *str1 = "Hello, ";
-    const char *str2 = "world";
-    const char *str_expected = "Hello, world";
-
-    char *str_actual = concat(str1, str2);
-
-    mu_assert_string_eq(str_expected, str_actual);
-    free(str_actual);
-}
-
-
-
-MU_TEST(test_assert_concat_empty_string)
-{
-    const char *str1 = "Hello, ";
-    const char *str_expected = "Hello, ";
-
-    char *str_actual = concat(str1, "");
-
-    mu_assert_string_eq(str_expected, str_actual);
-    free(str_actual);
-}
-
-
 MU_TEST_SUITE(test_suite)
 {
 	MU_SUITE_CONFIGURE(&test_setup, &test_teardown);
@@ -143,8 +113,6 @@ MU_TEST_SUITE(test_suite)
     MU_RUN_TEST(test_assert_strlower_csv);
     MU_RUN_TEST(test_assert_charptr_to_static);
     MU_RUN_TEST(test_assert_rand_str_seq);
-    MU_RUN_TEST(test_assert_concat_nonempty_strings);
-    MU_RUN_TEST(test_assert_concat_empty_string);
 }
 
 

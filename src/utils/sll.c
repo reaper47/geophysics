@@ -1,4 +1,4 @@
-#include "../../include/sll.h"
+#include "sll.h"
 
 struct node_t *create_node(const char *data)
 {

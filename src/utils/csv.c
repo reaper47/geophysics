@@ -1,19 +1,23 @@
-#include "../../include/csv.h"
+#include "csv.h"
 
 char *create_file_name(size_t n, const char *out_dir, const char *ext)
 {
-    char *path;
-    char *path_csv;
+    size_t nchars = n + strlen(out_dir) + strlen(ext) + 1;
+    char path_csv[nchars];
 
     do {
+        memset(path_csv, 0, sizeof path_csv);
         char *file_name = rand_str_seq(n);
-        path = concat(out_dir, file_name);
-        path_csv = concat(path, ext);
+        strcat(path_csv, out_dir);
+        strcat(path_csv, file_name);
+        strcat(path_csv, ext);
         free(file_name);
-    } while( access(path_csv, F_OK) != -1);
+    } while(access(path_csv, F_OK) != -1);
 
-    free(path);
-    return path_csv;
+    char *ret = malloc(nchars);
+    charptr_to_static(path_csv, ret, (int)nchars);
+    
+    return ret;
 }
 
 

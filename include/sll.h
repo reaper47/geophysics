@@ -28,7 +28,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <ctype.h>
-#include "./strings.h"
+#include "strings.h"
 
 struct node_t {
 	char   *data;

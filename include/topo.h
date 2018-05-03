@@ -117,11 +117,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "./arrays.h"
-#include "./calcs.h"
-#include "./csv.h"
-#include "./sll.h"
-#include "./strings.h"
+#include "arrays.h"
+#include "calcs.h"
+#include "csv.h"
+#include "sll.h"
+#include "strings.h"
 
 #define STATION    "station"
 #define ZERO       "zero"

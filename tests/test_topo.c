@@ -1,6 +1,6 @@
-#include "../include/topo.h"
-#include "../include/arrays.h"
-#include "../include/calcs.h"
+#include "topo.h"
+#include "arrays.h"
+#include "calcs.h"
 #include "test.h"
 
 #define TOPO_FILE "./test_data/topo1.csv"

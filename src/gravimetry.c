@@ -1,4 +1,4 @@
-#include "../include/gravimetry.h"
+#include "gravimetry.h"
 
 int alloc_worden807(struct worden807_t *worden, unsigned int n)
 {

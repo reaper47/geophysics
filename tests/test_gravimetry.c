@@ -1,5 +1,5 @@
-#include "../include/gravimetry.h"
-#include "../include/calcs.h"
+#include "gravimetry.h"
+#include "calcs.h"
 #include "test.h"
 
 #define GRAV_FILE "./test_data/grav.csv"
