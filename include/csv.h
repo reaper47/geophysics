@@ -1,34 +1,3 @@
-/*******************************************************************
- * NAME: csv.h
- *
- * PURPOSE: Defines utility functions for manipulating csv files.
- * 
- * GLOBAL VARIABLES: None
- *
- * Variables              Type      Description
- * ---------              ----      -----------
- * APOSTROPHE             int       ASCII id of an apostrophe
- *
- * COMMA                  int       ASCII id of a comma
- *
- * LF                     char      ASCII id of a line feed
- *
- * NUM_LINES_PROCESS      int       Number of lines to read
- *                                  before determining the csv
- *                                  file's delimiter
- *
- * QUOTES                 int       ASCII id of a quote
- *
- * delims_t               struct    Holds the number of occurences
- *                                  for every delimiter 
- *
- *    colon                  int    Number of colon occurences
- *    comma                  int    Number of comma occurences
- *     pipe                  int    Number of pipe occurences
- *     semi                  int    Number of semicolon occurences
- *      tab                  int    Number of tab occurences
- *
- *******************************************************************/
 #ifndef CSV_H_
 #define CSV_H_
 

@@ -78,8 +78,19 @@
     </div>
   </main>
   
-  <!-- GRAVIMETRY MODULE -->
+  <!-- GRAVIMETRY MODULE: Main -->
   <main id="main-gravimetry" class="module hidden">
+    <div id="open_modal" class="modal_dialog">
+      <div class="modal_file_upload">
+          <h3>Gravimetric Files Upload</h3>
+          <form id="grav-files-form" align="center" method="post">
+            <p>Select gravimetry and topography csv files</p>
+            <input type="file" multiple id="grav-files-input"/>
+            <input type="button" value="Submit" onclick="processGravimetry()"/>
+          </form>
+      </div>
+    </div>
+    
     <section class="grav-modes">
       <div class="grav-mode">
         <a href="#gravimetry/graphs?mode=import">

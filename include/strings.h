@@ -1,15 +1,3 @@
-/*******************************************************************
- * NAME: strings.h
- *
- * PURPOSE: Defines general-purpose functions on strings.
- *
- * GLOBAL VARIABLES: None
- *
- * Variable       Type         Description
- * --------       ----         -----------
- * 
- *
- *******************************************************************/
 #ifndef STRINGS_H_
 #define STRINGS_H_
 

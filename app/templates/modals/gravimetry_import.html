@@ -1,0 +1,18 @@
+<div class="modal" id="modal-gravimetry-import" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-header">
+      <h2>Import Files</h2>
+      <a href="#" class="btn-close" aria-hidden="true">x</a>
+    </div>
+    <div class="modal-body">
+      <p>Please upload csv files of topographic data and gravimetric data.</p>
+    </div>
+    <div class="modal-footer">
+      <form id="grav_form" method="post" action="/gravimetry/upload" enctype="multipart/form-data">
+        <input type="file" name="file" multiple>
+        <input type="submit" class="btn" value="Upload">
+      </form>
+    </div>
+  </div>
+</div>
+

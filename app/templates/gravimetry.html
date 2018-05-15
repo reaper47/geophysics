@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+  {% include "modals/gravimetry_import.html" %}
+  {% include "modals/gravimetry_load.html" %}
+  
+  <main id="main-gravimetry">
+    <section class="grav-modes">
+	{% for module in modules %}
+	<div class="grav-mode">
+	  <a href="{{ module[2] }}">
+	    <img src="img/home/gravimetry.jpg" alt="{{ module[1] }}">
+	  </a>
+	  <div class="polaroid"><p>{{ module[0] }}</p></div>
+	 </div>
+	 {% endfor %}
+	 <div class="choose-mode"><h3>Choose your path</h3></div>
+    </section>
+  </main>
+{% endblock %}
+

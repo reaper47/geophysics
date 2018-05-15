@@ -1,0 +1,10 @@
+
+{% if json_data %}
+<script>
+  json = {{ json_data|tojson }}
+  localStorage.setItem('gravimetry_json', JSON.stringify(json))
+  delete json
+  // add protection mecanism if user wants to delete previous data or with users
+  window.location.replace("{{ jumpto }}")
+</script>
+{% endif %}

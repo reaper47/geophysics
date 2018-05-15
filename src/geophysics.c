@@ -19,7 +19,8 @@ int main(int argc, char **argv)
     populate_calc_fields_worden807(&worden);
     
     char *csv_path = generate_grav_csv(&worden, "./data/processed/");
-    printf("csv file location: %s\n", csv_path);
+    char *json = generate_grav_json(&worden);
+    printf("%s|%s", json, csv_path);
     
     free_worden807(&worden);
 	return 0;

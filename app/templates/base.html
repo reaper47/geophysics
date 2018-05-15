@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge"> <!-- † -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="theme-color" content="#4285f4">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  {% if title %}
+  <title>Geophysica: {{ title }}</title>
+  {% else %}
+  <title>Geophysicsa</title>
+  {% endif %}
+  <link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}" />
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/index.css') }}">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/normalize.css') }}">
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+</head>
+{% if black %}
+<body class="black">
+{% else %}
+<body>
+{% endif %}
+  <input type="checkbox" id="drawer-toggle" name="drawer-toggle"/>
+  <label for="drawer-toggle" id="drawer-toggle-label"></label>
+  
+  <header>
+    <div class="left">
+      <svg width="100%" viewbox="0 0 90 35">
+        <path class="top" d="M10,10 L30,10 C50,10 50,-10 30,12 L10,30"></path>
+        <path class="mid" d="M10,18 L30,18"></path>
+        <path class="bottom" d="M10,26 L30,26 C50,26 50,46 30,26 L10,10"></path>
+      </svg>
+    </div>
+    {% if title %}
+    <div class="center"><h1 id="header-title">{{ title }}</h1></div>
+    {% else %}
+    <div class="center"><h1 id="header-title">Welcome to Geophysica!</h1></div>
+    {% endif %}
+    <div class="right">
+      <a id="icon_home" href="{{ url_for('index') }}">
+        <svg width="100%" viewbox="-30 -6 90 30">
+          <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        </svg>
+      </a>
+    </div>
+  </header>
+  
+  <nav>
+    <ul>
+      <li><a href="/index">Home</a></li>
+      <li><a href="/gravimetry">Gravimetry</a></li>
+      <li><a href="/seismology">Seismology</a></li>
+      <li><a href="/electricity">Electric</a></li>
+      <li><a href="/magnetism">Magnetism</a></li>
+      <li><a href="/electromagnetism">Electromagnetism</a></li>
+      <li><a href="/about">About</a></li>
+    </ul>
+  </nav>
+
+  <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+  {% block content %}{% endblock %}
+</body>
+</html>
+

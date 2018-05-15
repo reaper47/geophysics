@@ -1,25 +1,3 @@
-/*******************************************************************
- * NAME: sll.h
- *
- * PURPOSE: Implements the singly-linked list data structure.
- *
- * CREDITS: http://www.martinbroadhurst.com/singly-linked-list-in-c.html
- *
- * GLOBAL VARIABLES: None
- *
- * Variable       Type         Description
- * --------       ----         -----------
- * node_t         struct       Structure that models the node of a list.
- *   data         char*        Holds the data of a node.
- *    idx         uint8_t      Holds the column index of a node.
- *   next      struct node_t   Pointer to the next node in the list.
- *
- * list_t         struct       Structure that models a singly-linked list.
- *   head      struct node_t   Pointer to the head of the list.
- *   tail      struct node_t   Pointer to the tail of the list.
- *  count         uint         Tracks the number of nodes in the list.
- *
- *******************************************************************/
 #ifndef SLL_H_
 #define SLL_H_
 

@@ -1,19 +1,3 @@
-/*******************************************************************
- * NAME: calcs.h
- *
- * PURPOSE: Defines general-purpose calculation functions
- *
- * GLOBAL VARIABLES: None
- *
- * Variables              Type      Description
- * ---------              ----      -----------
- * EPSILON                double    minimum error margin 
- *
- * LAT_CORR_mGAL_PER_KM   double    Maximum latitude correction
- *                                  per kilometer at a latitude 
- *                                  of 45deg (mGal). Null at poles.
- *
- *******************************************************************/
 #ifndef CALCS_H_
 #define CALCS_H_
 

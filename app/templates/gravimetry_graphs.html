@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <main id="gravimetry_graphs_container" class="grav_graph">
+    <div class="">
+	    <h3>Parameters</h3>
+	    <div class="axis-params">
+		    <h4>Axis</h4>
+		    <div class="graph_param">
+			<label for="x-axis">x-axis</label>
+			<select id="x-axis-param" name="x-axis">
+				{% for opt in yopts %}
+				<option value="{{ opt }}">{{ opt }}</option>
+				{% endfor %}
+			</select> 	
+		    </div>
+		    <div class="graph_param">
+			<label for="y-axis">y-axis</label>
+			<select id="y-axis-param" name="y-axis">
+				{% for opt in yopts %}
+				<option value="{{ opt }}">{{ opt }}</option>
+				{% endfor %}
+
+			</select> 	
+	    	</div>
+	    </div>
+	    <div class="graph-params">
+		    <h4>Eye Candy</h4>
+	    </div>
+	    <div class="graph-control">
+		<h4>Control</h4>
+		{% for s in residual_anom_control %}
+		<div class='graph-slider'>
+			<label for="{{ s[1] }}">{{ s[0] }}</label><br>
+			<input type="range" min="0" max="100" value="50" id="{{ s[1] }}-slider" 
+			       step="1" oninput="outputUpdate(value)">
+			<output for="{{ s[1] }}" id="{{ s[1] }}-output">50</output></br>
+		</div>
+		{% endfor %}
+	    </div>
+    </div>
+    <div id="gravimetry_graph_root" class="d3_graph svg-container"></div>
+  </main>
+	<script>
+	data = Object.assign({}, JSON.parse(JSON.parse(localStorage.getItem('gravimetry_json'))))
+	
+	var chart = new Graph({
+    		element: document.getElementById('gravimetry_graph_root'),
+		originalData: data,
+		data: { x: data.stations, y: data.residual_anom }
+	});
+
+	var grav_options = []
+	var selectBox = document.getElementById("y-axis-param");
+	for (var i = 0; i < selectBox.options.length; i++) 
+        	grav_options.push(selectBox.options[i].value);
+
+	var xSelectBox = document.getElementById('x-axis-param')
+	selectBox.addEventListener('change', () => {
+		chart.setData({ 
+			x: chart.getData().stations, 
+			y: chart.getData()[selectBox.value] 
+		})
+	})
+
+function outputUpdate(vol) {
+	document.querySelector('#e-output').value = vol;
+}
+  </script>
+{% endblock %}

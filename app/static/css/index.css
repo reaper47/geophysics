@@ -27,7 +27,7 @@ body {
 body {
   background-color: #FFF;
   color: #212121;
-  font-family: Roboto, Verdana, sans-serif;
+  font-family: "Roboto", "Verdana", sans-serif;
   font-weight: 300;
   margin: 0;
   position: relative;
@@ -208,7 +208,8 @@ div.polaroid {
   text-align: center;
 }
 
-div.home-item img:hover {
+div.home-item img:hover,
+#main-gravimetry img:hover {
   cursor: pointer;
   opacity: 0.6;
 }
@@ -316,6 +317,101 @@ div.home-item img:hover {
   height: 10rem;
 }
 
+.btn {
+  color: #ecf0f1;
+  background: #3498db;
+  border: #357ebd solid 2px;
+  border-radius: 0.5rem;
+  padding: 0.7rem;
+  text-decoration: none;
+  min-width: 60px;
+  transition: color .1s ease;
+}
+
+.btn:hover {
+  background: #357ebd;
+  cursor: pointer;
+  color: #f1c40f;
+  transition: color .3s ease;
+}
+
+.btn-close {
+  color: #7f8c8d !important;
+  font-size: 2.3rem;
+  text-decoration: none;
+  position: absolute;
+  right: 1rem;
+  top: 0;
+  padding-left: 1rem;
+}
+
+.btn-close:hover {
+  color: #919191;
+}
+.modal:before {
+  content: "";
+  display: none;
+  background: rgba(0, 0, 0, 0.6);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+}
+.modal:target:before {
+  display: block;
+}
+.modal:target .modal-dialog {
+  -webkit-transform: translate(0, 0);
+  -ms-transform: translate(0, 0);
+  transform: translate(0, 0);
+  top: 20%;
+}
+.modal-dialog {
+  background: #fefefe;
+  border: #333 solid 1px;
+  border-radius: 0.7rem;
+  margin-left: -12rem;
+  position: fixed;
+  left: 50%;
+  top: -100%;
+  -webkit-transform: translate(0, -500%);
+  -ms-transform: translate(0, -500%);
+  transform: translate(0, -500%);
+  -webkit-transition: -webkit-transform 0.3s ease-out;
+  -moz-transition: -moz-transform 0.3s ease-out;
+  -o-transition: -o-transform 0.3s ease-out;
+  transition: transform 0.3s ease-out;
+  width: 25.5rem;
+  z-index: 11;
+}
+.modal-body {
+  padding: 2rem;
+  padding-bottom: 0.5rem;
+  
+}
+.modal-header,
+.modal-footer {
+  padding: 1rem 1.5rem;
+}
+.modal-header {
+  border-bottom: #eee solid 1px;
+}
+.modal-header h2 {
+  font-size: 1.5rem;
+}
+.modal-footer form {
+  border-top: #eee solid 1px;
+  text-align: right;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 8vh;
+  align-items: center;
+  justify-items: center;
+  padding-top: 0.5rem;
+}
+
 /*******************
  *       SVG       *
  *******************/
@@ -380,15 +476,64 @@ path {
   grid-column: 2 / 3
 }
 
-/*******************
- * GRAVIMETRY MODE *
- *******************/
- 
+.grav-menu-slide {
+    padding-left: 18.75rem;
+}
 
+/*********************
+ * GRAVIMETRY GRAPHS *
+ *********************/
+#gravimetry_graphs_container {
+  display: grid;
+  margin: 0 auto;
+  grid-gap: 20px;
+  grid-template-columns: 1fr 3fr;
+  height: 93vh;
+  padding: 0.5rem;
+}
+
+#gravimetry_graph_root {
+  border: rgba(33, 33, 33, 0.33) solid 1px;
+  padding-right: 1rem;
+}
+
+.svg-container svg {
+  stroke-opacity: 0.7;
+  shape-rendering: crispEdges;
+  width: 100%;
+  height: 100%;
+
+}
+
+.grid_graph line {
+  stroke: lightgrey;
+  stroke-opacity: 0.3;
+  shape-rendering: crispEdges;
+  fill: none;
+}
+
+.d3_graph path {
+	stroke: steelblue;
+	stroke-width: 1;
+	fill: none;
+}
+
+.d3_graph line {
+  stroke-width: 2;
+  fill: none;
+}
+
+.d3_graph .axis path {
+  stroke: #212121;
+}
 
 /*******************
  *   CONSTRUCTION  *
  *******************/
+ body.black {
+   background-color: black;
+ }
+ 
 .under-construction-h2 {
   color: white;
   margin-top: 45rem;

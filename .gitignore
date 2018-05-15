@@ -3,3 +3,7 @@
 /html/public/style.css
 /html/public/images/
 html/public/assets/
+__pycache__
+data/processed/*.csv
+bin
+app/__pycache__
