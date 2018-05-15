@@ -69,20 +69,37 @@ def process_gravimetric_files(files):
 
 @app.route('/gravimetry/graphs')
 def gravimetry_graphs():
+    xopts = [
+        ('stations', 'Stations'), 
+        ('times_min', 'Time')]
+
     yopts = [
-        'stations', 'times', 'times_min', 'readings_avg', 'std', 
-        'rel_grav_fields', 'grav_anom_uncorr', 'attract_dev', 
-        'lat_corr', 'elev', 'alts', 'free_air_corr', 'bouguer_corr', 
-        'bouguer_rel', 'bouguer_anom', 'regional_anom', 'residual_anom']
+        ('readings_avg', 'Average Readings'), 
+        ('std', 'Standard Deviation'),
+        ('rel_grav_fields', 'Relative Gravitational Field'), 
+        ('grav_anom_uncorr', 'Uncorrected Gravimetric Anomaly'),
+        ('attract_dev', 'Attraction/Instrumental Deviation'),
+        ('lat_corr', 'Corrected Latitude'),
+        ('elev', 'Elevation'), 
+        ('alts', 'Sea-level Altitude'),
+        ('free_air_corr', 'Free Air Correction'),
+        ('bouguer_corr', 'Bouguer Correction'),
+        ('bouguer_rel', 'Relative Bouguer Gravitational Field'),
+        ('bouguer_anom', 'Bouguer Anomaly'),
+        ('regional_anom', 'Regional Anomaly'),
+        ('residual_anom', 'Residual Anomaly')]
     
     residual_anom_control = [
-        ('Volumetric mass contrast (kg/m^3)', 'vol'), ('Prism thickness e (m)', 'e'), 
-        ('Prism horizontal width l (m)', 'l'), ('Prism burial depth z (m)', 'z'),
-        ('Starting prism position in relation to the reference station x (m)', 'x')
-    ]
+        ('Volumetric mass contrast (kg/m^3)', 'vol'), 
+        ('Prism thickness e (m)', 'e'), 
+        ('Prism horizontal width l (m)', 'l'),
+        ('Prism burial depth z (m)', 'z'),
+        ('Starting prism position to reference station x (m)', 'x')]
 
     return render_template('gravimetry_graphs.html', 
-            title='Gravimetry: Graphs', yopts=yopts, residual_anom_control=residual_anom_control)
+            title='Gravimetry: Graphs', 
+            xopts=xopts, yopts=yopts, 
+            residual_anom_control=residual_anom_control)
 
 @app.route('/seismology')
 def seismology():
