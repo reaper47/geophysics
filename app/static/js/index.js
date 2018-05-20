@@ -3,7 +3,8 @@ const cached = {
     'header_h1': document.getElementById('header-title'),
     'header': document.querySelector('header'),
     'open_modal': document.getElementById('open_modal'),
-    'main_gravimetry': document.getElementById('main-gravimetry')
+    'main_gravimetry': document.getElementById('main-gravimetry'),
+    'G': 6.67*(10**-11)
 }
 
 let slidingMenu = () => {
@@ -50,12 +51,67 @@ let cleanData = (data) => {
     return newData
 }
 
+let setColorPickerValue = (id, color) => {
+    const colorPicker = document.getElementById(id)
+    colorPicker.value = color
+}
+
+let updateLineColor = (event) => chart.setColor(event.target.value)
+
+let updateChartXAxisChange = () => {
+    chart.setData({ 
+        x: chart.getData()[xSelectBox.value], 
+        y: chart.getData()[ySelectBox.value] 
+    }, getXYLabels(xSelectBox, ySelectBox))
+}
+
+let updateChartYAxisChange = () => {
+    const controls = document.getElementById('graph-control-gravimetry')
+    if(ySelectBox.value === 'residual_anom')
+        controls.style.display = 'grid'
+    else
+        controls.style.display = 'none'
+
+    chart.setData({ 
+        x: chart.getData()[xSelectBox.value], 
+        y: chart.getData()[ySelectBox.value] 
+    }, getXYLabels(xSelectBox, ySelectBox))
+}
+
+let getXYLabels = (xbox, ybox) => {
+    const labels = {
+        x: xbox.options[xbox.selectedIndex].text,
+        y: ybox.options[ybox.selectedIndex].text
+    }
+    
+    addUnitToLabels(labels)
+    return labels
+}
+
+let addUnitToLabels = (labels) => {
+    const xlabel = labels.x.toLowerCase()
+    if(xlabel === 'stations')
+        labels.x += ' (m)'
+    else if(xlabel === 'time')
+        labels.x += ' (min)'
+        
+    const ylabel = labels.y.toLowerCase()
+    if(ylabel === 'elevation' || ylabel === 'sea-level altitude')
+        labels.y += ' (m)'
+    else if(ylabel === 'average readings')
+        labels.y += ' (div)'
+    else
+        labels.y += ' (mGal)'
+}
+
 class Graph {
     constructor(opts) {
         this.originalData = opts.originalData
         this.data = cleanData(opts.data)
         this.element = opts.element
         this.numGridTicks = 8
+        this.xlabel = opts.xlabel
+        this.ylabel = opts.ylabel
         this.draw()
         
         const self = this
@@ -119,10 +175,28 @@ class Graph {
             .attr('class', 'x axis grid_graph')
             .attr('transform',`translate(0, ${this.height - m.top + m.bottom})`)
             .call(this.xAxis)
+                    
+        this.plot.append('text')
+		    .attr('x', this.width / 2 )
+            .attr('y',  this.height + this.margin.bottom + 15)
+            .style('text-anchor', 'middle')
+            .style('font-size', '0.9em')
+            .classed('x-label', true)
+            .text(this.xlabel)
         
         this.plot.append('g')
             .attr('class', 'y axis grid_graph')
             .call(this.yAxis)
+            
+		this.plot.append('text')
+            .attr('transform', 'rotate(-90)')
+            .attr('y', -this.margin.left)
+            .attr('x', -this.height / 2)
+            .attr('dy', "1em")
+            .style("text-anchor", "middle")
+            .style('font-size', '0.9em')
+            .classed('y-label', true)
+            .text(this.ylabel)
     }
     
     addLine() {
@@ -144,11 +218,14 @@ class Graph {
     
     /* Public Methods */
     setColor(newColor) {
+        this.lineColor = newColor
         this.plot.select('.line').style('stroke', newColor)
     }
-    
-    setData(newData) {
+        
+    setData(newData, labels) {
         this.data = cleanData(newData)
+        this.xlabel = labels.x
+        this.ylabel = labels.y
         this.draw()
     }
     

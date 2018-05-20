@@ -530,7 +530,8 @@ path {
 /*****************************
  * GRAVIMETRY GRAPHS CONTROL *
  *****************************/
-input[type=range]::-moz-focus-outer {
+input[type=range]::-moz-focus-outer,
+input[type=color] {
   border: 0;
 }
 
@@ -584,9 +585,13 @@ select {
   flex-direction: column;
 }
 
-.graph-sliders-container {
+.graph-sliders-container,
+.graph-candy-container {
   padding-top: 1.2rem;
   text-align: center;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  font-size: 0.9rem;
 }
 
 .graph-sliders-container div {

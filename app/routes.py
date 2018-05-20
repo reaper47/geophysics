@@ -88,13 +88,19 @@ def gravimetry_graphs():
         ('bouguer_anom', 'Bouguer Anomaly'),
         ('regional_anom', 'Regional Anomaly'),
         ('residual_anom', 'Residual Anomaly')]
-    
+
+    vol_slider_params = { 'min': -3000, 'max': -400, 'step': 1, 'default': -1400 }
+    thickness_slider_params = { 'min': 1, 'max': 151, 'step': 1, 'default': 76}
+    width_slider_params = { 'min': 1, 'max': 411, 'step': 1, 'default': 206}
+    depth_slider_params = { 'min': 1, 'max': 200, 'step': 1, 'default': 100 }
+    starting_slider_params = { 'min': -364, 'max': 624, 'step': 1, 'default': 130 }
+
     residual_anom_control = [
-        ('Volumetric mass contrast (kg/m^3)', 'vol'), 
-        ('Prism thickness e (m)', 'e'), 
-        ('Prism horizontal width l (m)', 'l'),
-        ('Prism burial depth z (m)', 'z'),
-        ('Starting prism position to reference station x (m)', 'x')]
+        ('Volumetric mass contrast (kg/m^3)', 'vol', vol_slider_params), 
+        ('Prism thickness (m)', 'e', thickness_slider_params), 
+        ('Prism horizontal width (m)', 'l', width_slider_params),
+        ('Prism burial depth (m)', 'z', depth_slider_params),
+        ('Starting prism position to reference station (m)', 'x', starting_slider_params)]
 
     return render_template('gravimetry_graphs.html', 
             title='Gravimetry: Graphs', 

@@ -27,18 +27,23 @@
 	</div>
 	<div class="graph-params">
 	    <h4>Eye Candy</h4>
-
+	    <div class="graph-candy-container">
+	    	<div id="color-picker-container">
+		    <label for="color-picker">Line Color</label>
+		    <input id="color-picker" type="color">
+		</div>
+	    </div>
 	</div>
-	<div class="graph-control">
+	<div id='graph-control-gravimetry' class="graph-control">
 	    <h4>Control</h4>
 	    <div class="graph-sliders-container">
 	        {% for s in residual_anom_control %}
 	        <div class='graph-slider'>
 		    <label for="{{ s[1] }}">{{ s[0] }}</label><br>
-		    <input type="range" min="0" max="100" 
-		           value="50" id="{{ s[1] }}-slider" 
-		           step="1" oninput="updateSlider(value, this)">
-		    <output for="{{ s[1] }}" id="{{ s[1] }}-output">50</output></br>
+		    <input type="range" min="{{ s[2].min }}" max="{{ s[2].max }}" 
+			   value="{{ s[2].default }}" id="{{ s[1] }}-slider" 
+			   step="{{ s[2].step }}" oninput="updateSlider(value, this)">
+		    <output for="{{ s[1] }}" id="{{ s[1] }}-output">{{ s[2].default }}</output></br>
 	        </div>
 	        {% endfor %}
 	    </div>
@@ -46,39 +51,45 @@
     </div>
     <div id="gravimetry_graph_root" class="d3_graph svg-container"></div>
   </main>
-	<script>
+  <script>
 	data = Object.assign({}, JSON.parse(JSON.parse(localStorage.getItem('gravimetry_json'))))
 	
-	var chart = new Graph({
+	let chart = new Graph({
     		element: document.getElementById('gravimetry_graph_root'),
 		originalData: data,
-		data: { x: data.stations, y: data.residual_anom }
+		data: { x: data.stations, y: data.residual_anom },
+		xlabel: 'Stations (m)',
+		ylabel: 'Residual Anomaly (mGal)'
 	});
+	
+	document.getElementById('color-picker').addEventListener('change', updateLineColor, false)
+	setColorPickerValue('color-picker', '#ff0000')
 
-	var xSelectBox = document.getElementById('x-axis-param')
-	var ySelectBox = document.getElementById("y-axis-param")
+	let xSelectBox = document.getElementById('x-axis-param')
 	xSelectBox.value = 'stations'
+	xSelectBox.addEventListener('change', updateChartXAxisChange, false)
+	
+	let ySelectBox = document.getElementById("y-axis-param")
 	ySelectBox.value = 'residual_anom'
+	ySelectBox.addEventListener('change', updateChartYAxisChange, false)
 
-	xSelectBox.addEventListener('change', () => {
-		chart.setData({ 
-			x: chart.getData()[xSelectBox.value], 
-			y: chart.getData()[ySelectBox.value] 
-		})
-	})
-
-	ySelectBox.addEventListener('change', () => {
-		chart.setData({ 
-			x: chart.getData()[xSelectBox.value], 
-			y: chart.getData()[ySelectBox.value] 
-		})
-	})
+	let gravimetrySliders = Array.from(document.getElementsByClassName('graph-slider'))
 
 	let updateSlider = (newValue, self) => {
 		const sliderId = self.id.split('-')[0]
 		const outputSlider = document.getElementById(sliderId + '-output')
 		self.value = newValue;
 		outputSlider.innerHTML = newValue
+
+		const params = {
+			vol: gravimetrySliders[0].children[2].value,
+			e: gravimetrySliders[1].children[2].value,
+			l: gravimetrySliders[2].children[2].value,
+			z: gravimetrySliders[3].children[2].value,
+			x: gravimetrySliders[4].children[2].value
+		}
+
+		//(2*cached['G']*e_def*p_def * (np.arctan((l_def-x)/z_def) + np.arctan(x/z_def)) * 100000)
 	}
   </script>
 {% endblock %}
