@@ -82,14 +82,14 @@
 		outputSlider.innerHTML = newValue
 
 		const params = {
-			vol: gravimetrySliders[0].children[2].value,
+			p: gravimetrySliders[0].children[2].value,
 			e: gravimetrySliders[1].children[2].value,
 			l: gravimetrySliders[2].children[2].value,
 			z: gravimetrySliders[3].children[2].value,
 			x: gravimetrySliders[4].children[2].value
 		}
-
-		//(2*cached['G']*e_def*p_def * (np.arctan((l_def-x)/z_def) + np.arctan(x/z_def)) * 100000)
+		
+		chart.setResidualAnomalyData(params)
 	}
   </script>
 {% endblock %}

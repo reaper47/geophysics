@@ -48,7 +48,6 @@ def gravimetry_upload():
 
         if len(valid_files) == 2:
             json_data, csv_path = process_gravimetric_files(valid_files)
-            print(list(json.loads(json_data).keys()))
             return render_template('jumpto.html', json_data=json_data, jumpto='graphs')
         else:
             print("Too many files. Please upload a single topographic file and a single gravimetric file.")
@@ -56,8 +55,7 @@ def gravimetry_upload():
     return redirect(url_for('gravimetry'))
 
 def allowed_file(filename):
-    return '.' in filename and \
-        filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 def process_gravimetric_files(files):
     program = ['./bin/geophysics', './data/uploads/grav.csv', './data/uploads/topo.csv']
@@ -89,11 +87,11 @@ def gravimetry_graphs():
         ('regional_anom', 'Regional Anomaly'),
         ('residual_anom', 'Residual Anomaly')]
 
-    vol_slider_params = { 'min': -3000, 'max': -400, 'step': 1, 'default': -1400 }
-    thickness_slider_params = { 'min': 1, 'max': 151, 'step': 1, 'default': 76}
-    width_slider_params = { 'min': 1, 'max': 411, 'step': 1, 'default': 206}
-    depth_slider_params = { 'min': 1, 'max': 200, 'step': 1, 'default': 100 }
-    starting_slider_params = { 'min': -364, 'max': 624, 'step': 1, 'default': 130 }
+    vol_slider_params = { 'min': -3000, 'max': -400, 'step': 1, 'default': -1000 }
+    thickness_slider_params = { 'min': 1, 'max': 151, 'step': 1, 'default': 5}
+    width_slider_params = { 'min': 1, 'max': 411, 'step': 1, 'default': 100}
+    depth_slider_params = { 'min': 1, 'max': 200, 'step': 1, 'default': 5 }
+    starting_slider_params = { 'min': 0, 'max': 360, 'step': 1, 'default': 5 }
 
     residual_anom_control = [
         ('Volumetric mass contrast (kg/m^3)', 'vol', vol_slider_params), 

@@ -4,7 +4,8 @@ const cached = {
     'header': document.querySelector('header'),
     'open_modal': document.getElementById('open_modal'),
     'main_gravimetry': document.getElementById('main-gravimetry'),
-    'G': 6.67*(10**-11)
+    'G': 6.67*(10**-11),
+    'residual_line': 'residual-line'
 }
 
 let slidingMenu = () => {
@@ -48,7 +49,36 @@ let cleanData = (data) => {
     let newData = data.x.reduce((acc, curr, idx) => [...acc, [curr, data.y[idx]]], [])
 	newData.splice(12, 1)
 	newData.splice(26, 1)
-    return newData
+	
+	interpolatedData = []
+	for(let i = 0; i < newData.length - 1; ++i)
+	    interpolatedData.push(interpolate(newData[i], newData[i+1]))
+	    
+	firstpt = newData[0]
+	interpolatedData.unshift([[firstpt[0], firstpt[1]]])
+	lastpt = newData[newData.length - 1]
+	interpolatedData.push([[lastpt[0], lastpt[1]]])
+	
+    return flatten(interpolatedData)
+}
+
+let flatten = (arr) => {
+    flattened = []
+    arr.forEach(el => el.forEach(sub => flattened.push(sub)))
+    return flattened
+}
+
+let interpolate = (pt1, pt2) => {
+    const slope = (pt2[1] - pt1[1]) / (pt2[0] - pt1[0])
+    let interpolateValue = pt1[1]
+    
+    interpolatedPoints = []
+    for (let i = pt1[0] + 1; i < pt2[0]; ++i) {
+        interpolatedPoints.push([i, interpolateValue + slope])
+        interpolateValue += slope
+    }
+    
+    return interpolatedPoints
 }
 
 let setColorPickerValue = (id, color) => {
@@ -67,15 +97,19 @@ let updateChartXAxisChange = () => {
 
 let updateChartYAxisChange = () => {
     const controls = document.getElementById('graph-control-gravimetry')
-    if(ySelectBox.value === 'residual_anom')
-        controls.style.display = 'grid'
-    else
-        controls.style.display = 'none'
 
     chart.setData({ 
         x: chart.getData()[xSelectBox.value], 
         y: chart.getData()[ySelectBox.value] 
     }, getXYLabels(xSelectBox, ySelectBox))
+    
+    if(ySelectBox.value === 'residual_anom') {
+        controls.style.display = 'grid'
+        document.getElementsByClassName(cached['residual_line'])[0].style.display = 'block'
+    } else {
+        controls.style.display = 'none'
+        document.getElementsByClassName(cached['residual_line'])[0].style.display = 'none'
+    }
 }
 
 let getXYLabels = (xbox, ybox) => {
@@ -112,6 +146,7 @@ class Graph {
         this.numGridTicks = 8
         this.xlabel = opts.xlabel
         this.ylabel = opts.ylabel
+        this.resAnomParams = { G: 6.67 * (10**-11), p: -1000, e: 5, l: 100, z: 5, x: 5.0 }
         this.draw()
         
         const self = this
@@ -127,7 +162,7 @@ class Graph {
             bottom: 45,
             left: 50
         }
-        
+                
         this.element.innerHTML = ''
         const svg = d3.select(this.element).append('svg')
             .attr('preserveAspectRatio', `none`)
@@ -136,10 +171,28 @@ class Graph {
         this.plot = svg.append('g')
             .attr('transform',`translate(${this.margin.left},${this.margin.top})`)
         
+        this.addSecondLineToData()
         this.createScale()
         this.addAxes()
         this.addLine()
+        this.addResidualPlotLine()
         this.deleteTopAxisLine()
+    }
+    
+    addSecondLineToData() {
+        const G = this.resAnomParams.G
+        const p = this.resAnomParams.p
+        const e = this.resAnomParams.e
+        const l = this.resAnomParams.l
+        const z = this.resAnomParams.z
+        const x = this.resAnomParams.x
+
+        let ypoints = []
+        for (let i = -364; i < 1000; i++) 
+            ypoints.push(2*G*e*p * (Math.atan((l - i) / z) + Math.atan(i / z))*100000)
+
+        ypoints = ypoints.slice(x, this.data.length);
+        ypoints.forEach((el, idx) => this.data[idx].push(el))
     }
     
     createScale() {
@@ -205,10 +258,23 @@ class Graph {
             .y(d => this.yScale(d[1]))
 
         this.plot.append('path')
-            .datum(this.data)
             .classed('line', true)
-            .attr('d', line)
-            .style('stroke', this.lineColor || 'red')
+            .attr("class", "line")
+		    .attr("d", line(this.data));
+    }
+    
+    addResidualPlotLine() {
+        const m = this.margin
+        
+        const line = d3.line()
+            .x(d => this.xScale(d[0]))
+            .y(d => this.yScale(d[2]))
+        
+        this.plot.append('path')
+            .classed('residual_line', true)
+            .attr("class", cached['residual_line'])
+		    .style("stroke", "red")
+		    .attr("d", line(this.data));
     }
     
     deleteTopAxisLine() {
@@ -226,6 +292,22 @@ class Graph {
         this.data = cleanData(newData)
         this.xlabel = labels.x
         this.ylabel = labels.y
+        this.draw()
+    }
+    
+    setResidualAnomalyData(newParams) {
+        this.resAnomParams.p = newParams.p
+        this.resAnomParams.e = newParams.e
+        this.resAnomParams.l = newParams.l
+        this.resAnomParams.z = newParams.z
+        this.resAnomParams.x = newParams.x
+        
+        let newArr = []
+        for(let i = 0; i < this.data.length; ++i)
+            newArr.push(this.data[i].splice(0, 2))
+        this.data = newArr
+        
+        this.addSecondLineToData()
         this.draw()
     }
     
